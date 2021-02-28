@@ -173,7 +173,7 @@ class NanoWindow(QtWidgets.QMainWindow):
 
             if cC._Ze is not None:
                 #draw selected eze
-                self._gc_eze.setData(cC._Ze,cC.Fe)
+                self._gc_eze.setData(cC._Ze,cC._E)
                 #draw current eze fit
                 #todo implement drawing the fit
         else:
