@@ -36,6 +36,9 @@ class NanoWindow(QtWidgets.QMainWindow):
         self.ui.tabfilters.tabCloseRequested.connect(self.removeFilter)
         self.ui.sel_cp.currentIndexChanged.connect(self.cpSelected)
         self.ui.setZeroForce.clicked.connect(self.toggleZero)
+        self.ui.es_win.valueChanged.connect(self.calc1)
+        self.ui.es_order.valueChanged.connect(self.calc1)
+        self.ui.es_interpolate.clicked.connect(self.calc1)
 
         self.redraw = True
         QtCore.QMetaObject.connectSlotsByName(self)
