@@ -57,26 +57,20 @@ class curve(object):
     def calc_elspectra(self,win,order,interp=True):
         x = self._Zi
         y = self._Fi
-
         if self.tip['geometry']!='sphere':
-            return None #To be implemented fo rother geometries
-
+            return None #To be implemented for other geometries
         R = self.tip['radius']
-
         if(len(x)) < 1:  # check on length of ind
             return None
-
         if interp is True:
             yi = interp1d(x, y)
             max_x = np.max(x)
-            min_x = 1
-
-            if np.min(x) > 1:
+            min_x = 1e-9
+            if np.min(x) > 1e-9:
                 min_x = np.min(x)
-
-            xx = np.arange(min_x, max_x, 1.0)
+            xx = np.arange(min_x, max_x, 1.0e-9)
             yy = yi(xx)
-            ddt = 1.0
+            ddt = 1.0e-9
         else:
             xx = x[1:]
             yy = y[1:]
