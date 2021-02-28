@@ -121,7 +121,7 @@ class boxPanel:  # Contact point class
 
     def disconnect(self):
         #disconnect the callback from the parameters
-        for p in self._parameters:
+        for p in self._parameters.values():
             p.triggered.disconnect()
 
     def connect(self, callback):

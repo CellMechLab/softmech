@@ -14,7 +14,7 @@ class CP(boxPanel):  # Threshold
         self.addParameter('Fthreshold','float','AVG area [nm]',100.0)
 
     def calculate(self, x,y,curve=None):
-        yth = self.getValue('Athreshold')
+        yth = self.getValue('Athreshold')*1e-9
         if yth > np.max(y) or yth < np.min(y):
             return False
         jrov = 0
@@ -22,9 +22,11 @@ class CP(boxPanel):  # Threshold
             if y[j] > yth and y[j-1] < yth:
                 jrov = j
                 break
+        if jrov==0 or jrov==len(y)-1:
+            return False
         x0 = x[jrov]
-        dx = self.getValue('deltaX')
-        ddx = self.getValue('Fthreshold')
+        dx = self.getValue('deltaX')*1e-9
+        ddx = self.getValue('Fthreshold')*1e-9
         if ddx <= 0:
             jxalign = np.argmin((x - (x0 - dx)) ** 2)
             f0 = y[jxalign]
@@ -37,4 +39,6 @@ class CP(boxPanel):  # Threshold
             if y[j] > f0 and y[j-1] < f0:
                 jcp = j
                 break
+        if jcp == 0:
+            return False
         return [x[jcp], y[jcp]]

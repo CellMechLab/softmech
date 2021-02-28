@@ -18,6 +18,21 @@ class curve(object):
             setattr(self,k,v)
         self.reset()
 
+    def setZF(self,ret):
+        if ret is None or ret is False:
+            return
+        x,y = ret
+        self._Z,self._F = np.array(x),np.array(y)
+
+    def resetCP(self):
+        self._cp = None
+        self._Fi = None
+        self._Zi = None
+        self._E = None
+        self._Ze = None
+        self._Fparams = None
+        self._Eparams = None
+
     def reset(self):
         self._F = np.array(self.data['F'])
         self._Z = np.array(self.data['Z'])

@@ -34,7 +34,9 @@ class NanoWindow(QtWidgets.QMainWindow):
         self.ui.slid_alpha.valueChanged.connect( self.alphaChanged )
         self.ui.sel_filter.currentIndexChanged.connect(self.filterSelected)
         self.ui.tabfilters.tabCloseRequested.connect(self.removeFilter)
-                
+        self.ui.sel_cp.currentIndexChanged.connect(self.cpSelected)
+        self.ui.setZeroForce.clicked.connect(self.toggleZero)
+
         self.redraw = True
         QtCore.QMetaObject.connectSlotsByName(self)
 
@@ -146,7 +148,9 @@ class NanoWindow(QtWidgets.QMainWindow):
         self.redraw = True
         QtWidgets.QApplication.restoreOverrideCursor()
 
-        self.calculate()        
+        self.calculate()   
+        self.draw()
+        self.selectedCurveChanged()     
 
     def selectCurve(self,cv):
         self.ui.slid_cv.setValue(cv.cvid)
@@ -172,27 +176,28 @@ class NanoWindow(QtWidgets.QMainWindow):
                 self._gc_eze.setData(cC._Ze,cC.Fe)
                 #draw current eze fit
                 #todo implement drawing the fit
+        else:
+            self._gc_fizi.setData([],[])
+            self._gc_fizi_fit.setData([],[])
+            self._gc_eze.setData([],[])
+            self._gc_eze_fit.setData([],[])
 
     def calc_filters(self):
         for c in engine.dataset:
-            c._Z,c._F = c.data['Z'],c.data['F']
+            c.reset()
             for fil in self._filters_selected:
-                ret = fil.calculate(c._Z,c._F,curve=c)
-                if (ret is not None) and (ret is not False):
-                    c._Z,c._F = ret
+                c.setZF(fil.calculate(c._Z,c._F,curve=c))
 
     def calc_cp(self):
         for c in engine.dataset:
-            c._cp = None
+            c.resetCP()
             cp = self._cpoint
             if cp is not None:
                 ret = cp.calculate(c._Z,c._F,curve=c)
-                c._Zi,c._Fi = None,None
-                c._E,c._Ze = None,None
                 if (ret is not None) and (ret is not False):
                     c._cp = ret    
-                    c.calc_indentation(self.ui.setZeroForce.isChecked())
-                    c.calc_elspectra(int(self.ui.es_win.value()),int(self.ui.es_order.value()),self.ui.es_interpolate.isChecked())                
+                    c.calc_indentation(bool(self.ui.setZeroForce.isChecked()))
+                    c.calc_elspectra(int(self.ui.es_win.value()),int(self.ui.es_order.value()),bool(self.ui.es_interpolate.isChecked()))                
 
     def calc_fmodels(self):
         for c in engine.dataset:
@@ -212,6 +217,11 @@ class NanoWindow(QtWidgets.QMainWindow):
                 if (ret is not None) and (ret is not False):
                     c._Eparams = ret
 
+    def calc1(self):
+        self.calculate(1)
+        self.draw()
+        self.selectedCurveChanged()
+
     def calculate(self,start=0):
         if self.redraw is False:
             return
@@ -230,8 +240,6 @@ class NanoWindow(QtWidgets.QMainWindow):
         elif start == 2 or start == 'emodel':
             self.calc_emodels()
         QtWidgets.QApplication.restoreOverrideCursor()
-        self.draw()
-        self.selectedCurveChanged()
 
     def draw_fz(self):
         i=0
@@ -240,10 +248,10 @@ class NanoWindow(QtWidgets.QMainWindow):
             if c._cp is None:
                 p.setData(c._Z,c._F)
             else:
-                y = c._F
                 if self.ui.setZeroForce.isChecked() is True:
-                    y-=self._cp[1]
-                p.setData(c._Z-self._cp[0],y)
+                    p.setData(c._Z-c._cp[0],c._F-c._cp[1])
+                else:
+                    p.setData(c._Z-c._cp[0],c._F)                
             i+=1
 
     def draw_fizi(self):
@@ -266,14 +274,42 @@ class NanoWindow(QtWidgets.QMainWindow):
                 p.setData(c._Ze,c._E)
             i+=1
 
-    def draw(self,start=0):
+    def draw(self):
         if self.redraw is False:
             return
         QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
         self.draw_fz()
-        self.draw_fizi
-        self.draw_eze          
+        self.draw_fizi()
+        self.draw_eze()       
         QtWidgets.QApplication.restoreOverrideCursor()  
+
+    def toggleZero(self):
+        self.calculate('cp')
+        self.draw()
+        self.selectedCurveChanged()
+
+    def cpSelected(self,fid):
+        if fid == 0:
+            if self._cpoint is not None:                
+                self._cpoint.disconnect()
+                layout = self.ui.box_cp.layout()
+                if layout is not None:
+                    while(layout.rowCount()>0):
+                        layout.removeRow(0)
+                self._cpoint = None
+        else:
+            if self._cpoint is not None:                
+                self._cpoint.disconnect()
+            layout = self.ui.box_cp.layout()
+            if layout is None:
+                layout = QtWidgets.QFormLayout()
+            self._cpoint = protocols.cpoint.get(self._plugin_cpoint[fid-1])
+            self._cpoint.createUI(layout)
+            self._cpoint.connect(self.calc1)
+            self.ui.box_cp.setLayout(layout)
+        self.calculate('cp')
+        self.draw()
+        self.selectedCurveChanged()
 
     def filterSelected(self,fid):
         if fid == 0:
@@ -291,11 +327,15 @@ class NanoWindow(QtWidgets.QMainWindow):
         self.ui.tabfilters.setCurrentIndex(newtab)
         self.ui.sel_filter.setCurrentIndex(0)
         self.calculate()
+        self.draw()
+        self.selectedCurveChanged()
 
     def removeFilter(self,fid):
         self.ui.tabfilters.removeTab(fid)
         self._filters_selected.pop(fid)
         self.calculate()
+        self.draw()
+        self.selectedCurveChanged()
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
