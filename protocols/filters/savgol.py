@@ -4,7 +4,7 @@ from ..panels import boxPanel
 from scipy.signal import savgol_filter
 
 #Set here the details of the procedure
-NAME = 'S-G' #Name, please keep it short as it will appear in the combo box of the user interface
+NAME = 'SavGol' #Name, please keep it short as it will appear in the combo box of the user interface
 DESCRIPTION = 'Filter the curve with a Savitzky Golay filter; ideal to preserve steps' #Free text
 DOI = '' #set a DOI of a publication you want/suggest to be cited, empty if no reference
 
