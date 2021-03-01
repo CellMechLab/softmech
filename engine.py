@@ -50,7 +50,7 @@ class curve(object):
             Yf = self._F[iContact:]-self._cp[1]
         else:
             Yf = self._F[iContact:]
-        Xf = self._Z[iContact:]
+        Xf = self._Z[iContact:]-self._cp[0]
         self._Zi = Xf - Yf / self.spring_constant
         self._Fi = Yf
 
