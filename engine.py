@@ -8,10 +8,11 @@ class curve(object):
     def __init__(self,structure=None):
         self.data = {'F': None,'Z':None}
         self.spring_constant = 1.0
+        self.tip = {'geometry':None}
+        self._cp=[]
+        self.reset()
         if structure is not None:
             self.load(structure)
-        else:
-            self.reset()
 
     def load(self,structure):
         for k,v in structure.items():
