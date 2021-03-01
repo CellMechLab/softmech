@@ -7,7 +7,7 @@ DOI = ''
 
 import numpy as np
 
-class CP(boxPanel):  # Threshold
+class CP(boxPanel): 
     def create(self):
         self.addParameter('Athreshold','float','Align Threshold [nN]',10.0)
         self.addParameter('deltaX','float','Align left step [nm]',2000.0)
