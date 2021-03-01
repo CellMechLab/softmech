@@ -17,11 +17,11 @@ class Filter(boxPanel):
     def create(self):
         # This function is required and describes the form to be created in the user interface
         # The last value is the initial value of the field; currently 3 types are supported: int, float and combo
-        self.addParameter('win', 'float', 'Window size [m]', 25e-9)
+        self.addParameter('win', 'float', 'Window size [nm]', 25)
         self.addParameter('order', 'int', 'Order of the interpolation', 3)
 
     def calculate(self, x, y, curve=None):
-        win = self.getValue('win')
+        win = self.getValue('win')*1e-9
         xstep = (max(x) - min(x)) / (len(x) - 1)
         win = int(win / xstep)
         polyorder = self.getValue('order')

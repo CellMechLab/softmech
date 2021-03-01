@@ -21,9 +21,9 @@ class Filter(boxPanel):
         # This function is required and describes the form to be created in the user interface
         # The last value is the initial value of the field; currently 3 types are supported: int, float and combo
         self.addParameter('Athreshold', 'float',
-                          'Align Threshold [N]', 10.0e-9)
-        self.addParameter('deltaX', 'float', 'Align left step [m]', 2000.0e-9)
-        self.addParameter('Fthreshold', 'float', 'AVG area [m]', 100.0e-9)
+                          'Align Threshold [nN]', 10.0)
+        self.addParameter('deltaX', 'float', 'Align left step [nm]', 2000.0)
+        self.addParameter('Fthreshold', 'float', 'AVG area [nm]', 100.0)
 
     def calculate(self, x, y, curve=None):
         # This function gets the current x and y and returns the filtered version.
@@ -33,7 +33,7 @@ class Filter(boxPanel):
         x = np.array(x)
         y = np.array(y)
         # Getting baseline
-        yth = self.getValue('Athreshold')
+        yth = self.getValue('Athreshold')*1e-9
         if yth > np.max(y) or yth < np.min(y):
             return False
         jrov = 0
@@ -43,8 +43,8 @@ class Filter(boxPanel):
                 break
         x0 = x[jrov]
         x0 = x[jrov]
-        dx = self.getValue('deltaX')
-        ddx = self.getValue('Fthreshold')
+        dx = self.getValue('deltaX')*1e-9
+        ddx = self.getValue('Fthreshold')*1e-9
         if ddx <= 0:
             jxalign = np.argmin((x - (x0 - dx)) ** 2)
             f0 = y[jxalign]
