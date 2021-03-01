@@ -8,11 +8,10 @@ class curve(object):
     def __init__(self,structure=None):
         self.data = {'F': None,'Z':None}
         self.spring_constant = 1.0
-        self.tip = {'geometry':None}
-        self._cp=[]
-        self.reset()
         if structure is not None:
             self.load(structure)
+        else:
+            self.reset()
 
     def load(self,structure):
         for k,v in structure.items():
@@ -51,7 +50,7 @@ class curve(object):
             Yf = self._F[iContact:]-self._cp[1]
         else:
             Yf = self._F[iContact:]
-        Xf = self._Z[iContact:]-self._cp[0]
+        Xf = self._Z[iContact:]
         self._Zi = Xf - Yf / self.spring_constant
         self._Fi = Yf
 
@@ -82,7 +81,7 @@ class curve(object):
         if win % 2 == 0:
             win += 1
         if len(yy) <= win:
-            return None
+            return None, None
         deriv = savgol_filter(yy, win, order, delta=ddt, deriv=1)
         Ey = coeff * deriv
         dwin = int(win - 1)

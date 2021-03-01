@@ -40,10 +40,7 @@ class NanoWindow(QtWidgets.QMainWindow):
         self.ui.sel_filter.currentIndexChanged.connect(self.filterSelected)
         self.ui.tabfilters.tabCloseRequested.connect(self.removeFilter)
         self.ui.sel_cp.currentIndexChanged.connect(self.cpSelected)
-        self.ui.setZeroForce.clicked.connect(self.calc1)
-        self.ui.es_win.valueChanged.connect(self.calc1)
-        self.ui.es_order.valueChanged.connect(self.calc1)
-        self.ui.es_interpolate.clicked.connect(self.calc1)
+        self.ui.setZeroForce.clicked.connect(self.toggleZero)
 
         self.redraw = True
         QtCore.QMetaObject.connectSlotsByName(self)
@@ -159,7 +156,10 @@ class NanoWindow(QtWidgets.QMainWindow):
         self.ui.slid_cv.setValue(0)
         self.redraw = True
         QtWidgets.QApplication.restoreOverrideCursor()
-        self.calc0()   
+
+        self.calculate()   
+        self.draw()
+        self.selectedCurveChanged()     
 
     def selectCurve(self, cv):
         self.ui.slid_cv.setValue(cv.cvid)
@@ -226,11 +226,6 @@ class NanoWindow(QtWidgets.QMainWindow):
                 ret = model.calculate(c._Ze, c._E, curve=c)
                 if (ret is not None) and (ret is not False):
                     c._Eparams = ret
-
-    def calc0(self):
-        self.calculate()
-        self.draw()
-        self.selectedCurveChanged()
 
     def calc1(self):
         self.calculate(1)
@@ -300,6 +295,11 @@ class NanoWindow(QtWidgets.QMainWindow):
         self.draw_eze()
         QtWidgets.QApplication.restoreOverrideCursor()
 
+    def toggleZero(self):
+        self.calculate('cp')
+        self.draw()
+        self.selectedCurveChanged()
+
     def cpSelected(self,fid):
         if fid == 0:
             if self._cpoint is not None:
@@ -319,7 +319,9 @@ class NanoWindow(QtWidgets.QMainWindow):
             self._cpoint.createUI(layout)
             self._cpoint.connect(self.calc1)
             self.ui.box_cp.setLayout(layout)
-        self.calc1('cp')
+        self.calculate('cp')
+        self.draw()
+        self.selectedCurveChanged()
 
     def filterSelected(self, fid):
         if fid == 0:
@@ -332,17 +334,21 @@ class NanoWindow(QtWidgets.QMainWindow):
         layout.setFieldGrowthPolicy(
             QtWidgets.QFormLayout.AllNonFixedFieldsGrow)
         self._filters_selected[-1].createUI(layout)
-        newfilter.connect(self.calc0)
+        newfilter.connect(self.calculate)
         newwidget.setLayout(layout)
         newtab = self.ui.tabfilters.addTab(newwidget, name)
         self.ui.tabfilters.setCurrentIndex(newtab)
         self.ui.sel_filter.setCurrentIndex(0)
-        self.calc0()
+        self.calculate()
+        self.draw()
+        self.selectedCurveChanged()
 
     def removeFilter(self, fid):
         self.ui.tabfilters.removeTab(fid)
         self._filters_selected.pop(fid)
-        self.calc0()
+        self.calculate()
+        self.draw()
+        self.selectedCurveChanged()
 
 
 if __name__ == "__main__":

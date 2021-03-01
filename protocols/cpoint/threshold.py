@@ -12,7 +12,6 @@ class CP(boxPanel):
         self.addParameter('Athreshold','float','Align Threshold [nN]',10.0)
         self.addParameter('deltaX','float','Align left step [nm]',2000.0)
         self.addParameter('Fthreshold','float','AVG area [nm]',100.0)
-        self.addParameter('shift','float','shift CP [nm]',0)
 
     def calculate(self, x,y,curve=None):
         yth = self.getValue('Athreshold')*1e-9
@@ -42,7 +41,4 @@ class CP(boxPanel):
                 break
         if jcp == 0:
             return False
-        sh = self.getValue('shift')*1e-9
-        xcp = x[jcp] + sh
-        ycp = y[np.argmin( (x-xcp)**2)]
-        return [xcp, ycp]
+        return [x[jcp], y[jcp]]
