@@ -307,7 +307,7 @@ class NanoWindow(QtWidgets.QMainWindow):
             self._cpoint.createUI(layout)
             self._cpoint.connect(self.calc1)
             self.ui.box_cp.setLayout(layout)
-        self.calc1('cp')
+        self.calc1()
 
     def filterSelected(self,fid):
         if fid == 0:
