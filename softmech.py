@@ -35,6 +35,8 @@ class NanoWindow(QtWidgets.QMainWindow):
         self.ui.sel_filter.currentIndexChanged.connect(self.filterSelected)
         self.ui.tabfilters.tabCloseRequested.connect(self.removeFilter)
         self.ui.sel_cp.currentIndexChanged.connect(self.cpSelected)
+        self.ui.sel_fmodel.currentIndexChanged.connect(self.fmodelSelect)
+        self.ui.sel_emodel.currentIndexChanged.connect(self.emodelSelect)
         self.ui.setZeroForce.clicked.connect(self.calc1)
         self.ui.es_win.valueChanged.connect(self.calc1)
         self.ui.es_order.valueChanged.connect(self.calc1)
@@ -94,7 +96,7 @@ class NanoWindow(QtWidgets.QMainWindow):
         self._plugin_fmodels = list(data.keys())
         for l in data.values():
             self.ui.sel_fmodel.addItem(l)
-        data = protocols.cpoint.list()
+        data = protocols.emodels.list()
         self._plugin_emodels = list(data.keys())
         for l in data.values():
             self.ui.sel_emodel.addItem(l)
@@ -169,16 +171,18 @@ class NanoWindow(QtWidgets.QMainWindow):
             #draw selected fizi
             self._gc_fizi.setData(cC._Zi,cC._Fi)
             #draw current fizi fit
-            #todo implement drawing the fit
-
-            if cC._Ze is not None:
-                #draw selected eze
-                self._gc_eze.setData(cC._Ze,cC._E)
-                #draw current eze fit
-                #todo implement drawing the fit
+            if cC._Fparams is not None:
+                self._gc_fizi_fit.setData(cC._Zi,self._fmodel.theory(cC._Zi,*cC._Fparams,curve=cC))
         else:
             self._gc_fizi.setData([],[])
             self._gc_fizi_fit.setData([],[])
+        if cC._Ze is not None:
+                #draw selected eze
+                self._gc_eze.setData(cC._Ze,cC._E)
+                #draw current eze fit
+                if cC._Eparams is not None:
+                    self._gc_eze_fit.setData(cC._Ze,self._emodel.theory(cC._Ze,*cC._Eparams,curve=cC))
+        else:
             self._gc_eze.setData([],[])
             self._gc_eze_fit.setData([],[])
 
@@ -242,7 +246,7 @@ class NanoWindow(QtWidgets.QMainWindow):
             self.calc_emodels()
         elif start == 2 or start == 'fmodel':
             self.calc_fmodels()
-        elif start == 2 or start == 'emodel':
+        elif start == 3 or start == 'emodel':
             self.calc_emodels()
         QtWidgets.QApplication.restoreOverrideCursor()
 
@@ -287,6 +291,61 @@ class NanoWindow(QtWidgets.QMainWindow):
         self.draw_fizi()
         self.draw_eze()       
         QtWidgets.QApplication.restoreOverrideCursor()  
+
+    def data1(self):
+        self.calculate(2)
+        self.selectedCurveChanged()
+        self.data()
+
+    def data2(self):
+        self.calculate(3)
+        self.selectedCurveChanged()
+        self.data()
+
+    def data(self):
+        pass
+
+    def fmodelSelect(self,fid):
+        if fid == 0:
+            if self._fmodel is not None:                
+                self._fmodel.disconnect()
+                layout = self.ui.box_fmodel.layout()
+                if layout is not None:
+                    while(layout.rowCount()>0):
+                        layout.removeRow(0)
+                self._fmodel = None
+        else:
+            if self._fmodel is not None:                
+                self._fmodel.disconnect()
+            layout = self.ui.box_fmodel.layout()
+            if layout is None:
+                layout = QtWidgets.QFormLayout()
+            self._fmodel = protocols.fmodels.get(self._plugin_fmodels[fid-1])
+            self._fmodel.createUI(layout)
+            self._fmodel.connect(self.data1)
+            self.ui.box_fmodel.setLayout(layout)
+        self.data1()
+
+    def emodelSelect(self,fid):
+        if fid == 0:
+            if self._emodel is not None:                
+                self._emodel.disconnect()
+                layout = self.ui.box_emodel.layout()
+                if layout is not None:
+                    while(layout.rowCount()>0):
+                        layout.removeRow(0)
+                self._emodel = None
+        else:
+            if self._emodel is not None:                
+                self._emodel.disconnect()
+            layout = self.ui.box_emodel.layout()
+            if layout is None:
+                layout = QtWidgets.QFormLayout()
+            self._emodel = protocols.emodels.get(self._plugin_emodels[fid-1])
+            self._emodel.createUI(layout)
+            self._emodel.connect(self.data2)
+            self.ui.box_emodel.setLayout(layout)
+        self.data2()
 
     def cpSelected(self,fid):
         if fid == 0:
