@@ -81,7 +81,7 @@ class curve(object):
         if win % 2 == 0:
             win += 1
         if len(yy) <= win:
-            return None, None
+            return None
         deriv = savgol_filter(yy, win, order, delta=ddt, deriv=1)
         Ey = coeff * deriv
         dwin = int(win - 1)
