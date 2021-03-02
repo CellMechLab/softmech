@@ -1,10 +1,11 @@
 from PyQt5 import QtGui, QtWidgets
+from importlib import import_module
 
 class CPParameter:  # CP parameter class
     def __init__(self, label=None):
         self._label = label
         self._defaultValue = None
-        self._validTypes = ['int', 'float', 'combo']
+        self._validTypes = ['int', 'float', 'combo', 'label']
         self._type = 'int'
         self._values = []
         self._valueLabels = []
@@ -33,6 +34,22 @@ class CPParameter:  # CP parameter class
 
     def getValue(self):
         pass
+
+class CPPLabel(CPParameter):
+    def __init__(self, label=None):
+        super().__init__(label)
+        self._defaultValue = ''
+        self.setType('label')
+        widget = QtWidgets.QLabel()
+        self._widget = widget
+        self.setValue(self._defaultValue)
+        self.triggered = None
+
+    def setValue(self, text):
+        self._widget.setText(str(text))
+
+    def getValue(self):
+        return self._widget.text()
 
 
 class CPPInt(CPParameter):  # CPPInt inherits CPParameter class
@@ -131,14 +148,8 @@ class boxPanel:  # Contact point class
     def connect(self, callback):
         #connect the callback to the parameters
         for p in self._parameters.values():
-            p.triggered.connect(callback)
-
-    def theory(self,x,*params):
-        pass
-
-    def getTheory(self,x,params,curve = None):
-        self.curve = curve
-        return self.theory(x,*params)
+            if p.triggered is not None:
+                p.triggered.connect(callback)
 
     def getValue(self,name):
         return self._parameters[name].getValue()
@@ -155,6 +166,9 @@ class boxPanel:  # Contact point class
         elif ptype == 'float':
             newpar = CPPFloat(label)
             newpar.setValue(value)
+        elif ptype == 'label':
+            newpar = CPPLabel(label)
+            newpar.setValue(value)
         self._parameters[name] = newpar
 
     def createUI(self, layout):
@@ -162,3 +176,24 @@ class boxPanel:  # Contact point class
             layout.removeRow(0)
         for widget in self._parameters.values():
             layout.addRow(widget.getLabel(), widget.getWidget())
+
+class fitPanel(boxPanel):
+    def theory(self,x,*params):
+        pass
+
+    def getTheory(self,x,params,curve = None):
+        self.curve = curve
+        return self.theory(x,*params)
+
+    def createUI(self,layout):
+        mod = import_module(self.__class__.__module__)
+        self.names=[]
+        for k in mod.PARAMETERS:
+            self.names.append(k)
+            self.addParameter(k,'label',k,mod.PARAMETERS[k])
+        super().createUI(layout)
+
+    def setParameters(self,parameters):
+        for i in range(len(parameters)):
+            j = i-len(parameters)
+            self._parameters[self.names[j]].setValue( str(parameters[i]) )
