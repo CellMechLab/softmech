@@ -14,7 +14,7 @@ class CP(boxPanel):  # Threshold
         self.addParameter('Fthreshold','float','AVG area [nm]',100.0)
         self.addParameter('shift','float','shift CP [nm]',0)
 
-    def calculate(self, x,y,curve=None):
+    def calculate(self, x,y):
         yth = self.getValue('Athreshold')*1e-9
         if yth > np.max(y) or yth < np.min(y):
             return False
