@@ -116,7 +116,7 @@ class boxPanel:  # Contact point class
         self.curve = curve
         return self.calculate(x,y)
 
-    def calculate(self, x,y,curve=None):
+    def calculate(self, x,y):
         pass
 
     def quickTest(self, c):
