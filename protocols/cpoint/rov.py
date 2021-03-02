@@ -1,13 +1,13 @@
 from ..panels import boxPanel
 import numpy as np
 
-NAME = 'RoV 1st peak'
+NAME = 'RoV'
 DESCRIPTION = 'Identify the CP by ratio of variances'
 DOI = ''
 
 import numpy as np
 
-class CP(boxPanel): # Ratio of variances First peak
+class CP(boxPanel): 
     def create(self):
         self.addParameter('Fthreshold','float','Safe Threshold [nN]',10.0)
         self.addParameter('Xrange','float','X Range [nm]',1000.0)
@@ -32,9 +32,9 @@ class CP(boxPanel): # Ratio of variances First peak
         winr = self.getValue('windowr')*1e-9
         xstep = (max(x)-min(x))/(len(x)-1)
         win = int(winr/xstep)
-        if (len(y) - jmax) < int(win/2):
+        if (len(y) - jmax) < int(win):
             return False
-        if (jmin) < int(win/2):
+        if (jmin) < int(win):
             return False
         rov = []
         for j in range(jmin, jmax):
