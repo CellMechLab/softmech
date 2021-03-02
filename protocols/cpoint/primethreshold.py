@@ -19,7 +19,7 @@ class CP(boxPanel):
         self.addParameter('Athreshold','float','Align Threshold [nN/nm]', 0.0005)
         self.addParameter('deltaX','float','Align left step [nm]',2000.0)
         self.addParameter('Fthreshold','float','AVG area [nm]',100.0)
-        self.addParameter('shift','float','shift CP [nm]', 0)
+        #self.addParameter('shift','float','shift CP [nm]', 0)
 
 
     def calculate(self, x, y):  

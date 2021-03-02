@@ -19,7 +19,7 @@ class CP(boxPanel):
         self.addParameter('para3','combo',"Select smooth method",'med',
             dataset = {'med':'MedFilt','sg':'Savitzky-Golay'}) #Possible values are passed as dictionary; values are the labels
 
-    def calculate(self, x,y,curve=None):
+    def calculate(self, x, y):
         # This function gets the current x and y and returns the filtered version.
         p1 = self.getValue('para1') # get the value of the parameters as set by the user
         if p1 > 10:
