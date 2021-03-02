@@ -16,24 +16,17 @@ class FModel(boxPanel):
         # This function is required and describes the form to be created in the user interface 
         # The last value is the initial value of the field; currently 3 types are supported: int, float and combo
         # Parameters can be used as seeds or proper parameters (e.g. indentation depth ?) 
-        self.addParameter('maxind','float','Max indentation [nm]',800)
         self.addParameter('poisson','float','Poisson ratio',0.5)
 
-    def theory(self,x,*parameters,curve=None):
-        if curve is None:
-            R = self.R
-        else:
-            R = curve.tip['radius']
+    def theory(self,x,*parameters):
+        R = self.curve.tip['radius']
         # Calculate the fitting function for a specific set of parameters
         return (4.0 / 3.0) * (parameters[0] / (1 - self.getValue('poisson') ** 2)) * np.sqrt(R * x ** 3)
 
     def calculate(self, x,y,curve=None):
         # This function gets the current x and y and returns the parameters.
-        self.R = curve.tip['radius']
-        xmax = self.getValue('maxind')
-        jmax = np.argmin( (x-xmax)**2 )
         try:
-            popt, pcov = curve_fit(self.theory, x[:jmax], y[:jmax], p0=[1000], maxfev=1000)
+            popt, pcov = curve_fit(self.theory, x, y, p0=[1000], maxfev=1000)
         except RuntimeError:
             return False
         return popt

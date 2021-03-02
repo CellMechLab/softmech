@@ -41,6 +41,10 @@ class NanoWindow(QtWidgets.QMainWindow):
         self.ui.es_win.valueChanged.connect(self.calc1)
         self.ui.es_order.valueChanged.connect(self.calc1)
         self.ui.es_interpolate.clicked.connect(self.calc1)
+        self.ui.zi_min.valueChanged.connect(self.data1)
+        self.ui.zi_max.valueChanged.connect(self.data1)
+        self.ui.ze_min.valueChanged.connect(self.data2)
+        self.ui.ze_max.valueChanged.connect(self.data2)
 
         self.redraw = True
         QtCore.QMetaObject.connectSlotsByName(self)
@@ -172,7 +176,8 @@ class NanoWindow(QtWidgets.QMainWindow):
             self._gc_fizi.setData(cC._Zi,cC._Fi)
             #draw current fizi fit
             if cC._Fparams is not None:
-                self._gc_fizi_fit.setData(cC._Zi,self._fmodel.theory(cC._Zi,*cC._Fparams,curve=cC))
+                x,y = cC.getFizi(self.ui.zi_min.value()*1e-9,self.ui.zi_max.value()*1e-9)
+                self._gc_fizi_fit.setData(x,self._fmodel.getTheory(x,cC._Fparams,curve=cC))
         else:
             self._gc_fizi.setData([],[])
             self._gc_fizi_fit.setData([],[])
@@ -181,7 +186,8 @@ class NanoWindow(QtWidgets.QMainWindow):
                 self._gc_eze.setData(cC._Ze,cC._E)
                 #draw current eze fit
                 if cC._Eparams is not None:
-                    self._gc_eze_fit.setData(cC._Ze,self._emodel.theory(cC._Ze,*cC._Eparams,curve=cC))
+                    x,y = cC.getEze(self.ui.ze_min.value()*1e-9,self.ui.ze_max.value()*1e-9)
+                    self._gc_eze_fit.setData(x,self._emodel.getTheory(x,cC._Eparams,curve=cC))
         else:
             self._gc_eze.setData([],[])
             self._gc_eze_fit.setData([],[])
@@ -190,14 +196,14 @@ class NanoWindow(QtWidgets.QMainWindow):
         for c in engine.dataset:
             c.reset()
             for fil in self._filters_selected:
-                c.setZF(fil.calculate(c._Z,c._F,curve=c))
+                c.setZF(fil.do(c._Z,c._F,curve=c))
 
     def calc_cp(self):
         for c in engine.dataset:
             c.resetCP()
             cp = self._cpoint
             if cp is not None:
-                ret = cp.calculate(c._Z,c._F,curve=c)
+                ret = cp.do(c._Z,c._F,curve=c)
                 if (ret is not None) and (ret is not False):
                     c._cp = ret    
                     c.calc_indentation(bool(self.ui.setZeroForce.isChecked()))
@@ -208,7 +214,8 @@ class NanoWindow(QtWidgets.QMainWindow):
             c._Fparams = None
             model = self._fmodel
             if model is not None:
-                ret = model.calculate(c._Zi,c._Fi,curve=c)
+                x,y = c.getFizi(self.ui.zi_min.value()*1e-9,self.ui.zi_max.value()*1e-9)
+                ret = model.do(x,y,curve=c)
                 if (ret is not None) and (ret is not False):
                     c._Fparams = ret 
 
@@ -217,7 +224,8 @@ class NanoWindow(QtWidgets.QMainWindow):
             c._Eparams = None
             model = self._emodel
             if model is not None:
-                ret = model.calculate(c._Ze,c._E,curve=c)
+                x,y = c.getEze(self.ui.ze_min.value()*1e-9,self.ui.ze_max.value()*1e-9)
+                ret = model.do(x,y,curve=c)
                 if (ret is not None) and (ret is not False):
                     c._Eparams = ret
 
