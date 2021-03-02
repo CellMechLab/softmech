@@ -4,6 +4,33 @@ from scipy.signal import savgol_filter
 
 dataset = []
 
+def dataformat(box,n):
+    indicators=[]
+    for i in range(n):
+        n1 = np.average(box[i])
+        n2 = np.std(box[i])
+        if n2 > n1:
+            pippo = '{0:.4g}&plusmn;{1:.4g}'.format(n1,n2)
+        else:
+            p = int(np.floor(np.log10(n2)))
+            if np.abs(p)<2:
+                er = int(n2/10**p)*10**p
+                val = int( n1/10**p )*10**p
+                pippo = '{}&plusmn;{}'.format(val,er)
+            else:
+                er = int(n2/10**p)
+                val = int( n1/10**p )
+                pippo = '({}&plusmn;{})10<sup>{}<sup>'.format(val,er,p)
+        indicators.append( pippo )
+    return indicators
+
+def reorganise(stack,n):
+    box = []
+    data = np.array(stack)
+    for i in range(n):
+        box.append( data[:,i] )
+    return box
+
 class curve(object):
     def __init__(self,structure=None):
         self.data = {'F': None,'Z':None}

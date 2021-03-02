@@ -7,9 +7,11 @@ import json
 import protocols.filters,protocols.cpoint,protocols.fmodels,protocols.emodels
 
 
-pg.setConfigOption('background', 'w')
-pg.setConfigOption('foreground', 'k')
-
+#pg.setConfigOption('background', 'w')
+#pg.setConfigOption('foreground', 'k')
+BLACK = 'w'
+RED = 'r'
+GREY = 0.7
 
 class NanoWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
@@ -25,6 +27,8 @@ class NanoWindow(QtWidgets.QMainWindow):
         self._cpoint = None
         self._fmodel = None
         self._emodel = None
+        self._fdata = None
+        self._edata = None
 
         self.loadPlugins()
 
@@ -59,30 +63,30 @@ class NanoWindow(QtWidgets.QMainWindow):
         #set single curves 
         #FZ
         self._gc_fz_raw = pg.ScatterPlotItem(clickable=False)
-        self._gc_fz_raw.setPen( pg.mkPen(0.7) )
+        self._gc_fz_raw.setPen( pg.mkPen(GREY) )
         self._gc_fz_raw.setBrush(pg.mkBrush(0.5))
         self._gc_fz_raw.setSymbol('o')
         self.ui.g_fz_single.addItem(self._gc_fz_raw)
         self._gc_fz = pg.PlotCurveItem(clickable=False)
-        self._gc_fz.setPen(pg.mkPen('k', width=1))
+        self._gc_fz.setPen(pg.mkPen(BLACK, width=1))
         self.ui.g_fz_single.addItem(self._gc_fz)
         #FiZi
         self._gc_fizi = pg.ScatterPlotItem(clickable=False)
-        self._gc_fizi.setPen( pg.mkPen(0.7) )
+        self._gc_fizi.setPen( pg.mkPen(GREY) )
         self._gc_fizi.setBrush(pg.mkBrush(0.5))
         self._gc_fizi.setSymbol('o')
         self.ui.g_fizi_single.addItem(self._gc_fizi)
         self._gc_fizi_fit = pg.PlotCurveItem(clickable=False)
-        self._gc_fizi_fit.setPen(pg.mkPen('r', width=2, style=QtCore.Qt.DashLine))
+        self._gc_fizi_fit.setPen(pg.mkPen(RED, width=2)) #style=QtCore.Qt.DashLine
         self.ui.g_fizi_single.addItem(self._gc_fizi_fit)
         #EZe
         self._gc_eze = pg.ScatterPlotItem(clickable=False)
-        self._gc_eze.setPen( pg.mkPen(0.7) )
+        self._gc_eze.setPen( pg.mkPen(GREY) )
         self._gc_eze.setBrush(pg.mkBrush(0.5))
         self._gc_eze.setSymbol('o')
         self.ui.g_eze_single.addItem(self._gc_eze)
         self._gc_eze_fit = pg.PlotCurveItem(clickable=False)
-        self._gc_eze_fit.setPen(pg.mkPen('r', width=2, style=QtCore.Qt.DashLine))
+        self._gc_eze_fit.setPen(pg.mkPen(RED, width=2)) #style=QtCore.Qt.DashLine
         self.ui.g_eze_single.addItem(self._gc_eze_fit)
 
         self.redraw = was
@@ -105,9 +109,11 @@ class NanoWindow(QtWidgets.QMainWindow):
         for l in data.values():
             self.ui.sel_emodel.addItem(l)
 
-    def getCol(self, col='k'):
+    def getCol(self, col=BLACK):
         if col == 'k':
             col = [0,0,0]
+        elif col =='w':
+            col = [255,255,255]
         col.append( self.ui.slid_alpha.value() )
         return col
 
@@ -233,11 +239,13 @@ class NanoWindow(QtWidgets.QMainWindow):
         self.calculate()
         self.draw()
         self.selectedCurveChanged()
+        self.data()
 
     def calc1(self):
         self.calculate(1)
         self.draw()
         self.selectedCurveChanged()
+        self.data()
 
     def calculate(self,start=0):
         if self.redraw is False:
@@ -311,10 +319,28 @@ class NanoWindow(QtWidgets.QMainWindow):
         self.data()
 
     def data(self):
-
-        #self._fmodel.setParameters(cC._Fparams)
-        #self._emodel.setParameters(cC._Eparams)
-        pass
+        self._fdata = None
+        self._edata = None
+        fmod = []
+        nfmod = 0
+        for cC in engine.dataset:
+            if cC._Fparams is not None:
+                fmod.append(cC._Fparams)
+                if nfmod == 0:
+                    nfmod = len(cC._Fparams)
+        if nfmod>0:
+            self.fdata = engine.reorganise(fmod,nfmod)
+            self._fmodel.setParameters(engine.dataformat(self.fdata,nfmod))
+        emod = []
+        nemod = 0
+        for cC in engine.dataset:
+            if cC._Eparams is not None:
+                emod.append(cC._Eparams)
+                if nemod == 0:
+                    nemod = len(cC._Eparams)
+        if nemod>0:
+            self.edata = engine.reorganise(emod,nemod)
+            self._emodel.setParameters(engine.dataformat(self.edata,nemod))
 
     def fmodelSelect(self,fid):
         if fid == 0:

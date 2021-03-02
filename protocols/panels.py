@@ -1,4 +1,4 @@
-from PyQt5 import QtGui, QtWidgets
+from PyQt5 import QtGui, QtWidgets, QtCore
 from importlib import import_module
 
 class CPParameter:  # CP parameter class
@@ -41,6 +41,7 @@ class CPPLabel(CPParameter):
         self._defaultValue = ''
         self.setType('label')
         widget = QtWidgets.QLabel()
+        widget.setTextFormat(QtCore.Qt.RichText)
         self._widget = widget
         self.setValue(self._defaultValue)
         self.triggered = None
