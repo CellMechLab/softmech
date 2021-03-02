@@ -8,6 +8,7 @@ from scipy.optimize import curve_fit
 NAME = 'Hertz Sphere' #Name, please keep it short as it will appear in the combo box of the user interface
 DESCRIPTION = 'Fit indentation data with the Hertz model - Spherical indenter' #Free text
 DOI = '' #set a DOI of a publication you want/suggest to be cited, empty if no reference
+PARAMETERS = {'E [Pa]':"Young's modulus"}
 
 # Create your filter class by extending the main one
 # Additional methods can be created, if required
@@ -23,7 +24,7 @@ class FModel(boxPanel):
         # Calculate the fitting function for a specific set of parameters
         return (4.0 / 3.0) * (parameters[0] / (1 - self.getValue('poisson') ** 2)) * np.sqrt(R * x ** 3)
 
-    def calculate(self, x,y,curve=None):
+    def calculate(self, x,y):
         # This function gets the current x and y and returns the parameters.
         try:
             popt, pcov = curve_fit(self.theory, x, y, p0=[1000], maxfev=1000)

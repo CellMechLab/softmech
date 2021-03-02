@@ -60,8 +60,8 @@
    <widget class="QPushButton" name="b_saveprotocol">
     <property name="geometry">
      <rect>
-      <x>920</x>
-      <y>60</y>
+      <x>770</x>
+      <y>100</y>
       <width>121</width>
       <height>24</height>
      </rect>
@@ -252,94 +252,6 @@
       <bool>true</bool>
      </property>
     </widget>
-   </widget>
-   <widget class="QGroupBox" name="groupBox">
-    <property name="geometry">
-     <rect>
-      <x>268</x>
-      <y>12</y>
-      <width>194</width>
-      <height>56</height>
-     </rect>
-    </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="title">
-     <string>View</string>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_4">
-     <property name="sizeConstraint">
-      <enum>QLayout::SetMinimumSize</enum>
-     </property>
-     <item>
-      <widget class="QRadioButton" name="view_all">
-       <property name="styleSheet">
-        <string notr="true">color: red;</string>
-       </property>
-       <property name="text">
-        <string>All</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QRadioButton" name="view_active">
-       <property name="text">
-        <string>Active</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QGroupBox" name="groupBox_2">
-    <property name="geometry">
-     <rect>
-      <x>468</x>
-      <y>12</y>
-      <width>245</width>
-      <height>56</height>
-     </rect>
-    </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="title">
-     <string>Toggle</string>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_5">
-     <property name="sizeConstraint">
-      <enum>QLayout::SetMinimumSize</enum>
-     </property>
-     <item>
-      <widget class="QRadioButton" name="toggle_excluded">
-       <property name="styleSheet">
-        <string notr="true">color: red;</string>
-       </property>
-       <property name="text">
-        <string>Excluded</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QRadioButton" name="toggle_activated">
-       <property name="text">
-        <string>Activated</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
    </widget>
    <widget class="PlotWidget" name="g_fizi_all">
     <property name="geometry">
@@ -543,7 +455,7 @@
       <rect>
        <x>10</x>
        <y>30</y>
-       <width>69</width>
+       <width>91</width>
        <height>22</height>
       </rect>
      </property>
@@ -787,6 +699,19 @@
     </property>
     <property name="text">
      <string>Window</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="b_saveexperiment">
+    <property name="geometry">
+     <rect>
+      <x>770</x>
+      <y>70</y>
+      <width>121</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Save experiment</string>
     </property>
    </widget>
   </widget>
