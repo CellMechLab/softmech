@@ -1,7 +1,7 @@
 from ..panels import boxPanel
 import numpy as np
 
-NAME = 'RoV 1st'
+NAME = 'RoV 1st peak'
 DESCRIPTION = 'Identify the CP by ratio of variances'
 DOI = ''
 
@@ -11,34 +11,34 @@ class CP(boxPanel): # Ratio of variances First peak
     def create(self):
         self.addParameter('Fthreshold','float','Safe Threshold [nN]',10.0)
         self.addParameter('Xrange','float','X Range [nm]',1000.0)
-        self.addParameter('windowr','int','Window RoV [nm]',200)
+        self.addParameter('windowr','float','Window RoV [nm]',200.0)
 
-    def getRange(self, c):
-        x = c._z
-        y = c._f
+    def calculate(self, x, y, curve=None):
+        zz_x, rov = self.getWeight(x,y) 
+        rov_best_ind = np.argmax(rov)
+        j_rov = np.argmin((x-zz_x[rov_best_ind])**2)
+        return [x[j_rov], y[j_rov]]
+
+    def getRange(self, x, y):
         try:
-            jmax = np.argmin((y - self.getValue('Fthreshold')) ** 2)
-            jmin = np.argmin((x - (x[jmax] - self.getValue('Xrange'))) ** 2)
+            jmax = np.argmin((y - self.getValue('Fthreshold')*1e-9) ** 2)
+            jmin = np.argmin((x - (x[jmax] - self.getValue('Xrange')*1e-9)) ** 2)
         except ValueError:
             return False
         return jmin, jmax
 
-    def getWeight(self, c):
-        jmin, jmax = self.getRange(c)
-        winr = self.getValue('windowr')
-        x = c._z
-        y = c._f
-        if (len(y) - jmax) < int(winr/2):
+    def getWeight(self, x, y):
+        jmin, jmax = self.getRange(x, y)
+        winr = self.getValue('windowr')*1e-9
+        xstep = (max(x)-min(x))/(len(x)-1)
+        win = int(winr/xstep)
+        if (len(y) - jmax) < int(win/2):
             return False
-        if (jmin) < int(winr/2):
+        if (jmin) < int(win/2):
             return False
         rov = []
         for j in range(jmin, jmax):
-            rov.append((np.var(y[j+1: j+winr])) / (np.var(y[j-winr: j-1])))
+            rov.append((np.var(y[j+1: j+win])) / (np.var(y[j-win: j-1])))
         return x[jmin:jmax], rov
 
-    def calculate(self, z,f,curve=None):
-        zz_x, rov = self.getWeight(curve) #da correggere
-        rov_best_ind = np.argmax(rov)
-        j_rov = np.argmin((z-zz_x[rov_best_ind])**2)
-        return [z[j_rov], f[j_rov]]
+    
