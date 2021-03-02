@@ -19,9 +19,9 @@ class EModel(boxPanel):
         #self.addParameter('poisson','float','Poisson ratio',0.5)
         pass
 
-    def theory(self,x,*parameters,curve=None):
+    def theory(self,x,*parameters):
         return parameters[0]*np.ones(len(x))
 
-    def calculate(self, x,y,curve=None):
+    def calculate(self, x,y):
         # This function gets the current x and y and returns the parameters.
         return [np.average(y)]

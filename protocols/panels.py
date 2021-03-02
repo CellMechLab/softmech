@@ -111,8 +111,13 @@ class boxPanel:  # Contact point class
         #This function contains the list of parameters to be added
         pass
 
-    def calculate(self, c):
+    def do(self, x,y,c=None):
         #This is the main engine, performing the calculation
+        if c is not None:
+            self.curve = c
+        self.calculate(x,y,c)
+
+    def calculate(self, x,y,c=None):
         pass
 
     def quickTest(self, c):
@@ -128,6 +133,13 @@ class boxPanel:  # Contact point class
         #connect the callback to the parameters
         for p in self._parameters.values():
             p.triggered.connect(callback)
+
+    def theory(self,x,*params):
+        pass
+
+    def getTheory(self,x,*params,curve = None):
+        self.curve = curve
+        return self.theory(x,params)
 
     def getValue(self,name):
         return self._parameters[name].getValue()
