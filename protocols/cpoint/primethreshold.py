@@ -22,7 +22,7 @@ class CP(boxPanel):
         self.addParameter('shift','float','shift CP [nm]', 0)
 
 
-    def calculate(self, x, y, curve = None):  
+    def calculate(self, x, y):  
         # calculates CP baed on prime function threshold
         primeth = self.getValue('Athreshold')
         z_false, prime = self.getWeight(x,y)

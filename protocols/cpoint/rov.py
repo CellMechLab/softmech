@@ -13,7 +13,7 @@ class CP(boxPanel):
         self.addParameter('Xrange','float','X Range [nm]',1000.0)
         self.addParameter('windowr','float','Window RoV [nm]',200.0)
 
-    def calculate(self, x, y, curve=None):
+    def calculate(self, x, y):
         zz_x, rov = self.getWeight(x,y) 
         rov_best_ind = np.argmax(rov)
         j_rov = np.argmin((x-zz_x[rov_best_ind])**2)
