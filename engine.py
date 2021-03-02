@@ -25,6 +25,20 @@ class curve(object):
         x,y = ret
         self._Z,self._F = np.array(x),np.array(y)
 
+    def getJclose(self,x0,x):
+        x = np.array(x)
+        return np.argmin( (x-x0)**2 )
+
+    def getFizi(self,xmin,xmax):
+        jmin = self.getJclose(xmin,self._Zi)
+        jmax = self.getJclose(xmax,self._Zi)
+        return np.array(self._Zi[jmin:jmax]),np.array(self._Fi[jmin:jmax])
+
+    def getEze(self,xmin,xmax):
+        jmin = self.getJclose(xmin,self._Ze)
+        jmax = self.getJclose(xmax,self._Ze)
+        return np.array(self._Ze[jmin:jmax]),np.array(self._E[jmin:jmax])
+
     def resetCP(self):
         self._cp = None
         self._Fi = None

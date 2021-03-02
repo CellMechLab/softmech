@@ -176,8 +176,8 @@ class NanoWindow(QtWidgets.QMainWindow):
             self._gc_fizi.setData(cC._Zi,cC._Fi)
             #draw current fizi fit
             if cC._Fparams is not None:
-                x,y = c.getFizi(self.ui.zi_min.value(),self.ui.zi_max.value())
-                self._gc_fizi_fit.setData(x,self._fmodel.theory(x,*cC._Fparams,curve=cC))
+                x,y = cC.getFizi(self.ui.zi_min.value()*1e-9,self.ui.zi_max.value()*1e-9)
+                self._gc_fizi_fit.setData(x,self._fmodel.getTheory(x,cC._Fparams,curve=cC))
         else:
             self._gc_fizi.setData([],[])
             self._gc_fizi_fit.setData([],[])
@@ -186,8 +186,8 @@ class NanoWindow(QtWidgets.QMainWindow):
                 self._gc_eze.setData(cC._Ze,cC._E)
                 #draw current eze fit
                 if cC._Eparams is not None:
-                    x,y = cC.getEze(self.ui.ze_min.value(),self.ui.ze_max.value())
-                    self._gc_eze_fit.setData(x,self._emodel.getTheory(x,*cC._Eparams,curve=cC))
+                    x,y = cC.getEze(self.ui.ze_min.value()*1e-9,self.ui.ze_max.value()*1e-9)
+                    self._gc_eze_fit.setData(x,self._emodel.getTheory(x,cC._Eparams,curve=cC))
         else:
             self._gc_eze.setData([],[])
             self._gc_eze_fit.setData([],[])
@@ -214,7 +214,7 @@ class NanoWindow(QtWidgets.QMainWindow):
             c._Fparams = None
             model = self._fmodel
             if model is not None:
-                x,y = c.getFizi(self.ui.zi_min.value(),self.ui.zi_max.value())
+                x,y = c.getFizi(self.ui.zi_min.value()*1e-9,self.ui.zi_max.value()*1e-9)
                 ret = model.do(x,y,curve=c)
                 if (ret is not None) and (ret is not False):
                     c._Fparams = ret 
@@ -224,7 +224,7 @@ class NanoWindow(QtWidgets.QMainWindow):
             c._Eparams = None
             model = self._emodel
             if model is not None:
-                x,y = c.getEze(self.ui.ze_min.value(),self.ui.ze_max.value())
+                x,y = c.getEze(self.ui.ze_min.value()*1e-9,self.ui.ze_max.value()*1e-9)
                 ret = model.do(x,y,curve=c)
                 if (ret is not None) and (ret is not False):
                     c._Eparams = ret

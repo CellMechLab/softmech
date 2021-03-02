@@ -574,7 +574,7 @@
       <rect>
        <x>20</x>
        <y>170</y>
-       <width>96</width>
+       <width>123</width>
        <height>52</height>
       </rect>
      </property>
@@ -582,7 +582,7 @@
       <item row="0" column="0">
        <widget class="QLabel" name="label_9">
         <property name="text">
-         <string>Min ind</string>
+         <string>Min ind [nm]</string>
         </property>
        </widget>
       </item>
@@ -602,7 +602,7 @@
       <item row="1" column="0">
        <widget class="QLabel" name="label_11">
         <property name="text">
-         <string>Max ind</string>
+         <string>Max ind [nm</string>
         </property>
        </widget>
       </item>
@@ -670,7 +670,7 @@
       <rect>
        <x>20</x>
        <y>140</y>
-       <width>96</width>
+       <width>121</width>
        <height>52</height>
       </rect>
      </property>
@@ -678,7 +678,7 @@
       <item row="0" column="0">
        <widget class="QLabel" name="label_12">
         <property name="text">
-         <string>Min ind</string>
+         <string>Min ind [nm</string>
         </property>
        </widget>
       </item>
@@ -698,7 +698,7 @@
       <item row="1" column="0">
        <widget class="QLabel" name="label_14">
         <property name="text">
-         <string>Max ind</string>
+         <string>Max ind [nm</string>
         </property>
        </widget>
       </item>
