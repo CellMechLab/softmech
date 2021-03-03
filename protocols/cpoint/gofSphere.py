@@ -52,7 +52,6 @@ class CP(boxPanel):
                 return False
         return x[jmin:jmax], r_squared
 
-    
     def get_indentation(self, x, y, iContact, win):
         # Retunrs indentation f and ind from f and z
         z = x
