@@ -25,7 +25,7 @@ class FModel(boxPanel):
         # Calculate the fitting function for a specific set of parameters
         return (2.0/1.0) * ((parameters[0]*math.tan(ang*math.pi/180.0)) / (math.pi*(1-self.getValue('poisson') ** 2))) * x**2
 
-    def fit(self, x,y,curve=None):
+    def calculate(self, x,y):
         # This function gets the current x and y and returns the parameters.
         try:
             popt, pcov = curve_fit(self.theory, x, y, p0=[1000], maxfev=1000)

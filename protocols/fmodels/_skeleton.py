@@ -28,7 +28,7 @@ class FModel(boxPanel):
         # Calculate the fitting function for a specific set of parameters
         return x**2
 
-    def fit(self, x,y,curve=None):
+    def calculate(self, x,y):
         # This function gets the current x and y and returns the parameters.
         p1 = self.getValue('para1') # get the value of the parameters as set by the user
         if p1 > 10:
