@@ -322,10 +322,10 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>970</x>
-      <y>196</y>
-      <width>208</width>
-      <height>141</height>
+      <x>950</x>
+      <y>150</y>
+      <width>271</width>
+      <height>191</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -355,19 +355,6 @@
     </property>
     <property name="orientation">
      <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="quickView">
-    <property name="geometry">
-     <rect>
-      <x>1100</x>
-      <y>810</y>
-      <width>131</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Inspect</string>
     </property>
    </widget>
    <widget class="QGroupBox" name="groupBox_5">
@@ -636,10 +623,10 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>960</x>
-      <y>380</y>
-      <width>208</width>
-      <height>141</height>
+      <x>950</x>
+      <y>360</y>
+      <width>271</width>
+      <height>191</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -687,8 +674,8 @@
    <widget class="QGroupBox" name="f_params">
     <property name="geometry">
      <rect>
-      <x>1190</x>
-      <y>200</y>
+      <x>1230</x>
+      <y>150</y>
       <width>120</width>
       <height>131</height>
      </rect>
@@ -700,8 +687,8 @@
    <widget class="QGroupBox" name="e_params">
     <property name="geometry">
      <rect>
-      <x>1190</x>
-      <y>380</y>
+      <x>1230</x>
+      <y>360</y>
       <width>120</width>
       <height>131</height>
      </rect>

@@ -9,9 +9,22 @@ import protocols.filters,protocols.cpoint,protocols.fmodels,protocols.emodels
 
 #pg.setConfigOption('background', 'w')
 #pg.setConfigOption('foreground', 'k')
-BLACK = 'w'
-RED = 'r'
-GREY = 0.7
+
+#circles
+COL_CIR_OUTER=[0,0,255]
+COL_CIR_INNER=[0,0,255,100]
+#lines
+COL_LIN = [255,0,0]
+COL_LIN_FIT = [255,255,0]
+
+def roundCol(i):    
+    col = []
+    col.append([255,0,0])
+    col.append([255,255,0])
+    col.append([0,255,0])
+    col.append([255,255,255])
+    return col[i%len(col)]
+
 
 class NanoWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
@@ -63,30 +76,30 @@ class NanoWindow(QtWidgets.QMainWindow):
         #set single curves 
         #FZ
         self._gc_fz_raw = pg.ScatterPlotItem(clickable=False)
-        self._gc_fz_raw.setPen( pg.mkPen(GREY) )
-        self._gc_fz_raw.setBrush(pg.mkBrush(0.5))
+        self._gc_fz_raw.setPen( pg.mkPen(COL_CIR_OUTER) )
+        self._gc_fz_raw.setBrush(pg.mkBrush(COL_CIR_INNER))
         self._gc_fz_raw.setSymbol('o')
         self.ui.g_fz_single.addItem(self._gc_fz_raw)
         self._gc_fz = pg.PlotCurveItem(clickable=False)
-        self._gc_fz.setPen(pg.mkPen(BLACK, width=1))
+        self._gc_fz.setPen(pg.mkPen(COL_LIN, width=1))
         self.ui.g_fz_single.addItem(self._gc_fz)
         #FiZi
         self._gc_fizi = pg.ScatterPlotItem(clickable=False)
-        self._gc_fizi.setPen( pg.mkPen(GREY) )
-        self._gc_fizi.setBrush(pg.mkBrush(0.5))
+        self._gc_fizi.setPen( pg.mkPen(COL_CIR_OUTER) )
+        self._gc_fizi.setBrush(pg.mkBrush(COL_CIR_INNER))
         self._gc_fizi.setSymbol('o')
         self.ui.g_fizi_single.addItem(self._gc_fizi)
         self._gc_fizi_fit = pg.PlotCurveItem(clickable=False)
-        self._gc_fizi_fit.setPen(pg.mkPen(RED, width=2)) #style=QtCore.Qt.DashLine
+        self._gc_fizi_fit.setPen(pg.mkPen(COL_LIN_FIT, width=2)) #style=QtCore.Qt.DashLine
         self.ui.g_fizi_single.addItem(self._gc_fizi_fit)
         #EZe
         self._gc_eze = pg.ScatterPlotItem(clickable=False)
-        self._gc_eze.setPen( pg.mkPen(GREY) )
-        self._gc_eze.setBrush(pg.mkBrush(0.5))
+        self._gc_eze.setPen( pg.mkPen(COL_CIR_OUTER) )
+        self._gc_eze.setBrush(pg.mkBrush(COL_CIR_INNER))
         self._gc_eze.setSymbol('o')
         self.ui.g_eze_single.addItem(self._gc_eze)
         self._gc_eze_fit = pg.PlotCurveItem(clickable=False)
-        self._gc_eze_fit.setPen(pg.mkPen(RED, width=2)) #style=QtCore.Qt.DashLine
+        self._gc_eze_fit.setPen(pg.mkPen(COL_LIN_FIT, width=2)) #style=QtCore.Qt.DashLine
         self.ui.g_eze_single.addItem(self._gc_eze_fit)
 
         self.redraw = was
@@ -109,13 +122,10 @@ class NanoWindow(QtWidgets.QMainWindow):
         for l in data.values():
             self.ui.sel_emodel.addItem(l)
 
-    def getCol(self, col=BLACK):
-        if col == 'k':
-            col = [0,0,0]
-        elif col =='w':
-            col = [255,255,255]
-        col.append( self.ui.slid_alpha.value() )
-        return col
+    def getCol(self, col=COL_LIN):
+        colalpha = [0,0,0,self.ui.slid_alpha.value()]
+        colalpha[0:3]=col
+        return colalpha
 
     def alphaChanged(self):
         for p in self.ui.g_fz_all.getPlotItem().listDataItems():
@@ -330,7 +340,7 @@ class NanoWindow(QtWidgets.QMainWindow):
                     nfmod = len(cC._Fparams)
         if nfmod>0:
             self.fdata = engine.reorganise(fmod,nfmod)
-            self._fmodel.setParameters(engine.dataformat(self.fdata,nfmod))
+            self._fmodel.setParameters(engine.dataformat(self.fdata,nfmod))            
         emod = []
         nemod = 0
         for cC in engine.dataset:
@@ -341,6 +351,36 @@ class NanoWindow(QtWidgets.QMainWindow):
         if nemod>0:
             self.edata = engine.reorganise(emod,nemod)
             self._emodel.setParameters(engine.dataformat(self.edata,nemod))
+        self.scatter()
+
+    def scatter(self):
+        self.ui.g_scatter1.plotItem.clear()
+        self.ui.g_scatter2.plotItem.clear()
+        if self._fmodel is not None:
+            for i in range(self._fmodel.nparams):
+                w = self.ui.f_params.layout().itemAt(i)
+                if w is not None:
+                    if w.widget().isChecked() is True:
+                        sc = pg.ScatterPlotItem(clickable = False)
+                        col = roundCol(i)
+                        sc.setPen( pg.mkPen(col) )
+                        col.append(100)
+                        sc.setBrush(pg.mkBrush(col))
+                        sc.setData( engine.np.linspace(0,len(self.fdata[i]),len(self.fdata[i])),self.fdata[i] )
+                        self.ui.g_scatter1.addItem(sc) 
+        if self._emodel is not None:
+            for i in range(self._emodel.nparams):
+                w = self.ui.e_params.layout().itemAt(i)
+                if w is not None:
+                    if w.widget().isChecked() is True:
+                        sc = pg.ScatterPlotItem(clickable = False)
+                        col = roundCol(i)
+                        sc.setPen( pg.mkPen(col) )
+                        col.append(100)
+                        sc.setBrush(pg.mkBrush(col))
+                        sc.setData( engine.np.linspace(0,len(self.edata[i]),len(self.edata[i])),self.edata[i] )
+                        self.ui.g_scatter2.addItem(sc) 
+
 
     def fmodelSelect(self,fid):
         if fid == 0:
@@ -389,13 +429,16 @@ class NanoWindow(QtWidgets.QMainWindow):
         self.data2()
 
     def clearData(self,where):
-        if where ==1:
+        if where ==1:            
             layout = self.ui.f_params.layout()
         else:
             layout = self.ui.e_params.layout()
         if layout is not None:
-            while(layout.itemAt(0) is not None):
-                layout.removeItem(layout.itemAt(0))
+            while layout.count() > 0:
+                item = layout.takeAt(0)
+                widget = item.widget()
+                if widget is not None:
+                    widget.deleteLater()
 
     def createData(self,where):
         if where ==1:
@@ -408,11 +451,13 @@ class NanoWindow(QtWidgets.QMainWindow):
             if self._fmodel is not None:
                 for k,v in self._fmodel.fitparameters.items():
                     chk = QtWidgets.QCheckBox(k)
+                    chk.clicked.connect(self.scatter)
                     layout.addWidget(chk)
         else:
             if self._emodel is not None:
                 for k,v in self._emodel.fitparameters.items():
                     chk = QtWidgets.QCheckBox(k)
+                    chk.clicked.connect(self.scatter)
                     layout.addWidget(chk)
         if where ==1:
             if self.ui.f_params.layout() is None:

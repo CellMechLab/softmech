@@ -195,6 +195,7 @@ class fitPanel(boxPanel):
         mod = import_module(self.__class__.__module__)
         self.names=[]
         self.fitparameters = mod.PARAMETERS
+        self.nparams = len(mod.PARAMETERS)
         for k in mod.PARAMETERS:
             self.names.append(k)
             self.addParameter(k,'label',k,mod.PARAMETERS[k])
