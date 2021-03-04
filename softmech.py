@@ -1,6 +1,8 @@
 import sys,os
 import pyqtgraph as pg
 from PyQt5 import QtCore, QtGui, QtWidgets
+import qtmodern.styles
+import qtmodern.windows
 import nano_view as view
 import engine
 import json
@@ -430,8 +432,9 @@ class NanoWindow(QtWidgets.QMainWindow):
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     app.setApplicationName('SoftMech2021')
-    app.setStyle('Fusion')
+    qtmodern.styles.dark(app)
     chiaro = NanoWindow()
-    chiaro.show()
+    mw = qtmodern.windows.ModernWindow(chiaro)
+    mw.show()
     # QtCore.QObject.connect( app, QtCore.SIGNAL( 'lastWindowClosed()' ), app, QtCore.SLOT( 'quit()' ) )
     sys.exit(app.exec_())
