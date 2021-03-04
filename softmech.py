@@ -321,8 +321,8 @@ class NanoWindow(QtWidgets.QMainWindow):
         self.data()
 
     def data(self):
-        self._fdata = None
-        self._edata = None
+        self.fdata = None
+        self.edata = None
         fmod = []
         nfmod = 0
         for cC in engine.dataset:
@@ -363,6 +363,8 @@ class NanoWindow(QtWidgets.QMainWindow):
             self._fmodel.createUI(layout)
             self._fmodel.connect(self.data1)
             self.ui.box_fmodel.setLayout(layout)
+        self.clearData(1)
+        self.createData(1)
         self.data1()
 
     def emodelSelect(self,fid):
@@ -384,7 +386,43 @@ class NanoWindow(QtWidgets.QMainWindow):
             self._emodel.createUI(layout)
             self._emodel.connect(self.data2)
             self.ui.box_emodel.setLayout(layout)
+        self.clearData(2)
+        self.createData(2)
         self.data2()
+
+    def clearData(self,where):
+        if where ==1:
+            layout = self.ui.f_params.layout()
+        else:
+            layout = self.ui.e_params.layout()
+        if layout is not None:
+            while(layout.itemAt(0) is not None):
+                layout.removeItem(layout.itemAt(0))
+
+    def createData(self,where):
+        if where ==1:
+            layout = self.ui.f_params.layout()
+        else:
+            layout = self.ui.e_params.layout()
+        if layout is None:
+            layout = QtWidgets.QVBoxLayout()
+        if where ==1:
+            if self._fmodel is not None:
+                for k,v in self._fmodel.fitparameters.items():
+                    chk = QtWidgets.QCheckBox(k)
+                    layout.addWidget(chk)
+        else:
+            if self._emodel is not None:
+                for k,v in self._emodel.fitparameters.items():
+                    chk = QtWidgets.QCheckBox(k)
+                    layout.addWidget(chk)
+        if where ==1:
+            if self.ui.f_params.layout() is None:
+                self.ui.f_params.setLayout(layout)
+        else:
+            if self.ui.e_params.layout() is None:
+                self.ui.e_params.setLayout(layout)
+
 
     def cpSelected(self,fid):
         if fid == 0:

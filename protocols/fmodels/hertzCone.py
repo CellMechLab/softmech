@@ -1,5 +1,5 @@
 #import the main panels structure, required
-from ..panels import boxPanel
+from ..panels import fitPanel
 #import here your procedure-specific modules, no requirements (numpy as an example)
 import numpy as np
 from scipy.optimize import curve_fit
@@ -13,7 +13,7 @@ PARAMETERS = {'E [Pa]':"Young's modulus"}
 
 # Create your filter class by extending the main one
 # Additional methods can be created, if required
-class FModel(boxPanel):
+class FModel(fitPanel):
     def create(self):
         # This function is required and describes the form to be created in the user interface 
         # The last value is the initial value of the field; currently 3 types are supported: int, float and combo
@@ -22,6 +22,8 @@ class FModel(boxPanel):
     def theory(self,x,*parameters):
         if self.curve.tip['geometry']=='cone':
             ang = self.curve.tip['angle'] #see DOI for definition
+        else:
+            return False
         # Calculate the fitting function for a specific set of parameters
         return (2.0/1.0) * ((parameters[0]*math.tan(ang*math.pi/180.0)) / (math.pi*(1-self.getValue('poisson') ** 2))) * x**2
 
