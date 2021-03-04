@@ -1,5 +1,5 @@
 #import the main panels structure, required
-from ..panels import boxPanel
+from ..panels import fitPanel
 #import here your procedure-specific modules, no requirements (numpy as an example)
 import numpy as np
 from scipy.optimize import curve_fit
@@ -14,7 +14,7 @@ PARAMETERS = {} #set a dictionary with the fitting model parameters. For example
 
 # Create your filter class by extending the main one
 # Additional methods can be created, if required
-class FModel(boxPanel):
+class FModel(fitPanel):
     def create(self):
         # This function is required and describes the form to be created in the user interface 
         # The last value is the initial value of the field; currently 3 types are supported: int, float and combo

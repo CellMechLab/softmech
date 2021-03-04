@@ -144,7 +144,8 @@ class boxPanel:  # Contact point class
     def disconnect(self):
         #disconnect the callback from the parameters
         for p in self._parameters.values():
-            p.triggered.disconnect()
+            if p.triggered is not None:
+                p.triggered.disconnect()
 
     def connect(self, callback):
         #connect the callback to the parameters
@@ -179,6 +180,10 @@ class boxPanel:  # Contact point class
             layout.addRow(widget.getLabel(), widget.getWidget())
 
 class fitPanel(boxPanel):
+    def __init__(self):
+        super().__init__()
+        self.fitparameters = None
+
     def theory(self,x,*params):
         pass
 
@@ -189,6 +194,7 @@ class fitPanel(boxPanel):
     def createUI(self,layout):
         mod = import_module(self.__class__.__module__)
         self.names=[]
+        self.fitparameters = mod.PARAMETERS
         for k in mod.PARAMETERS:
             self.names.append(k)
             self.addParameter(k,'label',k,mod.PARAMETERS[k])
