@@ -9,21 +9,22 @@ import json
 import protocols.filters,protocols.cpoint,protocols.fmodels,protocols.emodels
 
 
-#pg.setConfigOption('background', 'w')
-#pg.setConfigOption('foreground', 'k')
+pg.setConfigOption('background', 'k')
+pg.setConfigOption('foreground', 'w')
 
 #circles
-COL_CIR_OUTER=[0,0,255]
-COL_CIR_INNER=[0,0,255,100]
+COL_CIR_OUTER=[42, 130, 218]
+COL_CIR_INNER=[42, 130, 218, 100]
 #lines
-COL_LIN = [255,0,0]
-COL_LIN_FIT = [255,255,0]
+COL_LIN = [250, 94, 82]
+COL_LIN_FIT = [255, 255, 0]
 
 def roundCol(i):    
     col = []
-    col.append([255,0,0])
-    col.append([255,255,0])
-    col.append([0,255,0])
+    #to test and change
+    col.append([42, 130, 218])
+    col.append([250, 94, 82])
+    col.append([255, 255, 0])
     col.append([255,255,255])
     return col[i%len(col)]
 
@@ -34,6 +35,7 @@ class NanoWindow(QtWidgets.QMainWindow):
 
         self.ui = view.Ui_MainWindow()
         self.ui.setupUi(self)
+        self.setStyleSheet("background-color: k") 
         self.ALLPLOTS = [self.ui.g_fz_all,self.ui.g_fz_single,self.ui.g_fizi_all,self.ui.g_fizi_single,self.ui.g_eze_all,self.ui.g_eze_single,self.ui.g_scatter1,self.ui.g_scatter2]
         self.workingpath = os.path.dirname(__file__)
         self.redraw = False
@@ -83,7 +85,7 @@ class NanoWindow(QtWidgets.QMainWindow):
         self._gc_fz_raw.setSymbol('o')
         self.ui.g_fz_single.addItem(self._gc_fz_raw)
         self._gc_fz = pg.PlotCurveItem(clickable=False)
-        self._gc_fz.setPen(pg.mkPen(COL_LIN, width=1))
+        self._gc_fz.setPen(pg.mkPen(COL_LIN, width=4))
         self.ui.g_fz_single.addItem(self._gc_fz)
         #FiZi
         self._gc_fizi = pg.ScatterPlotItem(clickable=False)
@@ -92,7 +94,7 @@ class NanoWindow(QtWidgets.QMainWindow):
         self._gc_fizi.setSymbol('o')
         self.ui.g_fizi_single.addItem(self._gc_fizi)
         self._gc_fizi_fit = pg.PlotCurveItem(clickable=False)
-        self._gc_fizi_fit.setPen(pg.mkPen(COL_LIN_FIT, width=2)) #style=QtCore.Qt.DashLine
+        self._gc_fizi_fit.setPen(pg.mkPen(COL_LIN_FIT, width=6)) #style=QtCore.Qt.DashLine
         self.ui.g_fizi_single.addItem(self._gc_fizi_fit)
         #EZe
         self._gc_eze = pg.ScatterPlotItem(clickable=False)
@@ -101,10 +103,42 @@ class NanoWindow(QtWidgets.QMainWindow):
         self._gc_eze.setSymbol('o')
         self.ui.g_eze_single.addItem(self._gc_eze)
         self._gc_eze_fit = pg.PlotCurveItem(clickable=False)
-        self._gc_eze_fit.setPen(pg.mkPen(COL_LIN_FIT, width=2)) #style=QtCore.Qt.DashLine
+        self._gc_eze_fit.setPen(pg.mkPen(COL_LIN_FIT, width=6)) #style=QtCore.Qt.DashLine
         self.ui.g_eze_single.addItem(self._gc_eze_fit)
-
+        
         self.redraw = was
+
+        #Titles and labels (single and all)
+        def title_style(lab):
+            return '<span style="font-family: Arial; font-weight:bold; font-size: 12pt;">{}</span>'.format(lab)
+
+        def lab_style(lab):
+            return '<span style="">{}</span>'.format(lab)
+        #FZ single
+        self.ui.g_fz_single.setTitle(title_style('Force-displacement (single)'))
+        self.ui.g_fz_single.setLabel('left', lab_style('F [N]'))
+        self.ui.g_fz_single.setLabel('bottom', lab_style('z [m]'))
+        #FiZi single
+        self.ui.g_fizi_single.setTitle(title_style('Force-indentation (single)'))
+        self.ui.g_fizi_single.setLabel('left', lab_style('F [N]'))
+        self.ui.g_fizi_single.setLabel('bottom', lab_style('<font>&delta;</font> [m]'))
+        #EZe single
+        self.ui.g_eze_single.setTitle(title_style('Elasticity Spectra (single)'))
+        self.ui.g_eze_single.setLabel('left', lab_style('E [Pa]'))
+        self.ui.g_eze_single.setLabel('bottom', lab_style('<font>&delta;</font> [m]'))
+        
+        #FZ all
+        self.ui.g_fz_all.setTitle(title_style('Force-displacement (data set)'))
+        self.ui.g_fz_all.setLabel('left', lab_style('F [N]'))
+        self.ui.g_fz_all.setLabel('bottom', lab_style('z [m]'))
+        #FiZi all
+        self.ui.g_fizi_all.setTitle(title_style('Force-indentation (data set)'))
+        self.ui.g_fizi_all.setLabel('left', lab_style('F [N]'))
+        self.ui.g_fizi_all.setLabel('bottom', lab_style('<font>&delta;</font> [m]'))
+        #EZe
+        self.ui.g_eze_all.setTitle(title_style('Elasticity Spectra (data set)'))
+        self.ui.g_eze_all.setLabel('left', lab_style('E [Pa]'))
+        self.ui.g_eze_all.setLabel('bottom', lab_style('<font>&delta;</font> [m]'))
 
     def loadPlugins(self):
         data = protocols.filters.list()
@@ -365,11 +399,12 @@ class NanoWindow(QtWidgets.QMainWindow):
                     if w.widget().isChecked() is True:
                         sc = pg.ScatterPlotItem(clickable = False)
                         col = roundCol(i)
-                        sc.setPen( pg.mkPen(col) )
+                        sc.setPen(pg.mkPen(col))
                         col.append(100)
                         sc.setBrush(pg.mkBrush(col))
-                        sc.setData( engine.np.linspace(0,len(self.fdata[i]),len(self.fdata[i])),self.fdata[i] )
+                        sc.setData(engine.np.linspace(0,len(self.fdata[i]),len(self.fdata[i])),self.fdata[i] )
                         self.ui.g_scatter1.addItem(sc) 
+                        self.ui.g_scatter1.plotItem.setLabel('bottom', 'Curve [#]')
         if self._emodel is not None:
             for i in range(self._emodel.nparams):
                 w = self.ui.e_params.layout().itemAt(i)
@@ -382,6 +417,8 @@ class NanoWindow(QtWidgets.QMainWindow):
                         sc.setBrush(pg.mkBrush(col))
                         sc.setData( engine.np.linspace(0,len(self.edata[i]),len(self.edata[i])),self.edata[i] )
                         self.ui.g_scatter2.addItem(sc) 
+                        self.ui.g_scatter2.plotItem.setLabel('bottom', 'Curve [#]')
+
 
 
     def fmodelSelect(self,fid):

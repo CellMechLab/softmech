@@ -7,644 +7,17 @@
     <x>0</x>
     <y>0</y>
     <width>1680</width>
-    <height>897</height>
+    <height>777</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Nano2021</string>
+   <string>SoftMech2021</string>
   </property>
   <property name="windowIcon">
    <iconset>
     <normaloff>../../.designer/backup/ico.svg</normaloff>../../.designer/backup/ico.svg</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="b_load">
-    <property name="geometry">
-     <rect>
-      <x>770</x>
-      <y>10</y>
-      <width>121</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Load experiment</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="b_protocol">
-    <property name="geometry">
-     <rect>
-      <x>770</x>
-      <y>70</y>
-      <width>121</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Load protocol</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="b_save">
-    <property name="geometry">
-     <rect>
-      <x>920</x>
-      <y>20</y>
-      <width>121</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Save analysis</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="b_saveprotocol">
-    <property name="geometry">
-     <rect>
-      <x>770</x>
-      <y>100</y>
-      <width>121</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Save protocol</string>
-    </property>
-   </widget>
-   <widget class="QGroupBox" name="groupBox_6">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>1160</x>
-      <y>20</y>
-      <width>128</width>
-      <height>108</height>
-     </rect>
-    </property>
-    <property name="title">
-     <string>Elasticity Spectra</string>
-    </property>
-    <layout class="QFormLayout" name="formLayout_2">
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_8">
-       <property name="text">
-        <string>Window</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QSpinBox" name="es_win">
-       <property name="minimum">
-        <number>3</number>
-       </property>
-       <property name="maximum">
-        <number>9999</number>
-       </property>
-       <property name="value">
-        <number>21</number>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_21">
-       <property name="text">
-        <string>Order</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QSpinBox" name="es_order">
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>9</number>
-       </property>
-       <property name="value">
-        <number>3</number>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_13">
-       <property name="text">
-        <string>Interpolate</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QCheckBox" name="es_interpolate">
-       <property name="text">
-        <string/>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QSlider" name="slid_alpha">
-    <property name="geometry">
-     <rect>
-      <x>220</x>
-      <y>40</y>
-      <width>22</width>
-      <height>84</height>
-     </rect>
-    </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="maximum">
-     <number>255</number>
-    </property>
-    <property name="singleStep">
-     <number>1</number>
-    </property>
-    <property name="value">
-     <number>100</number>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Vertical</enum>
-    </property>
-   </widget>
-   <widget class="PlotWidget" name="g_fz_single">
-    <property name="geometry">
-     <rect>
-      <x>35</x>
-      <y>370</y>
-      <width>441</width>
-      <height>192</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="PlotWidget" name="g_fz_all">
-    <property name="geometry">
-     <rect>
-      <x>35</x>
-      <y>150</y>
-      <width>441</width>
-      <height>192</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QGroupBox" name="boxCP">
-    <property name="geometry">
-     <rect>
-      <x>400</x>
-      <y>580</y>
-      <width>281</width>
-      <height>261</height>
-     </rect>
-    </property>
-    <property name="title">
-     <string>Contact Point </string>
-    </property>
-    <widget class="QComboBox" name="sel_cp">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>30</y>
-       <width>69</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <item>
-      <property name="text">
-       <string>-- none --</string>
-      </property>
-     </item>
-    </widget>
-    <widget class="QGroupBox" name="box_cp">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>60</y>
-       <width>251</width>
-       <height>161</height>
-      </rect>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="setZeroForce">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>230</y>
-       <width>110</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Set CP force to 0</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </widget>
-   <widget class="PlotWidget" name="g_fizi_all">
-    <property name="geometry">
-     <rect>
-      <x>490</x>
-      <y>150</y>
-      <width>182</width>
-      <height>192</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="PlotWidget" name="g_fizi_single">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>490</x>
-      <y>370</y>
-      <width>182</width>
-      <height>192</height>
-     </rect>
-    </property>
-    <property name="interactive">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="PlotWidget" name="g_eze_all">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>690</x>
-      <y>150</y>
-      <width>254</width>
-      <height>192</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="acceptDrops">
-     <bool>true</bool>
-    </property>
-    <property name="interactive">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="PlotWidget" name="g_eze_single">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>690</x>
-      <y>360</y>
-      <width>254</width>
-      <height>192</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="PlotWidget" name="g_scatter1">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>950</x>
-      <y>150</y>
-      <width>271</width>
-      <height>191</height>
-     </rect>
-    </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="lineWidth">
-     <number>0</number>
-    </property>
-    <property name="midLineWidth">
-     <number>0</number>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QSlider" name="slid_cv">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>90</y>
-      <width>160</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="QGroupBox" name="groupBox_5">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>570</y>
-      <width>351</width>
-      <height>291</height>
-     </rect>
-    </property>
-    <property name="title">
-     <string>Filters</string>
-    </property>
-    <widget class="QComboBox" name="sel_filter">
-     <property name="geometry">
-      <rect>
-       <x>30</x>
-       <y>20</y>
-       <width>141</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <property name="layoutDirection">
-      <enum>Qt::LeftToRight</enum>
-     </property>
-     <property name="autoFillBackground">
-      <bool>false</bool>
-     </property>
-     <property name="frame">
-      <bool>true</bool>
-     </property>
-     <item>
-      <property name="text">
-       <string>-- add --</string>
-      </property>
-     </item>
-    </widget>
-    <widget class="QTabWidget" name="tabfilters">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>60</y>
-       <width>301</width>
-       <height>191</height>
-      </rect>
-     </property>
-     <property name="tabPosition">
-      <enum>QTabWidget::North</enum>
-     </property>
-     <property name="currentIndex">
-      <number>-1</number>
-     </property>
-     <property name="usesScrollButtons">
-      <bool>true</bool>
-     </property>
-     <property name="documentMode">
-      <bool>false</bool>
-     </property>
-     <property name="tabsClosable">
-      <bool>true</bool>
-     </property>
-     <property name="movable">
-      <bool>true</bool>
-     </property>
-     <property name="tabBarAutoHide">
-      <bool>false</bool>
-     </property>
-    </widget>
-   </widget>
-   <widget class="QGroupBox" name="groupBox_10">
-    <property name="geometry">
-     <rect>
-      <x>720</x>
-      <y>570</y>
-      <width>291</width>
-      <height>251</height>
-     </rect>
-    </property>
-    <property name="title">
-     <string>FModel</string>
-    </property>
-    <widget class="QComboBox" name="sel_fmodel">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>30</y>
-       <width>91</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <item>
-      <property name="text">
-       <string>-- none --</string>
-      </property>
-     </item>
-    </widget>
-    <widget class="QGroupBox" name="box_fmodel">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>70</y>
-       <width>231</width>
-       <height>91</height>
-      </rect>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-    </widget>
-    <widget class="QWidget" name="">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>170</y>
-       <width>123</width>
-       <height>52</height>
-      </rect>
-     </property>
-     <layout class="QFormLayout" name="formLayout">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_9">
-        <property name="text">
-         <string>Min ind [nm]</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QSpinBox" name="zi_min">
-        <property name="minimum">
-         <number>0</number>
-        </property>
-        <property name="maximum">
-         <number>9999</number>
-        </property>
-        <property name="value">
-         <number>0</number>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_11">
-        <property name="text">
-         <string>Max ind [nm</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QSpinBox" name="zi_max">
-        <property name="minimum">
-         <number>0</number>
-        </property>
-        <property name="maximum">
-         <number>9999</number>
-        </property>
-        <property name="value">
-         <number>800</number>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </widget>
-   <widget class="QGroupBox" name="groupBox_11">
-    <property name="geometry">
-     <rect>
-      <x>1090</x>
-      <y>580</y>
-      <width>151</width>
-      <height>221</height>
-     </rect>
-    </property>
-    <property name="title">
-     <string>EModel</string>
-    </property>
-    <widget class="QComboBox" name="sel_emodel">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>30</y>
-       <width>69</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <item>
-      <property name="text">
-       <string>-- none --</string>
-      </property>
-     </item>
-    </widget>
-    <widget class="QGroupBox" name="box_emodel">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>60</y>
-       <width>131</width>
-       <height>61</height>
-      </rect>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-    </widget>
-    <widget class="QWidget" name="layoutWidget">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>140</y>
-       <width>121</width>
-       <height>52</height>
-      </rect>
-     </property>
-     <layout class="QFormLayout" name="formLayout_3">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_12">
-        <property name="text">
-         <string>Min ind [nm</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QSpinBox" name="ze_min">
-        <property name="minimum">
-         <number>0</number>
-        </property>
-        <property name="maximum">
-         <number>9999</number>
-        </property>
-        <property name="value">
-         <number>0</number>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_14">
-        <property name="text">
-         <string>Max ind [nm</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QSpinBox" name="ze_max">
-        <property name="minimum">
-         <number>0</number>
-        </property>
-        <property name="maximum">
-         <number>9999</number>
-        </property>
-        <property name="value">
-         <number>800</number>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </widget>
-   <widget class="PlotWidget" name="g_scatter2">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>950</x>
-      <y>360</y>
-      <width>271</width>
-      <height>191</height>
-     </rect>
-    </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="lineWidth">
-     <number>0</number>
-    </property>
-    <property name="midLineWidth">
-     <number>0</number>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_10">
     <property name="geometry">
      <rect>
@@ -658,43 +31,603 @@
      <string>Window</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="b_saveexperiment">
+   <widget class="QGroupBox" name="groupBox_7">
     <property name="geometry">
      <rect>
-      <x>770</x>
-      <y>40</y>
-      <width>121</width>
-      <height>24</height>
+      <x>70</x>
+      <y>10</y>
+      <width>161</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Load</string>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_10">
+     <item>
+      <widget class="QPushButton" name="b_load">
+       <property name="text">
+        <string>Load experiment</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="b_protocol">
+       <property name="text">
+        <string>Load protocol</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_8">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>10</y>
+      <width>141</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Save</string>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_11">
+     <item>
+      <widget class="QPushButton" name="b_saveexperiment">
+       <property name="text">
+        <string>Save experiment</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="b_save">
+       <property name="text">
+        <string>Save analysis</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="b_saveprotocol">
+       <property name="text">
+        <string>Save protocol</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QSplitter" name="splitter">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>140</y>
+      <width>1551</width>
+      <height>501</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+    <widget class="QWidget" name="layoutWidget">
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="PlotWidget" name="g_fz_all"/>
+      </item>
+      <item>
+       <widget class="PlotWidget" name="g_fz_single"/>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QWidget" name="layoutWidget">
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="PlotWidget" name="g_fizi_all"/>
+      </item>
+      <item>
+       <widget class="PlotWidget" name="g_fizi_single">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="interactive">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QWidget" name="layoutWidget">
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QLabel" name="label_13">
+            <property name="text">
+             <string>Interpolate</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="es_interpolate">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QLabel" name="label_8">
+            <property name="text">
+             <string>Window</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="es_win">
+            <property name="minimum">
+             <number>3</number>
+            </property>
+            <property name="maximum">
+             <number>9999</number>
+            </property>
+            <property name="value">
+             <number>21</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QLabel" name="label_21">
+            <property name="text">
+             <string>Order</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="es_order">
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>9</number>
+            </property>
+            <property name="value">
+             <number>3</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="PlotWidget" name="g_eze_all">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="acceptDrops">
+         <bool>true</bool>
+        </property>
+        <property name="interactive">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="PlotWidget" name="g_eze_single">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QWidget" name="layoutWidget">
+     <layout class="QVBoxLayout" name="verticalLayout_8">
+      <item>
+       <widget class="PlotWidget" name="g_scatter1">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="lineWidth">
+         <number>0</number>
+        </property>
+        <property name="midLineWidth">
+         <number>0</number>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="PlotWidget" name="g_scatter2">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="lineWidth">
+         <number>0</number>
+        </property>
+        <property name="midLineWidth">
+         <number>0</number>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>660</y>
+      <width>1551</width>
+      <height>231</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_8">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <item>
+        <widget class="QGroupBox" name="groupBox_5">
+         <property name="title">
+          <string>Filters</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_5">
+          <item>
+           <widget class="QComboBox" name="sel_filter">
+            <property name="layoutDirection">
+             <enum>Qt::LeftToRight</enum>
+            </property>
+            <property name="autoFillBackground">
+             <bool>false</bool>
+            </property>
+            <property name="frame">
+             <bool>true</bool>
+            </property>
+            <item>
+             <property name="text">
+              <string>-- add --</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTabWidget" name="tabfilters">
+            <property name="tabPosition">
+             <enum>QTabWidget::North</enum>
+            </property>
+            <property name="currentIndex">
+             <number>-1</number>
+            </property>
+            <property name="usesScrollButtons">
+             <bool>true</bool>
+            </property>
+            <property name="documentMode">
+             <bool>false</bool>
+            </property>
+            <property name="tabsClosable">
+             <bool>true</bool>
+            </property>
+            <property name="movable">
+             <bool>true</bool>
+            </property>
+            <property name="tabBarAutoHide">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="boxCP">
+         <property name="title">
+          <string>Contact Point </string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
+           <widget class="QComboBox" name="sel_cp">
+            <item>
+             <property name="text">
+              <string>-- none --</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="box_cp">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="setZeroForce">
+            <property name="text">
+             <string>Set CP force to 0</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_6">
+       <item>
+        <widget class="QGroupBox" name="groupBox_10">
+         <property name="title">
+          <string>Force-ind model</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_6">
+          <item>
+           <widget class="QComboBox" name="sel_fmodel">
+            <item>
+             <property name="text">
+              <string>-- none --</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="box_fmodel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QFormLayout" name="formLayout">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_9">
+              <property name="text">
+               <string>Min ind [nm]</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QSpinBox" name="zi_min">
+              <property name="minimum">
+               <number>0</number>
+              </property>
+              <property name="maximum">
+               <number>9999</number>
+              </property>
+              <property name="value">
+               <number>0</number>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_11">
+              <property name="text">
+               <string>Max ind [nm</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QSpinBox" name="zi_max">
+              <property name="minimum">
+               <number>0</number>
+              </property>
+              <property name="maximum">
+               <number>9999</number>
+              </property>
+              <property name="value">
+               <number>800</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_11">
+         <property name="title">
+          <string>Elasticity Spectra model</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_7">
+          <item>
+           <widget class="QComboBox" name="sel_emodel">
+            <item>
+             <property name="text">
+              <string>-- none --</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="box_emodel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QFormLayout" name="formLayout_3">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_12">
+              <property name="text">
+               <string>Min ind [nm</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QSpinBox" name="ze_min">
+              <property name="minimum">
+               <number>0</number>
+              </property>
+              <property name="maximum">
+               <number>9999</number>
+              </property>
+              <property name="value">
+               <number>0</number>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_14">
+              <property name="text">
+               <string>Max ind [nm</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QSpinBox" name="ze_max">
+              <property name="minimum">
+               <number>0</number>
+              </property>
+              <property name="maximum">
+               <number>9999</number>
+              </property>
+              <property name="value">
+               <number>800</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_7">
+       <item>
+        <widget class="QGroupBox" name="f_params">
+         <property name="title">
+          <string>Force-ind model params</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="e_params">
+         <property name="title">
+          <string>Elasticity Spectra model params</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="groupBox_9">
+       <property name="title">
+        <string>Sliders</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_12">
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Slide through curves</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSlider" name="slid_cv">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Trasnparency </string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSlider" name="slid_alpha">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximum">
+           <number>255</number>
+          </property>
+          <property name="singleStep">
+           <number>1</number>
+          </property>
+          <property name="value">
+           <number>100</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QLabel" name="logo">
+    <property name="geometry">
+     <rect>
+      <x>1460</x>
+      <y>0</y>
+      <width>161</width>
+      <height>141</height>
      </rect>
     </property>
     <property name="text">
-     <string>Save experiment</string>
+     <string/>
     </property>
-   </widget>
-   <widget class="QGroupBox" name="f_params">
-    <property name="geometry">
-     <rect>
-      <x>1230</x>
-      <y>150</y>
-      <width>120</width>
-      <height>131</height>
-     </rect>
+    <property name="pixmap">
+     <pixmap>logo1.png</pixmap>
     </property>
-    <property name="title">
-     <string>F(d) stats</string>
-    </property>
-   </widget>
-   <widget class="QGroupBox" name="e_params">
-    <property name="geometry">
-     <rect>
-      <x>1230</x>
-      <y>360</y>
-      <width>120</width>
-      <height>131</height>
-     </rect>
-    </property>
-    <property name="title">
-     <string>E(d) stats</string>
+    <property name="scaledContents">
+     <bool>true</bool>
     </property>
    </widget>
   </widget>
