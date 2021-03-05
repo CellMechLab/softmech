@@ -22,6 +22,8 @@ class FModel(fitPanel):
     def theory(self,x,*parameters):
         if self.curve.tip['geometry']=='sphere':
             R = self.curve.tip['radius']
+        else:
+            return False
         # Calculate the fitting function for a specific set of parameters
         return (4.0 / 3.0) * (parameters[0] / (1 - self.getValue('poisson') ** 2)) * np.sqrt(R * x ** 3)
 
