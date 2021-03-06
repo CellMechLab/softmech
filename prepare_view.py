@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'e:\git\softmech\prepare\nano.ui'
+# Form implementation generated from reading ui file 'e:\git\softmech\prepare.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.2
 #
@@ -16,7 +16,7 @@ class Ui_MainWindow(object):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(931, 710)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("e:\\git\\softmech\\prepare\\../../../.designer/backup/ico.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap("e:\\git\\softmech\\../../.designer/backup/ico.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -133,6 +133,19 @@ class Ui_MainWindow(object):
         self.slid_alpha.setObjectName("slid_alpha")
         self.horizontalLayout_2.addWidget(self.slid_alpha)
         self.verticalLayout_5.addLayout(self.horizontalLayout_2)
+        self.groupBox_3 = QtWidgets.QGroupBox(self.centralwidget)
+        self.groupBox_3.setObjectName("groupBox_3")
+        self.verticalLayout_8 = QtWidgets.QVBoxLayout(self.groupBox_3)
+        self.verticalLayout_8.setObjectName("verticalLayout_8")
+        self.cScreen = QtWidgets.QComboBox(self.groupBox_3)
+        self.cScreen.setObjectName("cScreen")
+        self.cScreen.addItem("")
+        self.verticalLayout_8.addWidget(self.cScreen)
+        self.tabScreen = QtWidgets.QTabWidget(self.groupBox_3)
+        self.tabScreen.setTabPosition(QtWidgets.QTabWidget.West)
+        self.tabScreen.setObjectName("tabScreen")
+        self.verticalLayout_8.addWidget(self.tabScreen)
+        self.verticalLayout_5.addWidget(self.groupBox_3)
         spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_5.addItem(spacerItem1)
         self.groupBox_2 = QtWidgets.QGroupBox(self.centralwidget)
@@ -194,7 +207,9 @@ class Ui_MainWindow(object):
         self.crop_right.setText(_translate("MainWindow", "R"))
         self.crop_left.setText(_translate("MainWindow", "L"))
         self.groupBox.setTitle(_translate("MainWindow", "Segment"))
-        self.groupBox_2.setTitle(_translate("MainWindow", "Toggle"))
+        self.groupBox_3.setTitle(_translate("MainWindow", "Screening"))
+        self.cScreen.setItemText(0, _translate("MainWindow", "-- select --"))
+        self.groupBox_2.setTitle(_translate("MainWindow", "Manual Toggle"))
         self.toggle_activated.setText(_translate("MainWindow", "IN"))
         self.toggle_excluded.setText(_translate("MainWindow", "OUT"))
 from pyqtgraph import PlotWidget
