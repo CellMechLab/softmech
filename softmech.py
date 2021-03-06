@@ -110,7 +110,7 @@ class NanoWindow(QtWidgets.QMainWindow):
 
         #Titles and labels (single and all)
         def title_style(lab):
-            return '<span style="font-family: Arial; font-weight:bold; font-size: 12pt;">{}</span>'.format(lab)
+            return '<span style="font-family: Arial; font-weight:bold; font-size: 10pt;">{}</span>'.format(lab)
 
         def lab_style(lab):
             return '<span style="">{}</span>'.format(lab)
