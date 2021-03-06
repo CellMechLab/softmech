@@ -13,6 +13,25 @@ import protocols.screening
 pg.setConfigOption('background', 'w')
 pg.setConfigOption('foreground', 'k')
 
+def emptyCurve():
+    curve = {
+        "filename": "noname",
+        "date": "2021-12-02",
+        "device_manufacturer": "Optics11",
+        "tip":{
+            "geometry": "sphere",
+            "radius": 0.0
+        },
+        "spring_constant": 0.0, 
+		"segment": "approach",
+        "speed": 0.0,
+        "data":{
+            "F":[],
+            "Z":[]
+        }
+    }
+    return curve
+
 def title_style(lab):
     return '<span style="font-family: Arial; font-weight:bold; font-size: 10pt;">{}</span>'.format(lab)
 
@@ -50,6 +69,7 @@ class NanoWindow(QtWidgets.QMainWindow):
         self.ui.g_single.plotItem.setLabel('left', lab_style('Force [nN]'))
         self.ui.g_fdistance.plotItem.setLabel('bottom', lab_style('Displacement [nm]'))
         self.ui.g_single.plotItem.setLabel('bottom', lab_style('Displacement [nm]'))
+        self.ui.save.clicked.connect(self.saveJSON)
 
         self.workingdir = './'
         self.collection = []
@@ -298,6 +318,31 @@ class NanoWindow(QtWidgets.QMainWindow):
             for c in self.collection:
                 if c.active is True:
                     c.active = method.calculate(c._z*1e-9,c._f*1e-9)
+
+    def saveJSON(self):
+
+        #fname = QtWidgets.QFileDialog.getSaveFileName(self, 'Save the experiment to a JSON structure', './')
+        fname = QtWidgets.QFileDialog.getSaveFileName(self, 'Save the experiment to a JSON structure', self.workingdir, "JSON Files (*.json)")
+        if fname == '' or fname is None or fname[0] == '':
+            return
+
+        QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
+        
+        import json
+        curves = []
+        for c in self.collection:
+            if c.active is True:    
+                cv = emptyCurve()
+                cv['filename']=c.basename
+                cv['tip']['radius']=c.R*1e-9
+                cv['spring_constant']=c.k
+                cv['data']['Z']=list(c._z*1e-9)
+                cv['data']['F']=list(c._f*1e-9)
+                curves.append(cv)
+        exp = {'Description':'Optics11 data'}
+        pro = {}
+        json.dump({'experiment':exp,'protocol':pro,'curves':curves},open(fname[0],'w'))
+        QtWidgets.QApplication.restoreOverrideCursor()
 
 
 if __name__ == "__main__":
