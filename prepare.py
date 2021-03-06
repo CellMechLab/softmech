@@ -314,6 +314,8 @@ class NanoWindow(QtWidgets.QMainWindow):
         self.doScreen()
 
     def doScreen(self):
+        for c in self.collection:
+            c.active = True
         for method in self._screening_selected:
             for c in self.collection:
                 if c.active is True:
