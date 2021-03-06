@@ -143,6 +143,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_8.addWidget(self.cScreen)
         self.tabScreen = QtWidgets.QTabWidget(self.groupBox_3)
         self.tabScreen.setTabPosition(QtWidgets.QTabWidget.West)
+        self.tabScreen.setTabsClosable(True)
         self.tabScreen.setObjectName("tabScreen")
         self.verticalLayout_8.addWidget(self.tabScreen)
         self.verticalLayout_5.addWidget(self.groupBox_3)
