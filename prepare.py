@@ -3,13 +3,21 @@ import sys
 import numpy as np
 import pyqtgraph as pg
 from PyQt5 import QtCore, QtGui, QtWidgets
-import motor
+import prepare_motor as motor
 import mvexperiment.experiment as experiment
-import nano_view as view
+import prepare_view as view
+
+import protocols.screening
 
 
 pg.setConfigOption('background', 'w')
 pg.setConfigOption('foreground', 'k')
+
+def title_style(lab):
+    return '<span style="font-family: Arial; font-weight:bold; font-size: 10pt;">{}</span>'.format(lab)
+
+def lab_style(lab):
+    return '<span style="">{}</span>'.format(lab)
 
 
 class NanoWindow(QtWidgets.QMainWindow):
@@ -34,11 +42,7 @@ class NanoWindow(QtWidgets.QMainWindow):
             0, 0, 255, 255), width=5, style=QtCore.Qt.DashLine))
         self.ui.g_single.plotItem.addItem(self.curve_fit)
 
-        def title_style(lab):
-            return '<span style="font-family: Arial; font-weight:bold; font-size: 10pt;">{}</span>'.format(lab)
-
-        def lab_style(lab):
-            return '<span style="">{}</span>'.format(lab)
+        self.screening = None
 
         self.ui.g_fdistance.plotItem.setTitle(title_style('Raw curves'))
         self.ui.g_single.plotItem.setTitle(title_style('Current curve'))
@@ -50,6 +54,14 @@ class NanoWindow(QtWidgets.QMainWindow):
         self.workingdir = './'
         self.collection = []
         self.experiment = None
+
+        self._screening_selected = []
+        data = protocols.screening.list()
+        self._screening_methods = list(data.keys())
+        for l in data.values():
+            self.ui.cScreen.addItem(l)
+        self.ui.cScreen.currentIndexChanged.connect(self.screenSelected)
+        self.ui.tabScreen.tabCloseRequested.connect(self.removeScreen)
 
         # connect load and open, other connections after load/open
         self.ui.open_selectfolder.clicked.connect(self.open_folder)
@@ -197,11 +209,7 @@ class NanoWindow(QtWidgets.QMainWindow):
         if self.ui.toggle_activated.isChecked() is True:
             self.collection[current].active = True
         else:
-            if self.ui.toggle_excluded.isChecked() is True:
-                self.collection[current].included = False
-            else:
-                self.collection[current].active = False
-        self.count()
+            self.collection[current].active = False
 
     def crop(self):
         left = self.ui.crop_left.isChecked()
@@ -232,7 +240,6 @@ class NanoWindow(QtWidgets.QMainWindow):
                 except IndexError:
                     QtWidgets.QMessageBox.information(
                         self, 'Empty curve', 'Problem detected with curve {}, not populated'.format(c.basename))
-            self.fmethod_changed()
         else:
             return
 
@@ -263,6 +270,34 @@ class NanoWindow(QtWidgets.QMainWindow):
         num = int(num)
         for c in self.collection:
             c.alpha = num
+
+    def screenSelected(self,fid):
+        if fid == 0:
+            return
+        name = self.ui.cScreen.currentText()
+        newfilter = protocols.screening.get(self._screening_methods[fid-1])
+        self._screening_selected.append( newfilter )
+        newwidget = QtWidgets.QGroupBox()
+        layout = QtWidgets.QFormLayout()
+        layout.setFieldGrowthPolicy(QtWidgets.QFormLayout.AllNonFixedFieldsGrow)
+        self._screening_selected[-1].createUI(layout)
+        newfilter.connect(self.doScreen)
+        newwidget.setLayout(layout)
+        newtab = self.ui.tabScreen.addTab(newwidget,name)
+        self.ui.tabScreen.setCurrentIndex(newtab)
+        self.ui.cScreen.setCurrentIndex(0)
+        self.doScreen()
+
+    def removeScreen(self,fid):
+        self.ui.tabScreen.removeTab(fid)
+        self._screening_selected.pop(fid)
+        self.doScreen()
+
+    def doScreen(self):
+        for method in self._screening_selected:
+            for c in self.collection:
+                if c.active is True:
+                    c.active = method.calculate(c._z*1e-9,c._f*1e-9)
 
 
 if __name__ == "__main__":

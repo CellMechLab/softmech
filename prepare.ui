@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../../../.designer/backup/ico.svg</normaloff>../../../.designer/backup/ico.svg</iconset>
+    <normaloff>../../.designer/backup/ico.svg</normaloff>../../.designer/backup/ico.svg</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -245,6 +245,31 @@
          </layout>
         </item>
         <item>
+         <widget class="QGroupBox" name="groupBox_3">
+          <property name="title">
+           <string>Screening</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_8">
+           <item>
+            <widget class="QComboBox" name="cScreen">
+             <item>
+              <property name="text">
+               <string>-- select --</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <widget class="QTabWidget" name="tabScreen">
+             <property name="tabPosition">
+              <enum>QTabWidget::West</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
          <spacer name="verticalSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -266,7 +291,7 @@
            </sizepolicy>
           </property>
           <property name="title">
-           <string>Toggle</string>
+           <string>Manual Toggle</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout">
            <property name="sizeConstraint">

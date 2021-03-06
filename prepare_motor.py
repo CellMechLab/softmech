@@ -11,6 +11,7 @@ ST_BLK = 3
 # Function checking if two arrays are the same
 
 
+
 def sames(ar1, ar2):
     if (ar1 is None) or (ar2 is None):
         return False
@@ -29,30 +30,20 @@ class Nanoment():
     def __init__(self, curve=None):
         # attributes
         self.basename = None
-        self._contactpoint = [0, 0]
         self._z = None
         self._f = None
         self._z_raw = None
         self._f_raw = None
-        self._ind = None
-        self._touch = None
         self.R = None
         self.k = None
-        self._E = 5
-        self._ex = None
-        self._ey = None
         self._curve_single = None
         self._curve_raw = None
-        self._curve_fit = None
         self._g_fdistance = None
-        self._state = ST_BLK = 3
+        self._state = ST_BLK
         self._alpha = 100
         self._selected = False
         self._tree = None
         self._ui = None
-        self._Eindex = 0
-        self._cpfunction = None
-        self._filter = None
         if curve is not None:
             self.R = curve.tip_radius
             self.k = curve.cantilever_k
@@ -102,10 +93,8 @@ class Nanoment():
         if self.selected is True:
             if self.active is True:
                 self._ui.toggle_activated.setChecked(True)
-            elif self.included is False:
-                self._ui.toggle_excluded.setChecked(True)
             else:
-                self._ui.toggle_included.setChecked(True)
+                self._ui.toggle_excluded.setChecked(True)
 
     def getPen(self, curve='ind'):
         PEN_BLACK = pg.mkPen(pg.QtGui.QColor(0, 0, 0, self.alpha), width=1)
@@ -119,10 +108,7 @@ class Nanoment():
         if self.active is True:
             pen = PEN_BLACK
         else:
-            if self.included is True:
-                pen = PEN_BLUE
-            else:
-                pen = PEN_RED
+            pen = PEN_RED
         if self.selected is True:
             pen = PEN_GREEN
         return pen
@@ -133,7 +119,6 @@ class Nanoment():
 
     def set_XY(self, x, y):
         self.reset_data()
-        self._included = True
         self._active = True
         self.z_raw = x
         self.f_raw = y
@@ -169,33 +154,10 @@ class Nanoment():
     @ active.setter
     def active(self, x):
         if x is False:
-            if self._state < ST_BLK:
-                return
-            self._state = ST_BLU
+            self._state = ST_RED
         else:
-            if self._state == ST_BLK:
-                return
             self._state = ST_BLK
-            self._tree.setCheckState(0, QtCore.Qt.Checked)
-        self.update_view()
-
-    @ property
-    def included(self):
-        return self._state > ST_RED
-
-    @ included.setter
-    def included(self, x):
-        if x is False:
-            if self._state == ST_RED:
-                return
-            else:
-                self._state = ST_RED
-                self._tree.setCheckState(0, QtCore.Qt.Unchecked)
-        else:
-            if self._state > ST_RED:
-                return
-            self._state = ST_BLK
-            self._tree.setCheckState(0, QtCore.Qt.Checked)
+        self._tree.setCheckState(0, QtCore.Qt.Checked)
         self.update_view()
 
     @ property
