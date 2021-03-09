@@ -43,7 +43,7 @@ class NanoWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
         QtWidgets.QMainWindow.__init__(self, parent)
 
-        self.ui = view.Ui_MainWindow()
+        self.ui = view.Ui_radius()
         self.ui.setupUi(self)
         self.collection = None
         # set plots style
@@ -86,10 +86,6 @@ class NanoWindow(QtWidgets.QMainWindow):
         # connect load and open, other connections after load/open
         self.ui.open_selectfolder.clicked.connect(self.open_folder)
         QtCore.QMetaObject.connectSlotsByName(self)
-
-    ################################################
-    ############## OPEN / LOAD #####################
-    ################################################
 
     def clear(self):
         self.collection = []
@@ -208,6 +204,14 @@ class NanoWindow(QtWidgets.QMainWindow):
 
         progress.setValue(len(self.experiment.haystack))
         QtWidgets.QApplication.restoreOverrideCursor()
+
+        self.ui.springconstant.setValue(exp[0].cantilever_k)
+        self.ui.tipradius.setValue(int(exp[0].tip_radius))
+        if exp[0].tip_shape == 'sphere':
+            self.ui.geometry.setCurrentIndex(1)
+        elif exp.tip_shape == 'cylinder':
+            self.ui.geometry.setCurrentIndex(2)
+              # onest shapes are 'sphere' , 'cone' , 'flat'
 
         self.ui.curve_segment.setMaximum(len(self.experiment.haystack[0])-1)
         if len(self.experiment.haystack[0]) > 1:
@@ -332,12 +336,18 @@ class NanoWindow(QtWidgets.QMainWindow):
         
         import json
         curves = []
+
+        geometry = str(self.ui.geometry.currentText()).lower()
+        radius = radius = float(self.ui.radius.value())
+        spring = float(self.ui.springconstant.value())
+
         for c in self.collection:
             if c.active is True:    
                 cv = emptyCurve()
-                cv['filename']=c.basename
-                cv['tip']['radius']=c.R*1e-9
-                cv['spring_constant']=c.k
+                cv['filename']=c.basename                
+                cv['tip']['radius']=radius*1e-9
+                cv['tip']['geometry']=geometry
+                cv['spring_constant']=spring
                 cv['data']['Z']=list(c._z*1e-9)
                 cv['data']['F']=list(c._f*1e-9)
                 curves.append(cv)

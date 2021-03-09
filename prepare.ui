@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>radius</class>
+ <widget class="QMainWindow" name="radius">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>931</width>
-    <height>710</height>
+    <width>1018</width>
+    <height>838</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -195,6 +195,75 @@
                   </widget>
                  </item>
                 </layout>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="Cantilever">
+              <property name="title">
+               <string>Cantilever</string>
+              </property>
+              <layout class="QFormLayout" name="formLayout_2">
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_2">
+                 <property name="text">
+                  <string>Spring constant [N/m]</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QDoubleSpinBox" name="springconstant">
+                 <property name="decimals">
+                  <number>4</number>
+                 </property>
+                 <property name="maximum">
+                  <double>999.990000000000009</double>
+                 </property>
+                 <property name="value">
+                  <double>1.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_3">
+                 <property name="text">
+                  <string>Tip geometry</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QComboBox" name="geometry">
+                 <item>
+                  <property name="text">
+                   <string>-- select --</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Sphere</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Cylinder</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="label">
+                 <property name="text">
+                  <string>Tip Radius [nm]</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QSpinBox" name="tipradius">
+                 <property name="maximum">
+                  <number>999999</number>
+                 </property>
+                </widget>
                </item>
               </layout>
              </widget>
