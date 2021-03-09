@@ -338,7 +338,7 @@ class NanoWindow(QtWidgets.QMainWindow):
         curves = []
 
         geometry = str(self.ui.geometry.currentText()).lower()
-        radius = radius = float(self.ui.radius.value())
+        radius = radius = float(self.ui.tipradius.value())
         spring = float(self.ui.springconstant.value())
 
         for c in self.collection:
