@@ -4,8 +4,8 @@ from ..panels import boxPanel
 import numpy as np
 
 #Set here the details of the procedure
-NAME = 'Prominency' #Name, please keep it short as it will appear in the combo box of the user interface
-DESCRIPTION = 'Filters prominent peaks in the Fourier space, to eliminate oscillations' #Free text
+NAME = 'Filter Name' #Name, please keep it short as it will appear in the combo box of the user interface
+DESCRIPTION = 'Filter description' #Free text
 DOI = '' #set a DOI of a publication you want/suggest to be cited, empty if no reference
 
 # Create your filter class by extending the main one
