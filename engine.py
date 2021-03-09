@@ -99,9 +99,6 @@ class curve(object):
     def calc_elspectra(self,win,order,interp=True):
         x = self._Zi
         y = self._Fi
-        if self.tip['geometry']!='sphere':
-            return None #To be implemented for other geometries
-        R = self.tip['radius']
         if(len(x)) < 1:  # check on length of ind
             return None
         if interp is True:
@@ -117,17 +114,26 @@ class curve(object):
             xx = x[1:]
             yy = y[1:]
             ddt = (x[-1]-x[1])/(len(x)-2)
-        area = np.pi * xx * R
-        contactradius = np.sqrt(xx * R)
-        coeff = 3 * np.sqrt(np.pi) / 8 / np.sqrt(area)
+        
+        if self.tip['geometry']=='sphere':
+            R = self.tip['radius']
+            area = np.pi * xx * R
+            #contactradius = np.sqrt(xx * R)
+            coeff = 3 * np.sqrt(np.pi) / 8 / np.sqrt(area)
+        elif self.tip['geometry']=='cylinder':
+            R = self.tip['radius']
+            coeff = 3 / 8 / R
+        else:
+            return False
         if win % 2 == 0:
-            win += 1
+                win += 1
         if len(yy) <= win:
-            return None
+            return False   
         deriv = savgol_filter(yy, win, order, delta=ddt, deriv=1)
         Ey = coeff * deriv
         dwin = int(win - 1)
-        Ex = contactradius[dwin:-dwin]
+        Ex = xx[dwin:-dwin] #contactradius[dwin:-dwin]
         Ey = Ey[dwin:-dwin]
+
         self._Ze = np.array(Ex)
         self._E = np.array(Ey)
