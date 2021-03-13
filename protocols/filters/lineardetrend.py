@@ -25,15 +25,15 @@ class Filter(boxPanel):
         self.addParameter('deltaX', 'float', 'Align left step [nm]', 2000.0)
         self.addParameter('Fthreshold', 'float', 'AVG area [nm]', 100.0)
 
-    def calculate(self, x, y, curve=None):
-        # This function gets the current x and y and returns the filtered version.
-        # get the value of the parameters as set by the user
 
-        # Conversion to array important when using physical units
-        x = np.array(x)
-        y = np.array(y)
-        # Getting baseline
-        yth = self.getValue('Athreshold')*1e-9
+    def calculate(self, x,y):
+        x_trend, y_trend = self.get_trendline(x,y)
+        yfiltered = y - y_trend
+        xfiltered = x
+        return xfiltered, yfiltered
+
+    def get_baseline(self, x, y):  # returns baseline based on threshold CP method
+        yth = self.getValue('Athrehshold')*1e-9
         if yth > np.max(y) or yth < np.min(y):
             return False
         jrov = 0
@@ -42,10 +42,9 @@ class Filter(boxPanel):
                 jrov = j
                 break
         x0 = x[jrov]
-        x0 = x[jrov]
         dx = self.getValue('deltaX')*1e-9
         ddx = self.getValue('Fthreshold')*1e-9
-        if ddx <= 0:
+        if ddx <= 0:  
             jxalign = np.argmin((x - (x0 - dx)) ** 2)
             f0 = y[jxalign]
         else:
@@ -62,15 +61,17 @@ class Filter(boxPanel):
             y_base = y[:jcp]
         else:
             return False
+        return x_base, y_base
 
-        # Fitting baseline
+    def get_trendline(self, x, y):
+        try:
+            x_base, y_base = self.get_baseline(x,y)
+        except TypeError:
+            return False
         def lin_fit(x, a, b):
             return a*x + b
-        popt, pcov = curve_fit(lin_fit, x_base, y_base, maxfev=10000)
-        x_lin = np.linspace(min(x), max(x), len(x))
-        y_trendline = lin_fit(x_lin, *popt)  # Calculated over whole z range
 
-        # Detrending
-        xfiltered = x
-        yfiltered = y-y_trendline
-        return xfiltered, yfiltered
+        popt, pcov = curve_fit(lin_fit, x_base, y_base, maxfev=10000)
+        z_lin = np.linspace(min(c._z), max(c._z), len(c._z))
+        y_trendline = lin_fit(z_lin, *popt)
+        return y_trendline  # calculated over whole z range
