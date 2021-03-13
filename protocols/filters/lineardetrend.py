@@ -27,13 +27,13 @@ class Filter(boxPanel):
 
 
     def calculate(self, x,y):
-        x_trend, y_trend = self.get_trendline(x,y)
+        y_trend = self.get_trendline(x,y)
         yfiltered = y - y_trend
         xfiltered = x
         return xfiltered, yfiltered
 
     def get_baseline(self, x, y):  # returns baseline based on threshold CP method
-        yth = self.getValue('Athrehshold')*1e-9
+        yth = self.getValue('Athreshold')*1e-9
         if yth > np.max(y) or yth < np.min(y):
             return False
         jrov = 0
@@ -72,6 +72,6 @@ class Filter(boxPanel):
             return a*x + b
 
         popt, pcov = curve_fit(lin_fit, x_base, y_base, maxfev=10000)
-        z_lin = np.linspace(min(c._z), max(c._z), len(c._z))
+        z_lin = np.linspace(min(x), max(x), len(x))
         y_trendline = lin_fit(z_lin, *popt)
         return y_trendline  # calculated over whole z range
