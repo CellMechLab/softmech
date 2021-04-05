@@ -3,9 +3,9 @@ import sys
 import numpy as np
 import pyqtgraph as pg
 from PyQt5 import QtCore, QtGui, QtWidgets
-import prepare_motor as motor
+import preparation.prepare_motor as motor
 import mvexperiment.experiment as experiment
-import prepare_view as view
+import preparation.prepare_view as view
 
 import protocols.screening
 

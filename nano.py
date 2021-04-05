@@ -3,8 +3,8 @@ import pyqtgraph as pg
 from PyQt5 import QtCore, QtGui, QtWidgets
 import qtmodern.styles
 import qtmodern.windows
-import nano_view as view
-import engine
+import nanoindentation.nano_view as view
+import nanoindentation.engine as engine
 import json
 import protocols.filters,protocols.cpoint,protocols.fmodels,protocols.emodels
 
