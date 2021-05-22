@@ -66,7 +66,8 @@ class NanoWindow(QtWidgets.QMainWindow):
         self.ui.zi_max.valueChanged.connect(self.data1)
         self.ui.ze_min.valueChanged.connect(self.data2)
         self.ui.ze_max.valueChanged.connect(self.data2)
-
+        self.ui.b_saveFdata.clicked.connect(lambda: self.save_params(True))
+        self.ui.b_saveEdata.clicked.connect(lambda: self.save_params(False))
         self.redraw = True
         QtCore.QMetaObject.connectSlotsByName(self)
 
@@ -389,6 +390,48 @@ class NanoWindow(QtWidgets.QMainWindow):
             self._emodel.setParameters(engine.dataformat(self.edata,nemod))
         self.scatter()
 
+    def save_params(self,force = True):
+        if force is True:
+            if self.fdata is None or self.fdata is False or len(self.fdata) == 0:
+                return
+        else:
+            if self.edata is None or self.edata is False or len(self.edata) == 0:
+                return
+
+        fname = QtWidgets.QFileDialog.getSaveFileName(self, 'Save the data to a CSV datafile', self.workingpath, "CSV Files (*.csv)")
+        if fname == '' or fname is None or fname[0] == '':
+            return        
+
+        QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
+        if force is True:
+            header = '#SoftMech export data\n#Indentation analysis\n#\n#FModel parameters\n'
+            model = self._fmodel
+            data = self.fdata
+        else:
+            header = '#SoftMech export data\n#Elastography analysis\n#\n#EModel parameters\n'
+            model = self._emodel
+            data = self.edata
+        
+        f = open(fname[0],'w')
+
+        for key in model.fitparameters:
+            header += '#{}:{}\n'.format(key,model.fitparameters[key])
+        header+='#\n#'
+        pre = ''
+        for key in model.fitparameters:
+            header = header + pre + key
+            pre = ','
+        header+='\n#\n#DATA\n'
+        f.write(header)
+        for line in range(len(data[0])):
+            pre = ''
+            for column in range(len(data)):
+                f.write(pre + str(data[column][line]))
+                pre=','
+            f.write('\n')
+        f.close()
+        QtWidgets.QApplication.restoreOverrideCursor()
+
     def scatter(self):
         self.ui.g_scatter1.plotItem.clear()
         self.ui.g_scatter2.plotItem.clear()
@@ -418,8 +461,6 @@ class NanoWindow(QtWidgets.QMainWindow):
                         sc.setData( engine.np.linspace(0,len(self.edata[i]),len(self.edata[i])),self.edata[i] )
                         self.ui.g_scatter2.addItem(sc) 
                         self.ui.g_scatter2.plotItem.setLabel('bottom', 'Curve [#]')
-
-
 
     def fmodelSelect(self,fid):
         if fid == 0:

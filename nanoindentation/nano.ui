@@ -27,6 +27,12 @@
          <layout class="QHBoxLayout" name="horizontalLayout_9">
           <item>
            <widget class="QGroupBox" name="groupBox_7">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="title">
              <string>Load</string>
             </property>
@@ -44,6 +50,19 @@
                 <string>Load protocol</string>
                </property>
               </widget>
+             </item>
+             <item>
+              <spacer name="verticalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
              </item>
             </layout>
            </widget>
@@ -75,9 +94,16 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="b_save">
+              <widget class="QPushButton" name="b_saveFdata">
                <property name="text">
-                <string>Save analysis</string>
+                <string>Save Indentation Analysis</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="b_saveEdata">
+               <property name="text">
+                <string>Save Elastography analysis</string>
                </property>
               </widget>
              </item>
@@ -229,7 +255,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>75</weight>
                 <bold>true</bold>
                </font>
               </property>
