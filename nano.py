@@ -9,7 +9,7 @@ import json
 import protocols.filters,protocols.cpoint,protocols.fmodels,protocols.emodels
 
 
-pg.setConfigOption('background', 'k')
+pg.setConfigOption('background', (53,53,53))
 pg.setConfigOption('foreground', 'w')
 
 #circles
@@ -28,14 +28,13 @@ def roundCol(i):
     col.append([255,255,255])
     return col[i%len(col)]
 
-
 class NanoWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
         QtWidgets.QMainWindow.__init__(self, parent)
 
         self.ui = view.Ui_MainWindow()
         self.ui.setupUi(self)
-        self.setStyleSheet("background-color: k") 
+        #self.setStyleSheet("background-color: grey") 
         self.ALLPLOTS = [self.ui.g_fz_all,self.ui.g_fz_single,self.ui.g_fizi_all,self.ui.g_fizi_single,self.ui.g_eze_all,self.ui.g_eze_single,self.ui.g_scatter1,self.ui.g_scatter2]
         self.workingpath = os.path.dirname(__file__)
         self.redraw = False
