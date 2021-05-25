@@ -36,11 +36,11 @@
             <property name="title">
              <string>Load</string>
             </property>
-            <layout class="QVBoxLayout" name="verticalLayout_10">
+            <layout class="QHBoxLayout" name="horizontalLayout_10">
              <item>
-              <widget class="QPushButton" name="b_load">
+              <widget class="QPushButton" name="consolle">
                <property name="text">
-                <string>Load experiment</string>
+                <string>Consolle</string>
                </property>
               </widget>
              </item>
@@ -52,9 +52,9 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="consolle">
+              <widget class="QPushButton" name="b_load">
                <property name="text">
-                <string>Consolle</string>
+                <string>Load experiment</string>
                </property>
               </widget>
              </item>
@@ -79,18 +79,11 @@
             <property name="title">
              <string>Save</string>
             </property>
-            <layout class="QVBoxLayout" name="verticalLayout_11">
+            <layout class="QHBoxLayout" name="horizontalLayout_11">
              <item>
-              <widget class="QPushButton" name="b_saveexperiment">
+              <widget class="QPushButton" name="b_saveprotocol">
                <property name="text">
-                <string>Save experiment</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="b_saveFdata">
-               <property name="text">
-                <string>Save Indentation Analysis</string>
+                <string>Save protocol</string>
                </property>
               </widget>
              </item>
@@ -102,9 +95,16 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="b_saveprotocol">
+              <widget class="QPushButton" name="b_saveFdata">
                <property name="text">
-                <string>Save protocol</string>
+                <string>Save Indentation Analysis</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="b_saveexperiment">
+               <property name="text">
+                <string>Save experiment</string>
                </property>
               </widget>
              </item>
