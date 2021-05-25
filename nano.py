@@ -8,6 +8,9 @@ import nanoindentation.engine as engine
 import json
 import protocols.filters,protocols.cpoint,protocols.fmodels,protocols.emodels
 
+from gevent import monkey; monkey.patch_all()   # noqa
+import gevent
+from pyqtconsole.console import PythonConsole
 
 pg.setConfigOption('background', (53,53,53))
 pg.setConfigOption('foreground', 'w')
@@ -28,10 +31,35 @@ def roundCol(i):
     col.append([255,255,255])
     return col[i%len(col)]
 
+class GEventProcessing:
+
+    """Interoperability class between Qt/gevent that allows processing gevent
+    tasks during Qt idle periods."""
+
+    def __init__(self, idle_period=0.010):
+        # Limit the IDLE handler's frequency while still allow for gevent
+        # to trigger a microthread anytime
+        self._idle_period = idle_period
+        # IDLE timer: on_idle is called whenever no Qt events left for
+        # processing
+        self._timer = QtCore.QTimer()
+        self._timer.timeout.connect(self.process_events)
+        self._timer.start(0)
+
+    def __enter__(self):
+        pass
+
+    def __exit__(self, *exc_info):
+        self._timer.stop()
+
+    def process_events(self):
+        # Cooperative yield, allow gevent to monitor file handles via libevent
+        gevent.sleep(self._idle_period)
+
 class NanoWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
         QtWidgets.QMainWindow.__init__(self, parent)
-
+        self.app = app
         self.ui = view.Ui_MainWindow()
         self.ui.setupUi(self)
         #self.setStyleSheet("background-color: grey") 
@@ -67,8 +95,20 @@ class NanoWindow(QtWidgets.QMainWindow):
         self.ui.ze_max.valueChanged.connect(self.data2)
         self.ui.b_saveFdata.clicked.connect(lambda: self.save_params(True))
         self.ui.b_saveEdata.clicked.connect(lambda: self.save_params(False))
-        self.redraw = True
+        self.redraw = True        
         QtCore.QMetaObject.connectSlotsByName(self)
+
+        self.ui.consolle.clicked.connect(self.new_consolle)
+
+    def getData(self):
+        return engine.dataset
+        
+    def new_consolle(self):
+        self.a=[]
+        console = PythonConsole()
+        console.push_local_ns('getData', self.getData)
+        console.show()
+        console.eval_executor(gevent.spawn)
 
     def reset(self):
         was = self.redraw
@@ -596,5 +636,11 @@ if __name__ == "__main__":
     chiaro = NanoWindow()
     mw = qtmodern.windows.ModernWindow(chiaro)
     mw.show()
-    # QtCore.QObject.connect( app, QtCore.SIGNAL( 'lastWindowClosed()' ), app, QtCore.SLOT( 'quit()' ) )
-    sys.exit(app.exec_())
+
+    #app.setQuitOnLastWindowClosed(True)
+    #app.aboutToQuit.connect(chiaro.cleanup_consoles)
+
+    #chiaro.ipkernel.start()
+    #sys.exit(app.exec_())
+    with GEventProcessing():
+        sys.exit(app.exec_())
