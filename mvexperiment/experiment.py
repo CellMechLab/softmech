@@ -92,17 +92,17 @@ class ChiaroBase(DataSet):
     def header(self):
         f = open(self.filename)
         targets = ['Tip radius (um)', 'Calibration factor', 'k (N/m)', 'SMDuration (s)',
-                   'Piezo Indentation Sweep Settings', 'Profile:', 'E[eff] (Pa)', 'X-position (um)', 'Y-position (um)']
+                   'Piezo Indentation Sweep Settings', 'Profile:', 'E[eff] (Pa)', 'X-position (um)', 'Y-position (um)','Software version','Time (s)']
         reading_protocol = False
+
+        self.version = 'old'
 
         for line in f:
             if reading_protocol is False:
                 if line[0:len(targets[0])] == targets[0]:
-                    self.tip_radius = float(line.strip().replace(',', '.').split('\t')[
-                                            1])*1000.0  # NB: internal units are nm
+                    self.tip_radius = float(line.strip().replace(',', '.').split('\t')[1])*1000.0  # NB: internal units are nm
                 elif line[0:len(targets[1])] == targets[1]:
-                    self.cantilever_lever = float(line.strip().replace(',', '.').split('\t')[
-                                                  1])  # NB: so called geometric factor
+                    self.cantilever_lever = float(line.strip().replace(',', '.').split('\t')[1])  # NB: so called geometric factor
                 elif line[0:len(targets[2])] == targets[2]:
                     self.cantilever_k = float(
                         line.strip().replace(',', '.').split('\t')[1])
@@ -124,6 +124,10 @@ class ChiaroBase(DataSet):
                     reading_protocol = True
                 elif line[0:len(targets[4])] == targets[4]:
                     reading_protocol = True
+                elif line[0:len(targets[9])] == targets[9]:
+                    self.version = line[len(targets[9])+1:].strip()
+                elif line[0:len(targets[10])] == targets[10]:
+                    break
             else:
                 if line.strip() == '':
                     reading_protocol = False
@@ -164,16 +168,16 @@ class ChiaroBase(DataSet):
 
 class Chiaro(ChiaroBase):
 
-    def createSegments(self, bias=30):
+    def createSegments(self, bias=30):        
         sign = +1
-        actualPos = 1
+        actualPos = 2
         nodi = []
         nodi.append(0)
         wait = 0
         for nextThreshold, nextTime in self.protocol:
             for j in range(actualPos, len(self.data['z'])):
                 if self.data['time'][j] > wait + nextTime:
-                    if (cross(self.data['z'][j], self.data['z'][j-1], nextThreshold, bias)) is True:
+                    if self.version != 'old' or  (cross(self.data['z'][j], self.data['z'][j-1], nextThreshold, bias)) is True:
                         nodi.append(j)
                         wait = self.data['time'][j]
                         break

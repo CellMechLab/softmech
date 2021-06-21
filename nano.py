@@ -102,11 +102,29 @@ class NanoWindow(QtWidgets.QMainWindow):
 
     def getData(self):
         return engine.dataset
+
+    def getCurrent(self):
+        cC = engine.dataset[ int(self.ui.slid_cv.value()) ]
+        dummy = {'indentation':None,'ind_fit':None,'elastography':None,'el_fit':None}
+        dummy['src']=cC
+        dummy['curve']=(cC._Z,cC._F)
+        if cC._Zi is not None:
+            dummy['indentation']=(cC._Zi,cC._Fi)
+            if cC._Fparams is not None:                
+                x,y = cC.getFizi(self.ui.zi_min.value()*1e-9,self.ui.zi_max.value()*1e-9)
+                dummy['ind_fit']=(x,self._fmodel.getTheory(x,cC._Fparams,curve=cC))
+        if cC._Ze is not None:
+                dummy['elastography']=(cC._Ze,cC._E)
+                if cC._Eparams is not None:
+                    x,y = cC.getEze(self.ui.ze_min.value()*1e-9,self.ui.ze_max.value()*1e-9)
+                    dummy['el_fit']=(x,self._emodel.getTheory(x,cC._Eparams,curve=cC))
+        return dummy 
         
     def new_consolle(self):
         self.a=[]
         console = PythonConsole()
         console.push_local_ns('getData', self.getData)
+        console.push_local_ns('getCurrent', self.getCurrent)
         console.show()
         console.eval_executor(gevent.spawn)
 
