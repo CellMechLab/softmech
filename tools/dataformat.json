@@ -1,0 +1,26 @@
+{
+    "experiment":{},
+    "curves": [{
+        "filename": "curve.jpk",
+        "date": "2020-12-05",
+        "device_manufacturer": "JPK",
+        "tip":{
+            "geometry": "sphere",
+            "radius": 3.2e-6
+        },
+        "spring_constant": 0.31, 
+		"segment": "approach",
+        "speed": 1.25e-6,
+        "data":{
+            "F":[],
+            "Z":[]
+        }
+    }],
+    "protocol": {
+        "filters":[],
+        "cpoint":{},
+        "Eparameters":{},
+        "Fmodel":{},
+        "Emodel":{}
+    }
+}
