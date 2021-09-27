@@ -13,7 +13,7 @@ class Filter(boxPanel):  # Threshold
     def create(self):
         self.addParameter('pro','int','Prominency [a.u.]',40)
         self.addParameter('threshold','int','Minimum frequency [channels]',25)
-        self.addParameter('band','int',"Band pass [% of the height]",30)
+        self.addParameter('band','int',"Band pass [% of the position]",30)
 
     def calculate(self, x,y,curve=None):
         # threshold is the minimum frequency to be eventually filtered
