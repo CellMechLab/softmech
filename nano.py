@@ -1,8 +1,14 @@
 import sys,os
 import pyqtgraph as pg
 from PyQt5 import QtCore, QtGui, QtWidgets
-import qtmodern.styles
-import qtmodern.windows
+useQtmodern = False
+try:
+    import qtmodern.styles
+    import qtmodern.windows
+    useQtmodern = True
+except ModuleNotFoundError:
+    print('Module qtmodern not found. Please evaluate installing it for a nicer UI')
+
 import nanoindentation.nano_view as view
 import nanoindentation.engine as engine
 import json
@@ -650,9 +656,12 @@ class NanoWindow(QtWidgets.QMainWindow):
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     app.setApplicationName('SoftMech2021')
-    qtmodern.styles.dark(app)
-    chiaro = NanoWindow()
-    mw = qtmodern.windows.ModernWindow(chiaro)
+    if useQtmodern is True:
+        qtmodern.styles.dark(app)
+        chiaro = NanoWindow()
+        mw = qtmodern.windows.ModernWindow(chiaro)
+    else:
+        mw = NanoWindow()
     mw.show()
 
     #app.setQuitOnLastWindowClosed(True)
