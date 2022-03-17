@@ -18,11 +18,12 @@ useGevent = False
 try:
     from gevent import monkey; monkey.patch_all()   # noqa
     import gevent
+    from pyqtconsole.console import PythonConsole
     useGevent = True
 except ModuleNotFoundError:
     print('Module gevent not found. Please evaluate installing it if you want to have access to the integrated shell')
 
-from pyqtconsole.console import PythonConsole
+
 
 pg.setConfigOption('background', (53,53,53))
 pg.setConfigOption('foreground', 'w')
