@@ -21,7 +21,7 @@ try:
     from pyqtconsole.console import PythonConsole
     useGevent = True
 except ModuleNotFoundError:
-    print('Module gevent not found. Please evaluate installing it if you want to have access to the integrated shell')
+    print('Module gevent and/or pyqtconsole not found. Please evaluate installing it if you want to have access to the integrated shell')
 
 
 
