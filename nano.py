@@ -14,8 +14,14 @@ import nanoindentation.engine as engine
 import json
 import protocols.filters,protocols.cpoint,protocols.fmodels,protocols.emodels
 
-from gevent import monkey; monkey.patch_all()   # noqa
-import gevent
+useGevent = False
+try:
+    from gevent import monkey; monkey.patch_all()   # noqa
+    import gevent
+    useGevent = True
+except ModuleNotFoundError:
+    print('Module gevent not found. Please evaluate installing it if you want to have access to the integrated shell')
+
 from pyqtconsole.console import PythonConsole
 
 pg.setConfigOption('background', (53,53,53))
@@ -104,7 +110,8 @@ class NanoWindow(QtWidgets.QMainWindow):
         self.redraw = True        
         QtCore.QMetaObject.connectSlotsByName(self)
 
-        self.ui.consolle.clicked.connect(self.new_consolle)
+        if useGevent is True:
+            self.ui.consolle.clicked.connect(self.new_consolle)
 
     def getData(self):
         return engine.dataset
@@ -669,5 +676,8 @@ if __name__ == "__main__":
 
     #chiaro.ipkernel.start()
     #sys.exit(app.exec_())
-    with GEventProcessing():
+    if useGevent is True:
+        with GEventProcessing():
+            sys.exit(app.exec_())
+    else:
         sys.exit(app.exec_())
