@@ -318,40 +318,52 @@ class NanoWindow(QtWidgets.QMainWindow):
 
     def calc_filters(self):
         for c in engine.dataset:
-            c.reset()
+            c.reset()            
             for fil in self._filters_selected:
-                c.setZF(fil.do(c._Z,c._F,curve=c))
+                try:
+                    c.setZF(fil.do(c._Z,c._F,curve=c))
+                except  Exception as e:
+                    print('Error filtering the curve: ',e)
 
     def calc_cp(self):
         for c in engine.dataset:
             c.resetCP()
             cp = self._cpoint
             if cp is not None:
-                ret = cp.do(c._Z,c._F,curve=c)
-                if (ret is not None) and (ret is not False):
-                    c._cp = ret    
-                    c.calc_indentation(bool(self.ui.setZeroForce.isChecked()))
-                    c.calc_elspectra(int(self.ui.es_win.value()),int(self.ui.es_order.value()),bool(self.ui.es_interpolate.isChecked()))                
+                try:
+                    ret = cp.do(c._Z,c._F,curve=c)
+                    if (ret is not None) and (ret is not False):
+                        c._cp = ret    
+                        c.calc_indentation(bool(self.ui.setZeroForce.isChecked()))
+                        c.calc_elspectra(int(self.ui.es_win.value()),int(self.ui.es_order.value()),bool(self.ui.es_interpolate.isChecked()))                
+                except Exception as e:
+                    print('ERROR calculating the contact point: ',e)
 
     def calc_fmodels(self):
         for c in engine.dataset:
             c._Fparams = None
             model = self._fmodel
             if model is not None:
-                x,y = c.getFizi(self.ui.zi_min.value()*1e-9,self.ui.zi_max.value()*1e-9)
-                ret = model.do(x,y,curve=c)
-                if (ret is not None) and (ret is not False):
-                    c._Fparams = ret 
+                try:
+                    x,y = c.getFizi(self.ui.zi_min.value()*1e-9,self.ui.zi_max.value()*1e-9)            
+                    ret = model.do(x,y,curve=c)
+                    if (ret is not None) and (ret is not False):
+                        c._Fparams = ret 
+                except Exception as e:
+                    print('Error in the force model: ',e)
 
     def calc_emodels(self):
         for c in engine.dataset:
             c._Eparams = None
             model = self._emodel
-            if model is not None:
-                x,y = c.getEze(self.ui.ze_min.value()*1e-9,self.ui.ze_max.value()*1e-9)
-                ret = model.do(x,y,curve=c)
-                if (ret is not None) and (ret is not False):
-                    c._Eparams = ret
+            if model is not None:                
+                try:
+                    x,y = c.getEze(self.ui.ze_min.value()*1e-9,self.ui.ze_max.value()*1e-9)
+                    ret = model.do(x,y,curve=c)
+                    if (ret is not None) and (ret is not False):
+                        c._Eparams = ret
+                except Exception as e:
+                    print('Error in the E model: ',e)
 
     def calc0(self):
         self.calculate()
