@@ -1,4 +1,5 @@
-from ..panels import boxPanel
+from ..panels import magicPanel
+from magicgui.widgets import  FloatSlider
 import numpy as np
 
 NAME = 'RoV'
@@ -7,11 +8,11 @@ DOI = ''
 
 import numpy as np
 
-class CP(boxPanel): 
+class CP(magicPanel): 
     def create(self):
-        self.addParameter('Fthreshold','float','Safe Threshold [nN]',10.0)
-        self.addParameter('Xrange','float','X Range [nm]',1000.0)
-        self.addParameter('windowr','float','Window RoV [nm]',200.0)
+        self.addParameter('Fthreshold', FloatSlider(value=10.0, name='Fthreshold', label='Safe Threshold [nN]'))
+        self.addParameter('Xrange',FloatSlider(value=1000.0, name='Fthreshold', label='XRange',min=0))
+        self.addParameter('windowr',FloatSlider(value=200.0, name='Fthreshold', label='Window RoV [nm]',min=0))
 
     def calculate(self, x, y):
         zz_x, rov = self.getWeight(x,y) 

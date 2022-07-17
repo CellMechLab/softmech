@@ -629,7 +629,6 @@ class NanoWindow(QtWidgets.QMainWindow):
             if self.ui.e_params.layout() is None:
                 self.ui.e_params.setLayout(layout)
 
-
     def cpSelected(self,fid):
         if fid == 0:
             if self._cpoint is not None:                

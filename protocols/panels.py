@@ -119,6 +119,8 @@ class CPPCombo(CPParameter):
                     num = i
                     break
         self._widget.setCurrentIndex(num)
+        
+
 
 class boxPanel:  # Contact point class
     def __init__(self):
@@ -178,6 +180,49 @@ class boxPanel:  # Contact point class
             layout.removeRow(0)
         for widget in self._parameters.values():
             layout.addRow(widget.getLabel(), widget.getWidget())
+            
+class magicPanel:  # Contact point class
+    def __init__(self):
+        self._parameters = {}
+        self.create()
+
+    def create(self):
+        #This function contains the list of parameters to be added
+        pass
+
+    def do(self, x,y,curve=None):
+        #This is the main engine, performing the calculation
+        self.curve = curve
+        return self.calculate(x,y)
+
+    def calculate(self, x,y):
+        pass
+
+    def quickTest(self, c):
+        #This function returns x/y arrays for showing the test/weight
+        pass
+
+    def disconnect(self):
+        #disconnect the callback from the parameters
+        for p in self._parameters.values():
+            p.changed.disconnect()
+
+    def connect(self, callback):
+        #connect the callback to the parameters
+        for p in self._parameters.values():
+            p.changed.connect(callback)
+
+    def getValue(self,name):
+        return self._parameters[name].value
+
+    def addParameter(self,name, widget):
+        self._parameters[name] = widget
+
+    def createUI(self, layout):
+        while(layout.rowCount()>0):
+            layout.removeRow(0)
+        for widget in self._parameters.values():
+            layout.addRow(widget.label, widget.native)
 
 class fitPanel(boxPanel):
     def __init__(self):
