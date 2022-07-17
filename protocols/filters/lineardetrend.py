@@ -3,6 +3,7 @@ from ..panels import boxPanel
 # import here your procedure-specific modules, no requirements (numpy as an example)
 import numpy as np
 from scipy.optimize import curve_fit
+from magicgui.widgets import  FloatSpinBox
 
 
 # Set here the details of the procedure
@@ -20,10 +21,9 @@ class Filter(boxPanel):
     def create(self):
         # This function is required and describes the form to be created in the user interface
         # The last value is the initial value of the field; currently 3 types are supported: int, float and combo
-        self.addParameter('Athreshold', 'float',
-                          'Align Threshold [nN]', 10.0)
-        self.addParameter('deltaX', 'float', 'Align left step [nm]', 2000.0)
-        self.addParameter('Fthreshold', 'float', 'AVG area [nm]', 100.0)
+        self.addParameter('Athreshold',FloatSpinBox(value=10.0, name='Athreshold', label='Align Threshold [nN]',min=0))
+        self.addParameter('deltaX',FloatSpinBox(value=2000.0, name='deltaX', label='Align left step [nm]',min=0,max=10000))
+        self.addParameter('Fthreshold',FloatSpinBox(value=100.0, name='Fthreshold', label='AVG area [nm]',min=0))
 
 
     def calculate(self, x,y):

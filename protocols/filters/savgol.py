@@ -2,6 +2,8 @@
 from ..panels import boxPanel
 # import here your procedure-specific modules, no requirements (numpy as an example)
 from scipy.signal import savgol_filter
+from magicgui.widgets import  FloatSpinBox, Slider
+
 
 # Set here the details of the procedure
 NAME = 'SavGol'  # Name, please keep it short as it will appear in the combo box of the user interface
@@ -17,8 +19,8 @@ class Filter(boxPanel):
     def create(self):
         # This function is required and describes the form to be created in the user interface
         # The last value is the initial value of the field; currently 3 types are supported: int, float and combo
-        self.addParameter('win', 'float', 'Window size [nm]', 25)
-        self.addParameter('order', 'int', 'Order of the interpolation', 3)
+        self.addParameter('win',FloatSpinBox(value=25.0, name='win', label='Window size [nm]',min=0))
+        self.addParameter('order',Slider(value=3, name='order', label='Order of the interpolation',min=1,max=7))
 
     def calculate(self, x, y, curve=None):
         win = self.getValue('win')*1e-9

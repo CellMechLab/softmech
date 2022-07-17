@@ -4,6 +4,8 @@ from ..panels import boxPanel
 import numpy as np
 from scipy.signal import savgol_filter
 from scipy.interpolate import interp1d
+from magicgui.widgets import  FloatSpinBox
+
 
 #Set here the details of the procedure
 NAME = 'Prime function threshold' #Name, please keep it short as it will appear in the combo box of the user interface

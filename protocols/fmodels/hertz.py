@@ -3,9 +3,11 @@ from ..panels import fitPanel
 #import here your procedure-specific modules, no requirements (numpy as an example)
 import numpy as np
 from scipy.optimize import curve_fit
+from magicgui.widgets import  FloatSlider
+
 
 #Set here the details of the procedure
-NAME = 'Hertz Sphere' #Name, please keep it short as it will appear in the combo box of the user interface
+NAME = 'Hertz' #Name, please keep it short as it will appear in the combo box of the user interface
 DESCRIPTION = 'Fit indentation data with the Hertz model - Spherical indenter' #Free text
 DOI = '' #set a DOI of a publication you want/suggest to be cited, empty if no reference
 PARAMETERS = {'E [Pa]':"Young's modulus"}
@@ -17,15 +19,23 @@ class FModel(fitPanel):
         # This function is required and describes the form to be created in the user interface 
         # The last value is the initial value of the field; currently 3 types are supported: int, float and combo
         # Parameters can be used as seeds or proper parameters (e.g. indentation depth ?) 
-        self.addParameter('poisson','float','Poisson ratio',0.5)
+        self.addParameter('poisson',FloatSlider(value=0.5, name='poisson', label='Poisson ratio',min=-1,max=0.5))
 
     def theory(self,x,*parameters):
         if self.curve.tip['geometry']=='sphere':
             R = self.curve.tip['radius']
+            return (4.0 / 3.0) * (parameters[0] / (1 - self.getValue('poisson') ** 2)) * np.sqrt(R * x ** 3)
+        elif self.curve.tip['geometry']=='pyramid':
+            ang = self.curve.tip['angle'] #see DOI for definition
+            return 0.7453 * ((parameters[0]*math.tan(ang*math.pi/180.0)) / (1-self.getValue('poisson') ** 2)) * x**2
+        elif self.curve.tip['geometry']=='cylinder':
+            R = self.curve.tip['radius']
+            return (2.0/1.0) * (parameters[0] / (1 - self.getValue('poisson') ** 2)) * (R * x)
+        elif self.curve.tip['geometry']=='cone':
+            ang = self.curve.tip['angle'] 
+            return (2.0/1.0) * ((parameters[0]*math.tan(ang*math.pi/180.0)) / (math.pi*(1-self.getValue('poisson') ** 2))) * x**2
         else:
             return False
-        # Calculate the fitting function for a specific set of parameters
-        return (4.0 / 3.0) * (parameters[0] / (1 - self.getValue('poisson') ** 2)) * np.sqrt(R * x ** 3)
 
     def calculate(self, x,y):
         # This function gets the current x and y and returns the parameters.

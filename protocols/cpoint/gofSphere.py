@@ -1,5 +1,7 @@
 from ..panels import boxPanel
 from scipy.optimize import curve_fit
+from magicgui.widgets import  FloatSpinBox
+
 
 NAME = 'GoF sphere'
 DESCRIPTION = 'Computes CP based on the GoF method using the Hertz solution for a spherical indenter'
@@ -9,9 +11,9 @@ import numpy as np
 
 class CP(boxPanel): 
     def create(self):
-        self.addParameter('fit window','float','Fit window [nm]',200.0)
-        self.addParameter('x range', 'float', 'X Range [nm]', 1000.0)
-        self.addParameter('force threshold', 'float', 'Force threshold', 10.0)
+        self.addParameter('fit window', FloatSpinBox(value=200.0, name='fit window', label='Fit window [nm]'))
+        self.addParameter('x range', FloatSpinBox(value=1000.0, name='x range', label='X Range [nm]'))
+        self.addParameter('force threshold', FloatSpinBox(value=10.0, name='force threshold', label='Force threshold [nN]'))
 
     def calculate(self, x, y):
         # Retunrs contact point (z0, f0) based on max R**2

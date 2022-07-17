@@ -3,6 +3,8 @@ from ..panels import boxPanel
 #import here your procedure-specific modules, no requirements (numpy as an example)
 import numpy as np
 from scipy.signal import savgol_filter
+from magicgui.widgets import  FloatSpinBox
+
 
 #Set here the details of the procedure
 NAME = 'Prime function derivative' #Name, please keep it short as it will appear in the combo box of the user interface

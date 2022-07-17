@@ -1,5 +1,6 @@
 from ..panels import boxPanel
 import numpy as np
+from magicgui.widgets import  Slider,SpinBox
 
 NAME = 'Prominency'
 DESCRIPTION = 'Filters prominent peaks in the Fourier space, to eliminate oscillations'
@@ -11,9 +12,9 @@ from scipy.interpolate import interp1d
 
 class Filter(boxPanel):  # Threshold
     def create(self):
-        self.addParameter('pro','int','Prominency [a.u.]',40)
-        self.addParameter('threshold','int','Minimum frequency [channels]',25)
-        self.addParameter('band','int',"Band pass [% of the position]",30)
+        self.addParameter('pro',SpinBox(value=40, name='pro', label='Prominency [a.u.]',min=1))
+        self.addParameter('threshold',SpinBox(value=25, name='threshold', label='Minimum frequency [channels]',min=1))
+        self.addParameter('band',Slider(value=30, name='band', label='Band pass [% of the position]',min=0,max=100))
 
     def calculate(self, x,y,curve=None):
         # threshold is the minimum frequency to be eventually filtered
