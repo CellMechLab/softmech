@@ -27,13 +27,13 @@ class FModel(fitPanel):
             return (4.0 / 3.0) * (parameters[0] / (1 - self.getValue('poisson') ** 2)) * np.sqrt(R * x ** 3)
         elif self.curve.tip['geometry']=='pyramid':
             ang = self.curve.tip['angle'] #see DOI for definition
-            return 0.7453 * ((parameters[0]*math.tan(ang*math.pi/180.0)) / (1-self.getValue('poisson') ** 2)) * x**2
+            return 0.7453 * ((parameters[0]*np.tan(ang*np.pi/180.0)) / (1-self.getValue('poisson') ** 2)) * x**2
         elif self.curve.tip['geometry']=='cylinder':
             R = self.curve.tip['radius']
             return (2.0/1.0) * (parameters[0] / (1 - self.getValue('poisson') ** 2)) * (R * x)
         elif self.curve.tip['geometry']=='cone':
             ang = self.curve.tip['angle'] 
-            return (2.0/1.0) * ((parameters[0]*math.tan(ang*math.pi/180.0)) / (math.pi*(1-self.getValue('poisson') ** 2))) * x**2
+            return (2.0/1.0) * ((parameters[0]*np.tan(ang*np.pi/180.0)) / (np.pi*(1-self.getValue('poisson') ** 2))) * x**2
         else:
             return False
 
