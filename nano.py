@@ -24,7 +24,7 @@ except ModuleNotFoundError:
     print('Module gevent and/or pyqtconsole not found. Please evaluate installing it if you want to have access to the integrated shell')
 
 try:
-    from magicgui.widgets import Spinbox   # noqa
+    from magicgui.widgets import FloatSlider   # noqa
 except ModuleNotFoundError:
     print('Module magicgui is not installed. You need it to load the plugins from the corresponding folders!!!')
 
