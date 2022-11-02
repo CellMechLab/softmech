@@ -24,6 +24,9 @@ def dataformat(box,n):
         indicators.append( pippo )
     return indicators
 
+def fuse(pre,post):
+    return np.append(pre,post)
+
 def reorganise(stack,n):
     box = []
     data = np.array(stack)
@@ -36,6 +39,7 @@ class curve(object):
         self.data = {'F': None,'Z':None}
         self.spring_constant = 1.0
         self.tip = {'geometry':None}
+        self.position=None
         self._cp=[]
         self.reset()
         if structure is not None:
