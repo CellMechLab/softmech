@@ -1,6 +1,6 @@
 from ..panels import boxPanel
 import numpy as np
-from magicgui.widgets import  FloatSpinBox,SpinBox
+from magicgui.widgets import  FloatSpinBox
 
 
 NAME = 'AutoThreshold'
