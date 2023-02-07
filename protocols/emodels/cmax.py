@@ -8,7 +8,7 @@ from magicgui.widgets import SpinBox
 NAME = 'LineMax' #Name, please keep it short as it will appear in the combo box of the user interface
 DESCRIPTION = 'Evaluate the average over a range and the maximum' #Free text
 DOI = '' #set a DOI of a publication you want/suggest to be cited, empty if no reference
-PARAMETERS = {'E [Pa]':"Average modulus",'M<E> [Pa]':"Median modulus",'Emax [Pa]':"Max modulus"}
+PARAMETERS = {'E [Pa]':"Average modulus",'M<E> [Pa]':"Median modulus",'Emax [Pa]':"Max modulus", 'Emin': 'Min modulus'}
 
 # Create your filter class by extending the main one
 # Additional methods can be created, if required
@@ -18,7 +18,8 @@ class EModel(fitPanel):
         # The last value is the initial value of the field; currently 3 types are supported: int, float and combo
         # Parameters can be used as seeds or proper parameters (e.g. indentation depth ?) 
         #self.addParameter('maxind','float','Max indentation [nm]',800)
-        self.addParameter('Smooth',SpinBox(value=100, name='Smooth', label='Percentile threshold',min=60,max=100))
+        self.addParameter('Smooth',SpinBox(value=100, name='Smooth', label='Upper Percentile threshold',min=60,max=100))
+        self.addParameter('Lower',SpinBox(value=10, name='Lower', label='Lower Percentile threshold',min=5,max=50) )
 
     def theory(self,x,*parameters):
         return parameters[0]*np.ones(len(x))
@@ -26,10 +27,13 @@ class EModel(fitPanel):
     def calculate(self, x,y):
         full = self.curve._E
         # This function gets the current x and y and returns the parameters.
-        percentile = self.getValue('Smooth')
+        percentile = self.getValue('Smooth') #Upper
+        lower = self.getValue('Lower') #Lower
         if percentile < 100:
             threshold = np.percentile(full,percentile)
             maxi = np.average(full[full>threshold])
         else:
             maxi = np.max(full)
-        return [np.average(y),np.median(full),maxi]
+        min_th = np.percentile(full,lower)
+        mini = np.average(full[full<min_th])
+        return [np.average(y),np.median(full),maxi,mini]
