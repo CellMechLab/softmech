@@ -215,8 +215,7 @@ class NanoWindow(QtWidgets.QMainWindow):
         #EZe
         self.ui.g_eze_all.setTitle(title_style('Elasticity Spectra (data set)'))
         self.ui.g_eze_all.setLabel('left', lab_style('E [Pa]'))
-        self.ui.g_eze_all.setLabel('bottom', lab_style('<font>&delta;</font> [m]'))#
-        #bla bla
+        self.ui.g_eze_all.setLabel('bottom', lab_style('<font>&delta;</font> [m]'))
 
     def loadPlugins(self):
         data = protocols.filters.list()
