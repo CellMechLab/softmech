@@ -141,6 +141,11 @@ class NanoWindow(QtWidgets.QMainWindow):
                     x,y = cC.getEze(self.ui.ze_min.value()*1e-9,self.ui.ze_max.value()*1e-9)
                     dummy['el_fit']=(x,self._emodel.getTheory(x,cC._Eparams,curve=cC))
         return dummy 
+    
+    def deleteCurve(self):
+        selected = int(self.ui.slid_cv.value())
+        del(engine.dataset[selected])
+        self.loadExperiment(True)
         
     def new_consolle(self):
         self.a=[]
@@ -256,18 +261,24 @@ class NanoWindow(QtWidgets.QMainWindow):
         for p in self.ui.g_eze_all.getPlotItem().listDataItems():
             p.setPen(pg.mkPen( self.getCol() ))
 
-    def loadExperiment(self):
-        fOpener = QtWidgets.QFileDialog.getOpenFileName(self,"Open Experiment File",self.workingpath,"JSON curve files (*.json)")
-        if fOpener[0]=='' or fOpener[0] is None:
-            return
-        self.redraw = False
-        QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
-        filename = fOpener[0]
-        self.workingpath = os.path.dirname(filename)
-        self.reset()
-        structure = json.load(open(filename))
-        for cv in structure['curves']:
-            engine.dataset.append(engine.curve(cv))
+    def loadExperiment(self,reload=False):
+        if reload is False:
+            fOpener = QtWidgets.QFileDialog.getOpenFileName(self,"Open Experiment File",self.workingpath,"JSON curve files (*.json)")
+            if fOpener[0]=='' or fOpener[0] is None:
+                return
+            self.redraw = False
+            QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
+            filename = fOpener[0]
+            self.workingpath = os.path.dirname(filename)
+            self.reset()
+            structure = json.load(open(filename))
+            for cv in structure['curves']:
+                engine.dataset.append(engine.curve(cv))
+        else:
+            store = engine.dataset.copy()
+            self.reset()
+            for c in store:
+                engine.dataset.append(c)
         i=0
         for cv in engine.dataset:
             #fz

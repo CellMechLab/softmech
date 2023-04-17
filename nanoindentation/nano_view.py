@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file 'nano.ui'
+# Form implementation generated from reading ui file 'nano.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.6
 #
@@ -337,11 +338,11 @@ class Ui_MainWindow(object):
         self.horizontalLayout_8.addLayout(self.horizontalLayout_7)
         self.groupBox_9 = QtWidgets.QGroupBox(self.centralwidget)
         self.groupBox_9.setObjectName("groupBox_9")
-        self.verticalLayout_12 = QtWidgets.QVBoxLayout(self.groupBox_9)
-        self.verticalLayout_12.setObjectName("verticalLayout_12")
+        self.verticalLayout_10 = QtWidgets.QVBoxLayout(self.groupBox_9)
+        self.verticalLayout_10.setObjectName("verticalLayout_10")
         self.label = QtWidgets.QLabel(self.groupBox_9)
         self.label.setObjectName("label")
-        self.verticalLayout_12.addWidget(self.label)
+        self.verticalLayout_10.addWidget(self.label)
         self.slid_cv = QtWidgets.QSlider(self.groupBox_9)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -350,12 +351,14 @@ class Ui_MainWindow(object):
         self.slid_cv.setSizePolicy(sizePolicy)
         self.slid_cv.setOrientation(QtCore.Qt.Horizontal)
         self.slid_cv.setObjectName("slid_cv")
-        self.verticalLayout_12.addWidget(self.slid_cv)
+        self.verticalLayout_10.addWidget(self.slid_cv)
         self.label_2 = QtWidgets.QLabel(self.groupBox_9)
         self.label_2.setObjectName("label_2")
-        self.verticalLayout_12.addWidget(self.label_2)
+        self.verticalLayout_10.addWidget(self.label_2)
+        self.horizontalLayout_12 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_12.setObjectName("horizontalLayout_12")
         self.slid_alpha = QtWidgets.QSlider(self.groupBox_9)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.slid_alpha.sizePolicy().hasHeightForWidth())
@@ -365,7 +368,11 @@ class Ui_MainWindow(object):
         self.slid_alpha.setProperty("value", 100)
         self.slid_alpha.setOrientation(QtCore.Qt.Horizontal)
         self.slid_alpha.setObjectName("slid_alpha")
-        self.verticalLayout_12.addWidget(self.slid_alpha)
+        self.horizontalLayout_12.addWidget(self.slid_alpha)
+        self.delcurve = QtWidgets.QPushButton(self.groupBox_9)
+        self.delcurve.setObjectName("delcurve")
+        self.horizontalLayout_12.addWidget(self.delcurve)
+        self.verticalLayout_10.addLayout(self.horizontalLayout_12)
         self.horizontalLayout_8.addWidget(self.groupBox_9)
         self.verticalLayout_13.addLayout(self.horizontalLayout_8)
         self.verticalLayout_14.addLayout(self.verticalLayout_13)
@@ -409,4 +416,5 @@ class Ui_MainWindow(object):
         self.groupBox_9.setTitle(_translate("MainWindow", "Sliders"))
         self.label.setText(_translate("MainWindow", "Slide through curves"))
         self.label_2.setText(_translate("MainWindow", "Trasnparency "))
+        self.delcurve.setText(_translate("MainWindow", "Delete selected"))
 from pyqtgraph import PlotWidget
