@@ -113,6 +113,7 @@ class NanoWindow(QtWidgets.QMainWindow):
         self.ui.zi_max.valueChanged.connect(self.data1)
         self.ui.ze_min.valueChanged.connect(self.data2)
         self.ui.ze_max.valueChanged.connect(self.data2)
+        self.ui.delcurve.clicked.connect(self.deleteCurve)
         #self.ui.b_saveFdata.clicked.connect(lambda: self.save_params(True))
         #self.ui.b_saveEdata.clicked.connect(lambda: self.save_params(False))
         self.ui.exportButton.clicked.connect(self.doExport)
@@ -124,6 +125,11 @@ class NanoWindow(QtWidgets.QMainWindow):
 
     def getData(self):
         return engine.dataset
+    
+    def deleteCurve(self):
+        selected = int(self.ui.slid_cv.value())
+        del(engine.dataset[selected])
+        self.loadExperiment(True)
 
     def getCurrent(self):
         cC = engine.dataset[ int(self.ui.slid_cv.value()) ]

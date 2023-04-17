@@ -2,14 +2,14 @@
 from ..panels import boxPanel
 #import here your procedure-specific modules, no requirements (numpy as an example)
 import numpy as np
-from magicgui.widgets import  RadioButtons,CheckBox
+from magicgui.widgets import  CheckBox,ComboBox,SpinBox
 
 #Set here the details of the procedure
 NAME = 'Average curve' #Name, please keep it short as it will appear in the combo box of the user interface
 DESCRIPTION = 'Plot (and save) average curve' #Free text
 DOI = '' #set a DOI of a publication you want/suggest to be cited, empty if no reference
 
-def averageall(xall,yall,direction):
+def averageall(xall,yall,direction,loose=100):
     
     N = np.max( [ len(x) for x in xall] )
 
@@ -19,13 +19,19 @@ def averageall(xall,yall,direction):
     else:
         dset = xall
         ddep = yall
-    
-    sup = np.min( [ np.max(d) for d in dset if d is not None] )
+        
     inf = np.max( [ np.min(d) for d in dset if d is not None] )
+    if loose >= 100:
+        sup = np.min( [ np.max(d) for d in dset if d is not None] )
+    else:
+        sups = [ np.max(d) for d in dset if d is not None]
+        sup = np.percentile(sups,100-loose)
+        
     newax = np.linspace(inf,sup,N)
     neway = []
     for x,y in zip(dset,ddep):
-        neway.append(np.interp(newax, x, y))
+        if np.max(x)>= sup:
+            neway.append(np.interp(newax, x, y))
     newyavg = np.average(np.array(neway),axis=0)
     
     if direction == 'H':
@@ -40,12 +46,13 @@ class EXP(boxPanel):
         # This function is required and describes the form to be created in the user interface 
         # The last value is the initial value of the field; currently 3 types are supported: int, float and combo
         #self.addParameter('ZeroRange',FloatSpinBox(value=500.0, name='ZeroRange', label='Range to set the zero [nN]',min=20,max=9999))
-        w1 = RadioButtons(choices=['Indentation','Elastography'], label='Dataset:', value='Indentation')        
-        w2 = RadioButtons(choices=['H','V'], label='Direction:', value='H')
+        w1 = ComboBox(choices=['Indentation','Elastography'], label='Dataset:', value='Indentation')        
+        w2 = ComboBox(choices=['H','V'], label='Direction:', value='H')
         w3 = CheckBox(text='Preview', value=False)
         self.addParameter('Dataset',w1)
         self.addParameter('Direction',w2)
         self.addParameter('Preview',w3)
+        self.addParameter('Loose',SpinBox(value=100,min=10,max=100,label="Looseness"))
         
     def export(self, filename, exp):
         data =exp.getData()
@@ -65,7 +72,7 @@ class EXP(boxPanel):
         if len(xall)==0:
             return
                     
-        x,y = averageall(xall,yall,self.getValue('Direction'))
+        x,y = averageall(xall,yall,self.getValue('Direction'),self.getValue('Loose'))
         
         if self.getValue('Preview') is True:
             import matplotlib.pyplot as plt
