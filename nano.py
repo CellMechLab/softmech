@@ -12,7 +12,7 @@ except ModuleNotFoundError:
 import nanoindentation.nano_view as view
 import nanoindentation.engine as engine
 import json
-import protocols.filters,protocols.cpoint,protocols.fmodels,protocols.emodels
+import protocols.filters,protocols.cpoint,protocols.fmodels,protocols.emodels,protocols.exporters
 
 useGevent = False
 try:
@@ -87,6 +87,7 @@ class NanoWindow(QtWidgets.QMainWindow):
 
         self._filters_selected = []
         self._cpoint = None
+        self._export = None
         self._fmodel = None
         self._emodel = None
         self._fdata = None
@@ -99,6 +100,7 @@ class NanoWindow(QtWidgets.QMainWindow):
         self.ui.slid_cv.valueChanged.connect( self.selectedCurveChanged )
         self.ui.slid_alpha.valueChanged.connect( self.alphaChanged )
         self.ui.sel_filter.currentIndexChanged.connect(self.filterSelected)
+        self.ui.sel_exp.currentIndexChanged.connect(self.exportSelected)
         self.ui.tabfilters.tabCloseRequested.connect(self.removeFilter)
         self.ui.sel_cp.currentIndexChanged.connect(self.cpSelected)
         self.ui.sel_fmodel.currentIndexChanged.connect(self.fmodelSelect)
@@ -111,8 +113,9 @@ class NanoWindow(QtWidgets.QMainWindow):
         self.ui.zi_max.valueChanged.connect(self.data1)
         self.ui.ze_min.valueChanged.connect(self.data2)
         self.ui.ze_max.valueChanged.connect(self.data2)
-        self.ui.b_saveFdata.clicked.connect(lambda: self.save_params(True))
-        self.ui.b_saveEdata.clicked.connect(lambda: self.save_params(False))
+        #self.ui.b_saveFdata.clicked.connect(lambda: self.save_params(True))
+        #self.ui.b_saveEdata.clicked.connect(lambda: self.save_params(False))
+        self.ui.exportButton.clicked.connect(self.doExport)
         self.redraw = True        
         QtCore.QMetaObject.connectSlotsByName(self)
 
@@ -227,6 +230,10 @@ class NanoWindow(QtWidgets.QMainWindow):
         self._plugin_cpoint = list(data.keys())
         for l in data.values():
             self.ui.sel_cp.addItem(l)
+        data = protocols.exporters.list()
+        self._plugin_export = list(data.keys())
+        for l in data.values():
+            self.ui.sel_exp.addItem(l)
         data = protocols.fmodels.list()
         self._plugin_fmodels = list(data.keys())
         for l in data.values():
@@ -483,46 +490,13 @@ class NanoWindow(QtWidgets.QMainWindow):
             self._emodel.setParameters(engine.dataformat(self.edata,nemod))
         self.scatter()
 
-    def save_params(self,force = True):
-        if force is True:
-            if self.fdata is None or self.fdata is False or len(self.fdata) == 0:
-                return
-        else:
-            if self.edata is None or self.edata is False or len(self.edata) == 0:
-                return
-
+    def doExport(self):
         fname = QtWidgets.QFileDialog.getSaveFileName(self, 'Save the data to a CSV datafile', self.workingpath, "CSV Files (*.csv)")
         if fname == '' or fname is None or fname[0] == '':
             return        
-
+        filename = fname[0]
         QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
-        if force is True:
-            header = '#SoftMech export data\n#Indentation analysis\n#\n#FModel parameters\n'
-            model = self._fmodel
-            data = self.fdata
-        else:
-            header = '#SoftMech export data\n#Elastography analysis\n#\n#EModel parameters\n'
-            model = self._emodel
-            data = self.edata
-        
-        f = open(fname[0],'w')
-
-        for key in model.fitparameters:
-            header += '#{}:{}\n'.format(key,model.fitparameters[key])
-        header+='#\n#'
-        pre = ''
-        for key in model.fitparameters:
-            header = header + pre + key
-            pre = ','
-        header+='\n#\n#DATA\n'
-        f.write(header)
-        for line in range(len(data[0])):
-            pre = ''
-            for column in range(len(data)):
-                f.write(pre + str(data[column][line]))
-                pre=','
-            f.write('\n')
-        f.close()
+        self._export.export(filename,self)
         QtWidgets.QApplication.restoreOverrideCursor()
 
     def scatter(self):
@@ -659,6 +633,14 @@ class NanoWindow(QtWidgets.QMainWindow):
             self._cpoint.connect(self.calc1)
             self.ui.box_cp.setLayout(layout)
         self.calc1()
+        
+    def exportSelected(self,fid):
+        layout = self.ui.box_exp.layout()
+        if layout is None:
+            layout = QtWidgets.QFormLayout()
+        self._export = protocols.exporters.get(self._plugin_export[fid-1])
+        self._export.createUI(layout)
+        self.ui.box_exp.setLayout(layout)
 
     def filterSelected(self,fid):
         if fid == 0:
