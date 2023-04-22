@@ -46,7 +46,7 @@ class EXP(boxPanel):
         # This function is required and describes the form to be created in the user interface 
         # The last value is the initial value of the field; currently 3 types are supported: int, float and combo
         #self.addParameter('ZeroRange',FloatSpinBox(value=500.0, name='ZeroRange', label='Range to set the zero [nN]',min=20,max=9999))
-        w1 = ComboBox(choices=['Indentation','Elastography'], label='Dataset:', value='Indentation')        
+        w1 = ComboBox(choices=['Force','Elasticity'], label='Dataset:', value='Force')        
         w2 = ComboBox(choices=['H','V'], label='Direction:', value='H')
         w3 = CheckBox(text='Preview', value=False)
         self.addParameter('Dataset',w1)
@@ -60,7 +60,7 @@ class EXP(boxPanel):
         xall=[]
         yall=[]
         for c in data:
-            if wone == 'Indentation':
+            if wone == 'Force':
                 if c._Zi is not None:
                     xall.append(c._Zi)
                     yall.append(c._Fi)
@@ -77,11 +77,24 @@ class EXP(boxPanel):
         if self.getValue('Preview') is True:
             import matplotlib.pyplot as plt
             for xx,yy in zip(xall,yall):
-                plt.plot(xx,yy,'r-',alpha=0.25)    
-            plt.plot(x,y,'b-')
+                plt.xlabel('Indentation [nm]')
+                if wone == 'Force':
+                    plt.ylabel('Force [nN]')
+                    yy*=1e9
+                else:
+                    plt.ylabel('Elasticity spectrum [kPa]')
+                    yy/=1000.0
+                plt.plot(xx*1e9,yy,'r-',alpha=0.25)    
+            x*=1e9
+            if wone == 'Force':
+                y*=1e9
+            else:
+                y/=1000.0
+            plt.plot(x,y,'b-',label='Average curve')
+            plt.legend()
             plt.show()
 
-        if wone == 'Indentation':
+        if wone == 'Force':
             header = '#SoftMech export data\n#Average F-d curve\n'
         else:
             header = '#SoftMech export data\n#Average E-d curve\n'

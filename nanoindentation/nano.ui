@@ -46,6 +46,9 @@
              </item>
              <item>
               <widget class="QPushButton" name="b_protocol">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="text">
                 <string>Load protocol</string>
                </property>
@@ -173,7 +176,7 @@
                    <number>9999</number>
                   </property>
                   <property name="value">
-                   <number>21</number>
+                   <number>61</number>
                   </property>
                  </widget>
                 </item>
@@ -197,7 +200,7 @@
                    <number>9</number>
                   </property>
                   <property name="value">
-                   <number>3</number>
+                   <number>2</number>
                   </property>
                  </widget>
                 </item>

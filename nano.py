@@ -163,6 +163,7 @@ class NanoWindow(QtWidgets.QMainWindow):
 
     def reset(self):
         was = self.redraw
+        #self.statusBar().showMessage('')
         self.redraw = False
         engine.dataset=[]
         for p in self.ALLPLOTS:
@@ -275,6 +276,7 @@ class NanoWindow(QtWidgets.QMainWindow):
             self.redraw = False
             QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
             filename = fOpener[0]
+            self.statusBar().showMessage(filename)
             self.workingpath = os.path.dirname(filename)
             self.reset()
             structure = json.load(open(filename))

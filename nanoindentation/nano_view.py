@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'nano.ui'
+# Form implementation generated from reading ui file '.\nano.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.6
 #
@@ -16,7 +16,7 @@ class Ui_MainWindow(object):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1680, 917)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("../../.designer/backup/ico.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(".\\../../.designer/backup/ico.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -41,6 +41,7 @@ class Ui_MainWindow(object):
         self.consolle.setObjectName("consolle")
         self.horizontalLayout_10.addWidget(self.consolle)
         self.b_protocol = QtWidgets.QPushButton(self.groupBox_7)
+        self.b_protocol.setEnabled(False)
         self.b_protocol.setObjectName("b_protocol")
         self.horizontalLayout_10.addWidget(self.b_protocol)
         self.b_load = QtWidgets.QPushButton(self.groupBox_7)
@@ -110,7 +111,7 @@ class Ui_MainWindow(object):
         self.es_win = QtWidgets.QSpinBox(self.layoutWidget2)
         self.es_win.setMinimum(3)
         self.es_win.setMaximum(9999)
-        self.es_win.setProperty("value", 21)
+        self.es_win.setProperty("value", 61)
         self.es_win.setObjectName("es_win")
         self.horizontalLayout_2.addWidget(self.es_win)
         self.horizontalLayout_4.addLayout(self.horizontalLayout_2)
@@ -122,7 +123,7 @@ class Ui_MainWindow(object):
         self.es_order = QtWidgets.QSpinBox(self.layoutWidget2)
         self.es_order.setMinimum(1)
         self.es_order.setMaximum(9)
-        self.es_order.setProperty("value", 3)
+        self.es_order.setProperty("value", 2)
         self.es_order.setObjectName("es_order")
         self.horizontalLayout.addWidget(self.es_order)
         self.horizontalLayout_4.addLayout(self.horizontalLayout)
