@@ -9,7 +9,16 @@ try:
 except ModuleNotFoundError:
     print('Module qtmodern not found. Please evaluate installing it for a nicer UI')
 
-import nanoindentation.nano_view as view
+#Modify the next line if using the old UI is preferred
+useNewUi = True
+#Set qtmoder manually to false if standard UI is preferred
+#useQtmodern = False
+
+if useNewUi is True:
+    import nanoindentation.nano_new_ui as view
+else:
+    import nanoindentation.nano_old_ui as view
+
 import nanoindentation.engine as engine
 import json
 import protocols.filters,protocols.cpoint,protocols.fmodels,protocols.emodels,protocols.exporters

@@ -16,23 +16,23 @@ class EXP(boxPanel):
         # This function is required and describes the form to be created in the user interface 
         # The last value is the initial value of the field; currently 3 types are supported: int, float and combo
         #self.addParameter('ZeroRange',FloatSpinBox(value=500.0, name='ZeroRange', label='Range to set the zero [nN]',min=20,max=9999))
-        choices = ['Indentation','Elastography']
-        w2 = RadioButtons(choices=choices, label='Dataset:', value='Indentation')
+        choices = ['Force Model','Elasticity Model']
+        w2 = RadioButtons(choices=choices, label='Dataset:', value='Force Model')
         self.addParameter('Dataset',w2)
     
     def export(self, filename, exp):
 
         wone = self.getValue('Dataset')
-        if wone == 'Indentation':
+        if wone == 'Force Model':
             if exp.fdata is None or exp.fdata is False or len(exp.fdata) == 0:
                 return
-            header = '#SoftMech export data\n#Indentation analysis\n#\n#FModel parameters\n'
+            header = '#SoftMech export data\n#Force Indentation analysis\n#\n#FModel parameters\n'
             model = exp._fmodel
             data = exp.fdata
         else:
             if exp.edata is None or exp.edata is False or len(exp.edata) == 0:
                 return
-            header = '#SoftMech export data\n#Elastography analysis\n#\n#EModel parameters\n'
+            header = '#SoftMech export data\n#Elasticity Spectra analysis\n#\n#EModel parameters\n'
             model = exp._emodel
             data = exp.edata
         

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '.\nano.ui'
+# Form implementation generated from reading ui file 'c:\Users\mv68b\git\softmech\nanoindentation\nano_old.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.6
 #
@@ -16,7 +16,7 @@ class Ui_MainWindow(object):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1680, 917)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(".\\../../.designer/backup/ico.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap("c:\\Users\\mv68b\\git\\softmech\\nanoindentation\\../../.designer/backup/ico.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
