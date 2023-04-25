@@ -341,6 +341,7 @@ class NanoWindow(QtWidgets.QMainWindow):
             self._gc_fizi.setData(cC._Zi,cC._Fi)
             #draw current fizi fit
             if cC._Fparams is not None:
+                print(cC._Fparams)
                 x,y = cC.getFizi(self.ui.zi_min.value()*1e-9,self.ui.zi_max.value()*1e-9)
                 self._gc_fizi_fit.setData(x,self._fmodel.getTheory(x,cC._Fparams,curve=cC))                
         else:

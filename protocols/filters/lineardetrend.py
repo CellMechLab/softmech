@@ -36,6 +36,7 @@ class Filter(boxPanel):
         for j in range(len(dy)):
             if dy[j]>self.getValue('threshold')/1e12:
                 break
+        k=j
         for k in range(j,0,-1):
             if dy[k]<0:
                 break

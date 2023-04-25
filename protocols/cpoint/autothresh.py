@@ -12,7 +12,7 @@ from scipy.signal import savgol_filter,argrelmin
 
 class CP(boxPanel):  # Threshold
     def create(self):
-        self.addParameter('ZeroRange',FloatSpinBox(value=500.0, name='ZeroRange', label='Range to set the zero [nN]',min=20,max=9999))
+        self.addParameter('ZeroRange',FloatSpinBox(value=500.0, name='ZeroRange', label='Range to set the zero [nm]',min=1,max=9999))
     def calculate(self, x,y):
         
         deg = 0 #self.getValue('Degree')
