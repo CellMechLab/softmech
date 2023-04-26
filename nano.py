@@ -1,6 +1,7 @@
 import sys,os
 import pyqtgraph as pg
 from PyQt5 import QtCore, QtGui, QtWidgets
+import traceback
 useQtmodern = False
 try:
     import qtmodern.styles
@@ -94,6 +95,7 @@ class NanoWindow(QtWidgets.QMainWindow):
         self.workingpath = os.path.dirname(__file__)
         self.redraw = False
 
+        self._debug = False
         self._filters_selected = []
         self._cpoint = None
         self._export = None
@@ -132,6 +134,9 @@ class NanoWindow(QtWidgets.QMainWindow):
         if useGevent is True:
             self.ui.consolle.clicked.connect(self.new_consolle)
 
+    def debug(self,val):
+        self._debug=val
+
     def getData(self):
         return engine.dataset
     
@@ -167,6 +172,7 @@ class NanoWindow(QtWidgets.QMainWindow):
         console = PythonConsole()
         console.push_local_ns('getData', self.getData)
         console.push_local_ns('getCurrent', self.getCurrent)
+        console.push_local_ns('debug', self.debug)
         console.show()
         console.eval_executor(gevent.spawn)
 
@@ -332,6 +338,7 @@ class NanoWindow(QtWidgets.QMainWindow):
         if len(engine.dataset) == 0:
             return
         cC = engine.dataset[ int(self.ui.slid_cv.value()) ]
+        self.ui.label.setText('Selected curve: {}'.format(self.ui.slid_cv.value()))
         #draw the selected fz curve
         self._gc_fz_raw.setData( cC.data['Z'],cC.data['F'] )
         #draw filtered
@@ -341,7 +348,6 @@ class NanoWindow(QtWidgets.QMainWindow):
             self._gc_fizi.setData(cC._Zi,cC._Fi)
             #draw current fizi fit
             if cC._Fparams is not None:
-                print(cC._Fparams)
                 x,y = cC.getFizi(self.ui.zi_min.value()*1e-9,self.ui.zi_max.value()*1e-9)
                 self._gc_fizi_fit.setData(x,self._fmodel.getTheory(x,cC._Fparams,curve=cC))                
         else:
@@ -366,6 +372,8 @@ class NanoWindow(QtWidgets.QMainWindow):
                     c.setZF(fil.do(c._Z,c._F,curve=c))
                 except  Exception as e:
                     print('Error filtering the curve {}: {}'.format(c.index,e))
+                    if self._debug is True:
+                        print(traceback.format_exc())
 
     def calc_cp(self):
         for c in engine.dataset:
@@ -378,8 +386,10 @@ class NanoWindow(QtWidgets.QMainWindow):
                         c._cp = ret    
                         c.calc_indentation(bool(self.ui.setZeroForce.isChecked()))
                         c.calc_elspectra(int(self.ui.es_win.value()),int(self.ui.es_order.value()),bool(self.ui.es_interpolate.isChecked()))                
-                except Exception as e:
+                except Exception as e:                    
                     print('ERROR calculating the contact point on {}: {}'.format(c.index,e))
+                    if self._debug is True:
+                        print(traceback.format_exc())
 
     def calc_fmodels(self):
         for c in engine.dataset:
@@ -388,11 +398,14 @@ class NanoWindow(QtWidgets.QMainWindow):
             if model is not None:
                 try:
                     x,y = c.getFizi(self.ui.zi_min.value()*1e-9,self.ui.zi_max.value()*1e-9)            
-                    ret = model.do(x,y,curve=c)
-                    if (ret is not None) and (ret is not False):
-                        c._Fparams = ret 
+                    if len(x)>5:
+                        ret = model.do(x,y,curve=c)
+                        if (ret is not None) and (ret is not False):
+                            c._Fparams = ret 
                 except Exception as e:
                     print('Error in the force model in {}: {}'.format(c.index,e))
+                    if self._debug is True:
+                        print(traceback.format_exc())
 
     def calc_emodels(self):
         for c in engine.dataset:
@@ -406,6 +419,8 @@ class NanoWindow(QtWidgets.QMainWindow):
                         c._Eparams = ret
                 except Exception as e:
                     print('Error in the E model in {}: {}'.format(c.index,e))
+                    if self._debug is True:
+                        print(traceback.format_exc())
 
     def calc0(self):
         self.calculate()

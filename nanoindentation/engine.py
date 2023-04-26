@@ -104,7 +104,7 @@ class curve(object):
     def calc_elspectra(self,win,order,interp=True):
         x = self._Zi
         y = self._Fi
-        if(len(x)) < 1:  # check on length of ind
+        if(len(x)) < 2:  # check on length of ind
             return None
         if interp is True:
             yi = interp1d(x, y)

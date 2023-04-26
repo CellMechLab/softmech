@@ -35,7 +35,7 @@ class FModel(fitPanel):
             ang = self.curve.tip['angle'] 
             return (2.0/1.0) * ((parameters[0]*np.tan(ang*np.pi/180.0)) / (np.pi*(1-self.getValue('poisson') ** 2))) * x**2
         else:
-            return False
+            raise Exception('No data for the tip defined')
 
     def calculate(self, x,y):
         # This function gets the current x and y and returns the parameters.
