@@ -290,7 +290,7 @@ class NanoWindow(QtWidgets.QMainWindow):
             self.reset()
             structure = json.load(open(filename))
             for cv in structure['curves']:
-                engine.dataset.append(engine.curve(cv))
+                engine.dataset.append(engine.curve(cv,len(engine.dataset)))
         else:
             store = engine.dataset.copy()
             self.reset()
@@ -365,7 +365,7 @@ class NanoWindow(QtWidgets.QMainWindow):
                 try:
                     c.setZF(fil.do(c._Z,c._F,curve=c))
                 except  Exception as e:
-                    print('Error filtering the curve: ',e)
+                    print('Error filtering the curve {}: {}'.format(c.index,e))
 
     def calc_cp(self):
         for c in engine.dataset:
@@ -379,7 +379,7 @@ class NanoWindow(QtWidgets.QMainWindow):
                         c.calc_indentation(bool(self.ui.setZeroForce.isChecked()))
                         c.calc_elspectra(int(self.ui.es_win.value()),int(self.ui.es_order.value()),bool(self.ui.es_interpolate.isChecked()))                
                 except Exception as e:
-                    print('ERROR calculating the contact point: ',e)
+                    print('ERROR calculating the contact point on {}: {}'.format(c.index,e))
 
     def calc_fmodels(self):
         for c in engine.dataset:
@@ -392,7 +392,7 @@ class NanoWindow(QtWidgets.QMainWindow):
                     if (ret is not None) and (ret is not False):
                         c._Fparams = ret 
                 except Exception as e:
-                    print('Error in the force model: ',e)
+                    print('Error in the force model in {}: {}'.format(c.index,e))
 
     def calc_emodels(self):
         for c in engine.dataset:
@@ -405,7 +405,7 @@ class NanoWindow(QtWidgets.QMainWindow):
                     if (ret is not None) and (ret is not False):
                         c._Eparams = ret
                 except Exception as e:
-                    print('Error in the E model: ',e)
+                    print('Error in the E model in {}: {}'.format(c.index,e))
 
     def calc0(self):
         self.calculate()

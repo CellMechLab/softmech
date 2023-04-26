@@ -35,8 +35,9 @@ def reorganise(stack,n):
     return box
 
 class curve(object):
-    def __init__(self,structure=None):
+    def __init__(self,structure=None,index=None):
         self.data = {'F': None,'Z':None}
+        self.index = index
         self.spring_constant = 1.0
         self.tip = {'geometry':None}
         self.position=None
