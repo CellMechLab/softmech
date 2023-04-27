@@ -1,6 +1,6 @@
 from ..panels import boxPanel
 import numpy as np
-from magicgui.widgets import  FloatSpinBox
+from magicgui.widgets import  FloatSpinBox,SpinBox
 
 
 NAME = 'Threshold'
@@ -11,40 +11,29 @@ import numpy as np
 
 class CP(boxPanel):  # Threshold
     def create(self):
-        self.addParameter('Athreshold',FloatSpinBox(value=10.0, name='Athreshold', label='Align Threshold [nN]',min=0))
-        self.addParameter('deltaX',FloatSpinBox(value=2000.0, name='deltaX', label='Align left step [nm]',min=0,max=10000))
-        self.addParameter('Fthreshold',FloatSpinBox(value=100.0, name='Fthreshold', label='AVG area [nm]',min=0))
-        self.addParameter('shift',FloatSpinBox(value=0.0, name='shift', label='shift CP [nm]',min=0))
+        self.addParameter('startth', FloatSpinBox(value=2.0, name='startth', label='Starting threshold [nN]'))
+        self.addParameter('minx', SpinBox(value=1, name='minx', label='Min x %',min=1,max=99))
+        self.addParameter('maxx', SpinBox(value=60, name='maxx', label='Max x %',min=1,max=99))
+        self.addParameter('offset', FloatSpinBox(value=0.0, name='offset', label='Force offset [pN]',min = -1000.0,max=1000.0))
 
     def calculate(self, x,y):
-        yth = self.getValue('Athreshold')*1e-9
-        if yth > np.max(y) or yth < np.min(y):
+        yth = self.getValue('startth')*1e-9
+        offset = self.getValue('offset')*1e-12
+        if yth < np.min(y):
             return False
-        jrov = 0
-        for j in range(len(y)-1, 1, -1):
-            if y[j] > yth and y[j-1] < yth:
-                jrov = j
-                break
-        if jrov==0 or jrov==len(y)-1:
+        if np.min(y)+offset >= yth:
             return False
-        x0 = x[jrov]
-        dx = self.getValue('deltaX')*1e-9
-        ddx = self.getValue('Fthreshold')*1e-9
-        if ddx <= 0:
-            jxalign = np.argmin((x - (x0 - dx)) ** 2)
-            f0 = y[jxalign]
-        else:
-            jxalignLeft = np.argmin((x-(x0-dx-ddx))**2)
-            jxalignRight = np.argmin((x-(x0-dx+ddx))**2)
-            f0 = np.average(y[jxalignLeft:jxalignRight])
-        jcp = jrov
-        for j in range(jrov, 1, -1):
-            if y[j] > f0 and y[j-1] < f0:
+        jstart = np.argmin((y-yth)**2)
+        xmin = np.min(x) + (np.max(x)-np.min(x))*self.getValue('minx')/100
+        xmax = np.min(x) + (np.max(x)-np.min(x))*self.getValue('maxx')/100
+        imax = np.argmin((x-xmax)**2)
+        imin = np.argmin((x-xmin)**2)
+        baseline = np.average(y[imin:imax])
+        jcp = 0
+        for j in range(jstart,0,-1):
+            if y[j]>baseline+offset and y[j-1]<=baseline+offset:
                 jcp = j
                 break
-        if jcp == 0:
-            return False
-        sh = self.getValue('shift')*1e-9
-        xcp = x[jcp] + sh
-        ycp = y[np.argmin( (x-xcp)**2)]
+        xcp = x[jcp]
+        ycp = y[jcp]
         return [xcp, ycp]
