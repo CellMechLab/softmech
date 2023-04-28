@@ -284,8 +284,8 @@ class NanoWindow(QtWidgets.QMainWindow):
                 return
             self.redraw = False
             QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
-            filename = fOpener[0]
-            self.statusBar().showMessage(filename)
+            filename = fOpener[0]     
+            self.filename = filename       
             self.workingpath = os.path.dirname(filename)
             self.reset()
             structure = json.load(open(filename))
@@ -297,6 +297,9 @@ class NanoWindow(QtWidgets.QMainWindow):
             for c in store:
                 engine.dataset.append(c)
         i=0
+        cv0 = engine.dataset[0]
+        self.statusBar().showMessage('#Curves: {} - k: {} N/m - R: {} µm - File: {}'.format(len(engine.dataset),cv0.spring_constant,cv0.tip['radius']*1e6,self.filename))
+
         for cv in engine.dataset:
             #fz
             newcv = pg.PlotCurveItem(clickable=True)
@@ -695,7 +698,7 @@ class NanoWindow(QtWidgets.QMainWindow):
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    app.setApplicationName('SoftMech2021')
+    app.setApplicationName('SoftMech2023')
     if useQtmodern is True:
         qtmodern.styles.dark(app)
         chiaro = NanoWindow()
