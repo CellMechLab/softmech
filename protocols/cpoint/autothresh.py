@@ -48,8 +48,14 @@ class CP(boxPanel):  # Threshold
             crossings.append( np.sum( np.bitwise_and( (worky[1:]>threshold),(worky[:-1]<threshold) )))
         crossings=np.array(crossings)
         
-        inflection = midpoints[midpoints>0][np.where(crossings==1)[0][0]]
-        jcpguess = np.argmin( np.abs(differences-inflection) )+1
+        candidates = np.where(crossings==1)
+        if len(candidates)==0 or len(candidates[0])==0:
+            return False
+        elif len(midpoints[midpoints>0])==0:
+            return False
+        else:
+            inflection = midpoints[midpoints>0][candidates[0][0]]
+            jcpguess = np.argmin( np.abs(differences-inflection) )+1
         
         xcp = x[jcpguess]
         ycp = y[jcpguess]
