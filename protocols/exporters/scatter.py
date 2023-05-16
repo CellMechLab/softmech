@@ -19,9 +19,8 @@ class EXP(boxPanel):
         choices = ['Force Model','Elasticity Model']
         w2 = RadioButtons(choices=choices, label='Dataset:', value='Force Model')
         self.addParameter('Dataset',w2)
-    
-    def export(self, filename, exp):
 
+    def calculate(self,exp):
         wone = self.getValue('Dataset')
         if wone == 'Force Model':
             if exp.fdata is None or exp.fdata is False or len(exp.fdata) == 0:
@@ -35,9 +34,16 @@ class EXP(boxPanel):
             header = '#SoftMech export data\n#Elasticity Spectra analysis\n#\n#EModel parameters\n'
             model = exp._emodel
             data = exp.edata
-        
-        f = open(filename,'w')
+        return header,model,data
 
+    def preview(self,ax,exp):
+        header,model,data = self.calculate(exp)
+        for column in range(len(data)):
+            ax.hist(data[column][:],bins='auto')
+
+    def export(self, filename, exp):
+        header,model,data = self.calculate(exp)
+        f = open(filename,'w')
         for key in model.fitparameters:
             header += '#{}:{}\n'.format(key,model.fitparameters[key])
         header+='#\n#'

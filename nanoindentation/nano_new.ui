@@ -40,7 +40,15 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <widget class="QWidget" name="toolBoxPage1" native="true">
+       <widget class="QWidget" name="toolBoxPage1">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>153</width>
+          <height>639</height>
+         </rect>
+        </property>
         <attribute name="label">
          <string>Load</string>
         </attribute>
@@ -84,7 +92,15 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="toolBoxPage2" native="true">
+       <widget class="QWidget" name="toolBoxPage2">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>153</width>
+          <height>639</height>
+         </rect>
+        </property>
         <attribute name="label">
          <string>Filters</string>
         </attribute>
@@ -146,7 +162,15 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="toolBoxPage3" native="true">
+       <widget class="QWidget" name="toolBoxPage3">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>153</width>
+          <height>639</height>
+         </rect>
+        </property>
         <attribute name="label">
          <string>Contact point</string>
         </attribute>
@@ -201,7 +225,15 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="toolBoxPage4" native="true">
+       <widget class="QWidget" name="toolBoxPage4">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>153</width>
+          <height>639</height>
+         </rect>
+        </property>
         <attribute name="label">
          <string>Force model</string>
         </attribute>
@@ -303,7 +335,15 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="toolBoxPage5" native="true">
+       <widget class="QWidget" name="toolBoxPage5">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>153</width>
+          <height>639</height>
+         </rect>
+        </property>
         <attribute name="label">
          <string>Elasticity spectra</string>
         </attribute>
@@ -410,7 +450,15 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="toolBoxPage6" native="true">
+       <widget class="QWidget" name="toolBoxPage6">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>153</width>
+          <height>639</height>
+         </rect>
+        </property>
         <attribute name="label">
          <string>Elasticity Model</string>
         </attribute>
@@ -524,7 +572,15 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="toolBoxPage7" native="true">
+       <widget class="QWidget" name="toolBoxPage7">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>176</width>
+          <height>622</height>
+         </rect>
+        </property>
         <attribute name="label">
          <string>Export</string>
         </attribute>
@@ -555,11 +611,22 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="exportButton">
-           <property name="text">
-            <string>Save</string>
-           </property>
-          </widget>
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <item>
+            <widget class="QPushButton" name="previewButton">
+             <property name="text">
+              <string>Preview</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="exportButton">
+             <property name="text">
+              <string>Save</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
          <item>
           <spacer name="verticalSpacer_6">
@@ -577,7 +644,7 @@
         </layout>
        </widget>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="0">
          <widget class="PlotWidget" name="g_fz_all"/>

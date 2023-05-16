@@ -4,6 +4,9 @@ from ..panels import boxPanel
 import numpy as np
 from magicgui.widgets import  CheckBox,ComboBox,SpinBox
 
+from scipy.interpolate import interp1d
+from scipy.signal import savgol_filter
+
 #Set here the details of the procedure
 NAME = 'Average curve' #Name, please keep it short as it will appear in the combo box of the user interface
 DESCRIPTION = 'Plot (and save) average curve' #Free text
@@ -38,6 +41,45 @@ def averageall(xall,yall,direction,loose=100):
         return  newyavg,newax
     else:
         return newax,newyavg
+    
+def calc_elspectra(x,y,self,win,order,interp=True):
+        if(len(x)) < 2:  # check on length of ind
+            return None
+        if interp is True:
+            yi = interp1d(x, y)
+            max_x = np.max(x)
+            min_x = 1e-9
+            if np.min(x) > 1e-9:
+                min_x = np.min(x)
+            xx = np.arange(min_x, max_x, 1.0e-9)
+            yy = yi(xx)
+            ddt = 1.0e-9
+        else:
+            xx = x[1:]
+            yy = y[1:]
+            ddt = (x[-1]-x[1])/(len(x)-2)
+        
+        if self.tip['geometry']=='sphere':
+            R = self.tip['radius']
+            area = np.pi * xx * R
+            #contactradius = np.sqrt(xx * R)
+            coeff = 3 * np.sqrt(np.pi) / 8 / np.sqrt(area)
+        elif self.tip['geometry']=='cylinder':
+            R = self.tip['radius']
+            coeff = 3 / 8 / R
+        else:
+            return False
+        if win % 2 == 0:
+                win += 1
+        if len(yy) <= win:
+            return False   
+        deriv = savgol_filter(yy, win, order, delta=ddt, deriv=1)
+        Ey = coeff * deriv
+        dwin = int(win - 1)
+        Ex = xx[dwin:-dwin] #contactradius[dwin:-dwin]
+        Ey = Ey[dwin:-dwin]
+
+        return np.array(Ex),np.array(Ey)
 
 # Create your filter class by extending the main one
 # Additional methods can be created, if required
@@ -46,19 +88,20 @@ class EXP(boxPanel):
         # This function is required and describes the form to be created in the user interface 
         # The last value is the initial value of the field; currently 3 types are supported: int, float and combo
         #self.addParameter('ZeroRange',FloatSpinBox(value=500.0, name='ZeroRange', label='Range to set the zero [nN]',min=20,max=9999))
-        w1 = ComboBox(choices=['Force','Elasticity'], label='Dataset:', value='Force')        
+        w1 = ComboBox(choices=['Force','Elasticity','El from F'], label='Dataset:', value='Force')        
         w2 = ComboBox(choices=['H','V'], label='Direction:', value='H')
         w3 = CheckBox(text='Preview', value=False)
         self.addParameter('Dataset',w1)
         self.addParameter('Direction',w2)
-        self.addParameter('Preview',w3)
         self.addParameter('Loose',SpinBox(value=100,min=10,max=100,label="Looseness"))
         
-    def export(self, filename, exp):
+    def calculate(self,exp):
         data =exp.getData()
         wone = self.getValue('Dataset')
         xall=[]
         yall=[]
+        x2all=[]
+        y2all=[]
         for c in data:
             if wone == 'Force':
                 if c._Zi is not None:
@@ -68,31 +111,44 @@ class EXP(boxPanel):
                 if c._Ze is not None:
                     xall.append(c._Ze)
                     yall.append(c._E)
+                if wone == 'El from F':
+                    if c._Zi is not None:
+                        x2all.append(c._Zi)
+                        y2all.append(c._Fi)
 
         if len(xall)==0:
             return
-                    
-        x,y = averageall(xall,yall,self.getValue('Direction'),self.getValue('Loose'))
+
+        if wone == 'El from F':
+            x2,y2 = averageall(x2all,y2all,self.getValue('Direction'),self.getValue('Loose'))
+            x,y = calc_elspectra(x2,y2,data[0],*exp.getEPars())
+        else:
+            x,y = averageall(xall,yall,self.getValue('Direction'),self.getValue('Loose'))
         
-        if self.getValue('Preview') is True:
-            import matplotlib.pyplot as plt
-            for xx,yy in zip(xall,yall):
-                plt.xlabel('Indentation [nm]')
-                if wone == 'Force':
-                    plt.ylabel('Force [nN]')
-                    yy*=1e9
-                else:
-                    plt.ylabel('Elasticity spectrum [kPa]')
-                    yy/=1000.0
-                plt.plot(xx*1e9,yy,'r-',alpha=0.25)    
-            x*=1e9
+        return xall,yall,x,y
+
+    def preview(self, ax, exp):
+        xall,yall,x,y = self.calculate(exp)
+        wone = self.getValue('Dataset')
+        for xx,yy in zip(xall,yall):
+            ax.set_xlabel('Indentation [nm]')                
             if wone == 'Force':
-                y*=1e9
+                ax.set_ylabel('Force [nN]')
+                coe = 1e9
             else:
-                y/=1000.0
-            plt.plot(x,y,'b-',label='Average curve')
-            plt.legend()
-            plt.show()
+                ax.set_ylabel('Elasticity spectrum [kPa]')
+                coe = 1/1000.0
+            ax.plot(xx*1e9,yy*coe,'r-',alpha=0.25)    
+        if wone == 'Force':
+            coe =1e9
+        else:
+            coe = 1/1000.0
+        ax.plot(x*1e9,y*coe,'b-',label='Average curve')
+        return
+        
+    def export(self, filename, exp):
+        xall,yall,x,y = self.calculate(exp)
+        wone = self.getValue('Dataset')
 
         if wone == 'Force':
             header = '#SoftMech export data\n#Average F-d curve\n'
@@ -105,5 +161,4 @@ class EXP(boxPanel):
         for line in range(len(x)):
             f.write('{}\t{}\n'.format(x[line],y[line]))
         f.close()
-
         return

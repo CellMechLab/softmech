@@ -128,6 +128,7 @@ class NanoWindow(QtWidgets.QMainWindow):
         #self.ui.b_saveFdata.clicked.connect(lambda: self.save_params(True))
         #self.ui.b_saveEdata.clicked.connect(lambda: self.save_params(False))
         self.ui.exportButton.clicked.connect(self.doExport)
+        self.ui.previewButton.clicked.connect(self.doPreview)
         self.redraw = True        
         QtCore.QMetaObject.connectSlotsByName(self)
 
@@ -136,6 +137,9 @@ class NanoWindow(QtWidgets.QMainWindow):
 
     def debug(self,val):
         self._debug=val
+    
+    def getEPars(self):
+        return int(self.ui.es_win.value()),int(self.ui.es_order.value()),bool(self.ui.es_interpolate.isChecked())
 
     def getData(self):
         return engine.dataset
@@ -545,6 +549,16 @@ class NanoWindow(QtWidgets.QMainWindow):
         QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
         self._export.export(filename,self)
         QtWidgets.QApplication.restoreOverrideCursor()
+
+    def doPreview(self):
+        QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
+        import matplotlib.pyplot as plt
+        fig,ax = plt.subplots()
+        self._export.preview(ax,self)
+        QtWidgets.QApplication.restoreOverrideCursor()
+        plt.legend()
+        plt.show()
+        
 
     def scatter(self):
         self.ui.g_scatter1.plotItem.clear()
