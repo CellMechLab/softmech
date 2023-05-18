@@ -28,6 +28,7 @@ class EXP(boxPanel):
             header = '#SoftMech export data\n#Force Indentation analysis\n#\n#FModel parameters\n'
             model = exp._fmodel
             data = exp.fdata
+
         else:
             if exp.edata is None or exp.edata is False or len(exp.edata) == 0:
                 return
