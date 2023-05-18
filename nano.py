@@ -520,11 +520,11 @@ class NanoWindow(QtWidgets.QMainWindow):
         for cC in engine.dataset:
             if cC._Fparams is not None:
                 fmod.append(cC._Fparams)
-                if cC.position is not None:
-                    fmod[-1] = engine.fuse(fmod[-1],cC.position)
+                #if cC.position is not None:
+                #    fmod[-1] = engine.fuse(fmod[-1],cC.position)
                 if nfmod == 0:
                     nfmod = len(cC._Fparams)
-        if nfmod>0:
+        if nfmod>0:            
             self.fdata = engine.reorganise(fmod,len(fmod[0]))
             self._fmodel.setParameters(engine.dataformat(self.fdata,nfmod))            
         emod = []
@@ -532,8 +532,8 @@ class NanoWindow(QtWidgets.QMainWindow):
         for cC in engine.dataset:
             if cC._Eparams is not None:
                 emod.append(cC._Eparams)
-                if cC.position is not None:
-                    emod[-1] = engine.fuse(emod[-1],cC.position)
+                #if cC.position is not None:
+                #    emod[-1] = engine.fuse(emod[-1],cC.position)
                 if nemod == 0:
                     nemod = len(cC._Eparams)
         if nemod>0:

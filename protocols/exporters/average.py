@@ -89,7 +89,7 @@ class EXP(boxPanel):
         # The last value is the initial value of the field; currently 3 types are supported: int, float and combo
         #self.addParameter('ZeroRange',FloatSpinBox(value=500.0, name='ZeroRange', label='Range to set the zero [nN]',min=20,max=9999))
         w1 = ComboBox(choices=['Force','Elasticity','El from F'], label='Dataset:', value='Force')        
-        w2 = ComboBox(choices=['H','V'], label='Direction:', value='H')
+        w2 = ComboBox(choices=['H','V'], label='Direction:', value='V')
         w3 = CheckBox(text='Preview', value=False)
         self.addParameter('Dataset',w1)
         self.addParameter('Direction',w2)
