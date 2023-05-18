@@ -21,19 +21,19 @@ class FModel(fitPanel):
         # Parameters can be used as seeds or proper parameters (e.g. indentation depth ?) 
         self.addParameter('poisson',FloatSlider(value=0.5, name='poisson', label='Poisson ratio',min=-1,max=0.5))
 
-    def theory(self,x,*parameters):
+    def theory(self,x,elastic):
         if self.curve.tip['geometry']=='sphere':
             R = self.curve.tip['radius']
-            return (4.0 / 3.0) * (parameters[0] / (1 - self.getValue('poisson') ** 2)) * np.sqrt(R * x ** 3)
+            return (4.0 / 3.0) * (elastic / (1 - self.getValue('poisson') ** 2)) * np.sqrt(R * x ** 3)
         elif self.curve.tip['geometry']=='pyramid':
             ang = self.curve.tip['angle'] #see DOI for definition
-            return 0.7453 * ((parameters[0]*np.tan(ang*np.pi/180.0)) / (1-self.getValue('poisson') ** 2)) * x**2
+            return 0.7453 * ((elastic*np.tan(ang*np.pi/180.0)) / (1-self.getValue('poisson') ** 2)) * x**2
         elif self.curve.tip['geometry']=='cylinder':
             R = self.curve.tip['radius']
-            return (2.0/1.0) * (parameters[0] / (1 - self.getValue('poisson') ** 2)) * (R * x)
+            return (2.0/1.0) * (elastic / (1 - self.getValue('poisson') ** 2)) * (R * x)
         elif self.curve.tip['geometry']=='cone':
             ang = self.curve.tip['angle'] 
-            return (2.0/1.0) * ((parameters[0]*np.tan(ang*np.pi/180.0)) / (np.pi*(1-self.getValue('poisson') ** 2))) * x**2
+            return (2.0/1.0) * ((elastic*np.tan(ang*np.pi/180.0)) / (np.pi*(1-self.getValue('poisson') ** 2))) * x**2
         else:
             raise Exception('No data for the tip defined')
 
