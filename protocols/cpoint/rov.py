@@ -15,7 +15,10 @@ class CP(boxPanel):
         self.addParameter('windowr',FloatSpinBox(value=200.0, name='windowr', label='Window RoV [nm]',min=0))
 
     def calculate(self, x, y):
-        zz_x, rov = self.getWeight(x,y) 
+        out = self.getWeight(x,y) 
+        if out is False:
+            return False
+        zz_x, rov = out
         rov_best_ind = np.argmax(rov)
         j_rov = np.argmin((x-zz_x[rov_best_ind])**2)
         return [x[j_rov], y[j_rov]]
@@ -29,13 +32,18 @@ class CP(boxPanel):
         return jmin, jmax
 
     def getWeight(self, x, y):
-        jmin, jmax = self.getRange(x, y)
+        out = self.getRange(x, y)
+        if out is False:
+            return False
+        jmin, jmax = out
         winr = self.getValue('windowr')*1e-9
         xstep = (max(x)-min(x))/(len(x)-1)
         win = int(winr/xstep)
-        if (len(y) - jmax) < int(win):
-            return False
+        if (len(y) - jmax) < win:
+            jmax = len(y)-1-win
         if (jmin) < int(win):
+            jmin = win
+        if jmax<=jmin:
             return False
         rov = []
         for j in range(jmin, jmax):

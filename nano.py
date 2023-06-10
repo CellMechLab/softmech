@@ -393,6 +393,8 @@ class NanoWindow(QtWidgets.QMainWindow):
                         c._cp = ret    
                         c.calc_indentation(bool(self.ui.setZeroForce.isChecked()))
                         c.calc_elspectra(int(self.ui.es_win.value()),int(self.ui.es_order.value()),bool(self.ui.es_interpolate.isChecked()))                
+                    else:
+                        print('Contact point could not be calculated on {}'.format(c.index))
                 except Exception as e:                    
                     print('ERROR calculating the contact point on {}: {}'.format(c.index,e))
                     if self._debug is True:

@@ -36,12 +36,17 @@ class CP(boxPanel):
 
     def getWeight(self, x, y):
         # Retunrs weight array (R**2) and corresponding index array. Uses get_indentation and fit methods defined below
-        jmin, jmax = self.getRange(x,y)
-        if jmin is False or jmax is False:
+        out = self.getRange(x, y)
+        if out is False:
             return False
+        jmin, jmax = out
         zwin = self.getValue('fit window') * 1e-9
         zstep = (max(x) - min(x)) / (len(x) - 1)
         win = int(zwin / zstep)
+        if (len(y) - jmax) < win:
+            jmax = len(y)-1-win
+        if jmax<=jmin:
+            return False
 
         r_squared = []
         j_x = np.arange(jmin, jmax)
