@@ -121,15 +121,14 @@ class curve(object):
             ddt = (x[-1]-x[1])/(len(x)-2)
         
         if self.tip['geometry']=='sphere':
-            R = self.tip['radius']
-            area = np.pi * xx * R
-            #contactradius = np.sqrt(xx * R)
-            coeff = 3 * np.sqrt(np.pi) / 8 / np.sqrt(area)
+            aradius = np.sqrt(xx * self.tip['radius'])
         elif self.tip['geometry']=='cylinder':
-            R = self.tip['radius']
-            coeff = 3 / 8 / R
+            aradius = self.tip['radius']
+        elif self.tip['geometry']=='cone':
+            aradius = 2*xx / np.tan(self.curve.tip['angle']*np.pi/180.0)/np.pi
         else:
             return False
+        coeff = 3  / 8 / aradius
         if win % 2 == 0:
                 win += 1
         if len(yy) <= win:
