@@ -1,6 +1,6 @@
 import sys,os
-import pyqtgraph as pg
 from PyQt5 import QtCore, QtGui, QtWidgets
+import pyqtgraph as pg
 import traceback
 useQtmodern = False
 try:
