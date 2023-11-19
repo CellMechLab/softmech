@@ -9,7 +9,7 @@ from magicgui.widgets import  FloatSlider
 NAME = 'Bilayer' #Name, please keep it short as it will appear in the combo box of the user interface
 DESCRIPTION = 'Bilayer model' #Free text
 DOI = '' #set a DOI of a publication you want/suggest to be cited, empty if no reference
-PARAMETERS = {'E0 [Pa]':"Cortex Young's modulus", 'Eb [Pa]':"Bulk Young's modulus", 'd [m]':"Cortex thickness"}
+PARAMETERS = {'E0 [Pa]':"Cortex Young's modulus", 'Eb [Pa]':"Bulk Young's modulus", 'd [nm]':"Cortex thickness"}
 
 # Create your filter class by extending the main one
 # Additional methods can be created, if required
@@ -24,13 +24,14 @@ class EModel(fitPanel):
 
     def theory(self,x,*parameters):
         R = self.curve.tip['radius']
-        phi = np.exp( -self.getValue('Lambda')*np.sqrt(R*x)/parameters[2] )
+        d = parameters[2]*1e-9
+        phi = np.exp( -self.getValue('Lambda')*np.sqrt(R*x)/d )
         return parameters[1]+(parameters[0]-parameters[1])*phi
 
     def calculate(self, x,y):
         # This function gets the current x and y and returns the parameters.
         try:
-            popt, pcov = curve_fit(self.theory, x, y, p0=[1000,900,100e-9], maxfev=10000)
+            popt, pcov = curve_fit(self.theory, x, y, p0=[1000,900,100], maxfev=10000)
         except RuntimeError:
             return False
         return popt
