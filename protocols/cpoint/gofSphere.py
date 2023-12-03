@@ -69,8 +69,8 @@ class CP(boxPanel):
         Zf = z[iContact: iContact + win] - z[iContact]
         Yf = f[iContact: iContact + win] - f[iContact]
         ind = Zf - Yf / self.curve.spring_constant
-        ind = ind[ind <= 0.1*R]
         Yf = Yf[ind <= 0.1*R]   # fit only for small indentations
+        ind = ind[ind <= 0.1*R]        
         return ind, Yf
 
     def fit(self, x, y, ind, f):

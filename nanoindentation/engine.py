@@ -125,7 +125,9 @@ class curve(object):
         elif self.tip['geometry']=='cylinder':
             aradius = self.tip['radius']
         elif self.tip['geometry']=='cone':
-            aradius = 2*xx / np.tan(self.curve.tip['angle']*np.pi/180.0)/np.pi
+            aradius = 2*xx / np.tan(self.tip['angle']*np.pi/180.0)/np.pi
+        elif self.tip['geometry']=='pyramid': #Bilodeau formula
+            aradius = 0.709*xx*np.tan(self.tip['angle']*np.pi/180.0)
         else:
             return False
         coeff = 3  / 8 / aradius
