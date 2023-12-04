@@ -67,6 +67,12 @@ def calc_elspectra(x,y,self,win,order,interp=True):
         elif self.tip['geometry']=='cylinder':
             R = self.tip['radius']
             coeff = 3 / 8 / R
+        elif self.tip['geometry']=='cone':
+            aradius = 2*xx / np.tan(self.tip['angle']*np.pi/180.0)/np.pi
+            coeff = 3  / 8 / aradius
+        elif self.tip['geometry']=='pyramid': #Bilodeau formula
+            aradius = 0.709*xx*np.tan(self.tip['angle']*np.pi/180.0)
+            coeff = 3  / 8 / aradius
         else:
             return False
         if win % 2 == 0:
