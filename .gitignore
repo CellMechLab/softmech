@@ -131,3 +131,4 @@ dmypy.json
 ciao.csv
 test.json
 test2.json
+.DS_Store
