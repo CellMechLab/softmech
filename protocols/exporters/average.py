@@ -36,11 +36,12 @@ def averageall(xall,yall,direction,loose=100):
         if np.max(x)>= sup:
             neway.append(np.interp(newax, x, y))
     newyavg = np.average(np.array(neway),axis=0)
+    newstd = np.std(np.array(neway),axis=0)
     
     if direction == 'H':
-        return  newyavg,newax
+        return  newyavg,newax,newstd
     else:
-        return newax,newyavg
+        return newax,newyavg,newstd
     
 def calc_elspectra(x,y,self,win,order,interp=True):
         if(len(x)) < 2:  # check on length of ind
@@ -124,17 +125,17 @@ class EXP(boxPanel):
 
         if len(xall)==0:
             return
-
+        std=None
         if wone == 'El from F':
-            x2,y2 = averageall(x2all,y2all,self.getValue('Direction'),self.getValue('Loose'))
+            x2,y2,std = averageall(x2all,y2all,self.getValue('Direction'),self.getValue('Loose'))
             x,y = calc_elspectra(x2,y2,data[0],*exp.getEPars())
         else:
-            x,y = averageall(xall,yall,self.getValue('Direction'),self.getValue('Loose'))
+            x,y,std = averageall(xall,yall,self.getValue('Direction'),self.getValue('Loose'))
         
-        return xall,yall,x,y
+        return xall,yall,x,y,std
 
     def preview(self, ax, exp):
-        xall,yall,x,y = self.calculate(exp)
+        xall,yall,x,y,std = self.calculate(exp)
         wone = self.getValue('Dataset')
         for xx,yy in zip(xall,yall):
             ax.set_xlabel('Indentation [nm]')                
@@ -153,14 +154,25 @@ class EXP(boxPanel):
         return
         
     def export(self, filename, exp):
-        xall,yall,x,y = self.calculate(exp)
+        xall,yall,x,y,std = self.calculate(exp)
         wone = self.getValue('Dataset')
 
         if wone == 'Force':
             header = '#SoftMech export data\n#Average F-d curve\n'
         else:
             header = '#SoftMech export data\n#Average E-d curve\n'
-        
+        header+='Direction:{} Loose:{}\n'.format(self.getValue('Direction'),self.getValue('Loose'))
+        wone = self.getValue('Dataset')
+        if wone == 'Force':
+            if self.getValue('Direction')=='V':
+                header+='#Columns: Z Favg Fstd\n'
+            else:
+                header+='#Columns: Zavg F Zstd\n'
+        else:
+            if self.getValue('Direction')=='V':
+                header+='#Columns: Z Eavg\n'
+            else:
+                header+='#Columns: Zavg E\n'
         f = open(filename,'w')
         header+='#\n#DATA\n'
         f.write(header)
