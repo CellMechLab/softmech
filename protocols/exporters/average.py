@@ -177,6 +177,6 @@ class EXP(boxPanel):
         header+='#\n#DATA\n'
         f.write(header)
         for line in range(len(x)):
-            f.write('{}\t{}\n'.format(x[line],y[line]))
+            f.write('{}\t{}\t{}\n'.format(x[line],y[line],std[line]))
         f.close()
         return
