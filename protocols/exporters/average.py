@@ -156,27 +156,40 @@ class EXP(boxPanel):
     def export(self, filename, exp):
         xall,yall,x,y,std = self.calculate(exp)
         wone = self.getValue('Dataset')
-
+        ds = exp.getData()
         if wone == 'Force':
             header = '#SoftMech export data\n#Average F-d curve\n'
         else:
             header = '#SoftMech export data\n#Average E-d curve\n'
-        header+='Direction:{} Loose:{}\n'.format(self.getValue('Direction'),self.getValue('Loose'))
-        wone = self.getValue('Dataset')
+        header+='#Direction:{} Loose:{}\n'.format(self.getValue('Direction'),self.getValue('Loose'))
+        geometry = ds[0].tip['geometry']
+        header+='#Tip shape: {}\n'.format(geometry)
+        if geometry in ['sphere','cylinder']:
+            header+='#Tip radius: {}\n'.format(ds[0].tip['radius'])
+        else:
+            header+='#Tip angle: {}\n'.format(ds[0].tip['angle'])
+        header+='#Elastic constant: {}\n'.format()
         if wone == 'Force':
             if self.getValue('Direction')=='V':
-                header+='#Columns: Z Favg Fstd\n'
+                header+='#Columns: Indentation <F> σF\n'
             else:
-                header+='#Columns: Zavg F Zstd\n'
+                header+='#Columns: <Indentation> F σZ\n'
         else:
             if self.getValue('Direction')=='V':
-                header+='#Columns: Z Eavg\n'
+                header+='#Columns: Indentation <E>\n'
             else:
-                header+='#Columns: Zavg E\n'
+                header+='#Columns: <Indentation> E\n'
         f = open(filename,'w')
         header+='#\n#DATA\n'
         f.write(header)
         for line in range(len(x)):
+<<<<<<< Updated upstream
             f.write('{}\t{}\t{}\n'.format(x[line],y[line],std[line]))
+=======
+            if wone == 'Force':
+                f.write('{}\t{}\t{}\n'.format(x[line],y[line],std[line]))
+            else:
+                f.write('{}\t{}\n'.format(x[line],y[line]))
+>>>>>>> Stashed changes
         f.close()
         return
