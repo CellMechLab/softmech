@@ -161,19 +161,19 @@ class EXP(boxPanel):
             header = '#SoftMech export data\n#Average F-d curve\n'
         else:
             header = '#SoftMech export data\n#Average E-d curve\n'
-        header+='#Direction:{} Loose:{}\n'.format(self.getValue('Direction'),self.getValue('Loose'))
+        header+='#Direction:{}\n#Loose:{}\n'.format(self.getValue('Direction'),self.getValue('Loose'))
         geometry = ds[0].tip['geometry']
         header+='#Tip shape: {}\n'.format(geometry)
         if geometry in ['sphere','cylinder']:
             header+='#Tip radius: {}\n'.format(ds[0].tip['radius'])
         else:
             header+='#Tip angle: {}\n'.format(ds[0].tip['angle'])
-        header+='#Elastic constant: {}\n'.format()
+        header+='#Elastic constant: {}\n'.format(ds[0].spring_constant)
         if wone == 'Force':
             if self.getValue('Direction')=='V':
-                header+='#Columns: Indentation <F> σF\n'
+                header+='#Columns: Indentation <F> SigmaF\n'
             else:
-                header+='#Columns: <Indentation> F σZ\n'
+                header+='#Columns: <Indentation> F SigmaZ\n'
         else:
             if self.getValue('Direction')=='V':
                 header+='#Columns: Indentation <E>\n'
@@ -183,13 +183,9 @@ class EXP(boxPanel):
         header+='#\n#DATA\n'
         f.write(header)
         for line in range(len(x)):
-<<<<<<< Updated upstream
-            f.write('{}\t{}\t{}\n'.format(x[line],y[line],std[line]))
-=======
             if wone == 'Force':
                 f.write('{}\t{}\t{}\n'.format(x[line],y[line],std[line]))
             else:
                 f.write('{}\t{}\n'.format(x[line],y[line]))
->>>>>>> Stashed changes
         f.close()
         return
