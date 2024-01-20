@@ -165,11 +165,16 @@ class EXP(boxPanel):
         geometry = ds[0].tip['geometry']
         header+='#Tip shape: {}\n'.format(geometry)
         if geometry in ['sphere','cylinder']:
-            header+='#Tip radius: {}\n'.format(ds[0].tip['radius'])
+            header+='#Tip radius [nm]: {}\n'.format(ds[0].tip['radius']*1e9)
         else:
-            header+='#Tip angle: {}\n'.format(ds[0].tip['angle'])
-        header+='#Elastic constant: {}\n'.format(ds[0].spring_constant)
+            header+='#Tip angle [deg]: {}\n'.format(ds[0].tip['angle'])
+        header+='#Elastic constant [N/m]: {}\n'.format(ds[0].spring_constant)
         if wone == 'Force':
+            try:
+                header+='#Average Hertz modulus [Pa]: {}\n'.format(np.average(exp.fdata[0]))
+                header+='#Hertz max indentation [nm]: {}\n'.format(exp.ui.zi_max.value())
+            except:
+                pass
             if self.getValue('Direction')=='V':
                 header+='#Columns: Indentation <F> SigmaF\n'
             else:
