@@ -138,19 +138,25 @@ class EXP(boxPanel):
         xall,yall,x,y,std = self.calculate(exp)
         wone = self.getValue('Dataset')
         for xx,yy in zip(xall,yall):
-            ax.set_xlabel('Indentation [nm]')                
+            ax.set_xlabel('Indentation [nm]',fontsize=15)           
             if wone == 'Force':
-                ax.set_ylabel('Force [nN]')
+                ax.set_ylabel('Force [nN]',fontsize=15)
                 coe = 1e9
             else:
-                ax.set_ylabel('Elasticity spectrum [kPa]')
+                ax.set_ylabel('Elasticity spectrum [kPa]',fontsize=15)
                 coe = 1/1000.0
-            ax.plot(xx*1e9,yy*coe,'r-',alpha=0.25)    
+            ax.plot(xx*1e9,yy*coe,'k-',alpha=0.25)    
         if wone == 'Force':
             coe =1e9
         else:
             coe = 1/1000.0
-        ax.plot(x*1e9,y*coe,'b-',label='Average curve')
+        ax.plot(x*1e9,y*coe,'r-')#label='Average curve')
+        #increase fontsize of ax labels
+        for item in (ax.get_xticklabels() + ax.get_yticklabels()):
+            item.set_fontsize(15)
+        #remove right and top spines
+        ax.spines['right'].set_visible(False)
+        ax.spines['top'].set_visible(False)
         return
         
     def export(self, filename, exp):
