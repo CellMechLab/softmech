@@ -6,9 +6,8 @@ from scipy.optimize import curve_fit
 from magicgui.widgets import  FloatSlider
 
 
-#Set here the details of the procedure
-NAME = 'Hertz Effective' #Name, please keep it short as it will appear in the combo box of the user interface
-DESCRIPTION = 'Fit indentation data with the Hertz model - Spherical indenter' #Free text
+NAME = 'Hertz Effective' 
+DESCRIPTION = 'Fit indentation data with the Hertz model without assuming the Poisson ratio'#Free text
 DOI = '' #set a DOI of a publication you want/suggest to be cited, empty if no reference
 PARAMETERS = {'E [Pa]':" Effective Young's modulus"}
 
