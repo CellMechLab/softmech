@@ -1,13 +1,18 @@
 import h5py
 import numpy as np
 
+#open the file
 filename = '../testdata/test.hdf5'
 experiment = h5py.File(filename,'r')
 
+#list to store the curves
 curves = []
 
+#browse the experiment
 for struct_id in list(experiment.keys()):
     structure=experiment[struct_id]
+    
+    #extrat the relevant info for the selected segment
     k = structure.attrs['spring_constant']
     selectedSegment = structure.attrs['selectedSegment']
     F = np.array(structure[f'segment{selectedSegment}']['Force'])
@@ -21,11 +26,11 @@ for struct_id in list(experiment.keys()):
         F = F - cp[1]
         Z = Z - cp[0]
         iContact = np.argmin( Z** 2)
-        
+        #extract the portion in contact and calculate the indentation
         Force = F[iContact:]
         Indentation = Z[iContact:] - Force / k
         Delay = Time[iContact:]-Time[iContact]
-            
+        #populate the array
         curves.append([Delay,Indentation,Force])
 
 experiment.close()
