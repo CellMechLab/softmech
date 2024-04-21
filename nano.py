@@ -306,6 +306,7 @@ class NanoWindow(QtWidgets.QMainWindow):
                 structure = h5py.File(filename,'r') 
                 for cv in list(structure.keys()):
                     engine.dataset.append(engine.curve(structure[cv],len(engine.dataset),True))
+                structure.close()
         else:
             store = engine.dataset.copy()
             self.reset()
@@ -388,22 +389,25 @@ class NanoWindow(QtWidgets.QMainWindow):
                         print(traceback.format_exc())
 
     def calc_cp(self):
-        for c in engine.dataset:
-            c.resetCP()
-            cp = self._cpoint
+        cp = self._cpoint
+        for c in engine.dataset:                        
             if cp is not None:
+                c.resetCP()
                 try:
                     ret = cp.do(c._Z,c._F,curve=c)
                     if (ret is not None) and (ret is not False):
-                        c._cp = ret    
-                        c.calc_indentation(bool(self.ui.setZeroForce.isChecked()))
-                        c.calc_elspectra(int(self.ui.es_win.value()),int(self.ui.es_order.value()),bool(self.ui.es_interpolate.isChecked()))                
+                        c._cp = ret                            
                     else:
+                        c._cp=None
                         print('Contact point could not be calculated on {}'.format(c.index))
                 except Exception as e:                    
+                    c._cp=None
                     print('ERROR calculating the contact point on {}: {}'.format(c.index,e))
                     if self._debug is True:
                         print(traceback.format_exc())
+            if c._cp is not None:
+                c.calc_indentation(bool(self.ui.setZeroForce.isChecked()))
+                c.calc_elspectra(int(self.ui.es_win.value()),int(self.ui.es_order.value()),bool(self.ui.es_interpolate.isChecked()))                        
 
     def calc_fmodels(self):
         for c in engine.dataset:

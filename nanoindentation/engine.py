@@ -5,14 +5,17 @@ from scipy.signal import savgol_filter
 dataset = []
 
 def interpret(value):
+    print(value)
+    dt = value
     try:
-        value = int(value)
+        dt = int(value)
     except ValueError:
         try:
-            value=float(value)
+            dt=float(value)
         except ValueError:
-            pass
-    return value
+            dt=value
+    print(dt)
+    return dt
 
 def dataformat(box,n):
     indicators=[]
@@ -51,7 +54,6 @@ class curve(object):
         self.spring_constant = 1.0
         self.tip = {'geometry':None}
         self.position=None
-        self._cp=[]
         self.reset()
         if structure is not None:
             if h5 is True:
@@ -61,10 +63,10 @@ class curve(object):
 
     def load5(self,structure):
         for name in structure.attrs:
-            value = interpret(structure.attrs[name])
+            value = structure.attrs[name]
             setattr(self,name,value)
         for name in structure['tip'].attrs:
-            value = interpret(structure['tip'].attrs[name])
+            value = structure['tip'].attrs[name]
             self.tip[name]=value         
         #backwards compatibility, to be eliminated in future releases
         self.tip['radius']=self.tip['value']
@@ -72,20 +74,23 @@ class curve(object):
         
         F = np.array(structure[f'segment{self.selectedSegment}']['Force'])
         Z = np.array(structure[f'segment{self.selectedSegment}']['Z'])
-        self.data = {'F': F,'Z':Z}
-        
-        self.reset()
+        self.data = {'F': F,'Z':Z}        
+        self.setZF('auto')
 
     def load(self,structure):
         for k,v in structure.items():
             setattr(self,k,v)
-        self.reset()
+        self.setZF('auto')        
 
     def setZF(self,ret):
         if ret is None or ret is False:
             return
-        x,y = ret
-        self._Z,self._F = np.array(x),np.array(y)
+        if ret == 'auto':
+            self._F = np.array(self.data['F'])
+            self._Z = np.array(self.data['Z'])
+        else:
+            x,y = ret
+            self._Z,self._F = np.array(x),np.array(y)
 
     def getJclose(self,x0,x):
         x = np.array(x)
