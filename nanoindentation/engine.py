@@ -76,6 +76,8 @@ class curve(object):
         Z = np.array(structure[f'segment{self.selectedSegment}']['Z'])
         self.data = {'F': F,'Z':Z}        
         self.setZF('auto')
+        if 'cp' in structure.keys():
+            self._cp = list(structure['cp'])
 
     def load(self,structure):
         for k,v in structure.items():

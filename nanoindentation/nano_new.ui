@@ -45,8 +45,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>153</width>
-          <height>639</height>
+          <width>155</width>
+          <height>641</height>
          </rect>
         </property>
         <attribute name="label">
@@ -57,6 +57,16 @@
           <widget class="QPushButton" name="b_load">
            <property name="text">
             <string>Load experiment</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="updateexperiment">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Update HDF5</string>
            </property>
           </widget>
          </item>
@@ -97,8 +107,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>153</width>
-          <height>639</height>
+          <width>145</width>
+          <height>49</height>
          </rect>
         </property>
         <attribute name="label">
@@ -167,8 +177,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>153</width>
-          <height>639</height>
+          <width>117</width>
+          <height>86</height>
          </rect>
         </property>
         <attribute name="label">
@@ -230,8 +240,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>153</width>
-          <height>639</height>
+          <width>143</width>
+          <height>133</height>
          </rect>
         </property>
         <attribute name="label">
@@ -340,8 +350,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>153</width>
-          <height>639</height>
+          <width>116</width>
+          <height>94</height>
          </rect>
         </property>
         <attribute name="label">
@@ -455,8 +465,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>153</width>
-          <height>639</height>
+          <width>143</width>
+          <height>133</height>
          </rect>
         </property>
         <attribute name="label">
@@ -578,7 +588,7 @@
           <x>0</x>
           <y>0</y>
           <width>176</width>
-          <height>622</height>
+          <height>93</height>
          </rect>
         </property>
         <attribute name="label">

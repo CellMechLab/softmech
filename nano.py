@@ -10,15 +10,10 @@ try:
 except ModuleNotFoundError:
     print('Module qtmodern not found. Please evaluate installing it for a nicer UI')
 
-#Modify the next line if using the old UI is preferred
-useNewUi = True
 #Set qtmoder manually to false if standard UI is preferred
 #useQtmodern = False
 
-if useNewUi is True:
-    import nanoindentation.nano_new_ui as view
-else:
-    import nanoindentation.nano_old_ui as view
+import nanoindentation.nano_new_ui as view
 
 import nanoindentation.engine as engine
 import json, h5py
@@ -108,6 +103,7 @@ class NanoWindow(QtWidgets.QMainWindow):
 
         #main connections
         self.ui.b_load.clicked.connect(self.loadExperiment)
+        self.ui.updateexperiment.clicked.connect(self.update5)
         self.ui.slid_cv.valueChanged.connect( self.selectedCurveChanged )
         self.ui.slid_alpha.valueChanged.connect( self.alphaChanged )
         self.ui.sel_filter.currentIndexChanged.connect(self.filterSelected)
@@ -286,6 +282,21 @@ class NanoWindow(QtWidgets.QMainWindow):
             p.setPen(pg.mkPen( self.getCol() ))
         for p in self.ui.g_eze_all.getPlotItem().listDataItems():
             p.setPen(pg.mkPen( self.getCol() ))
+            
+    def update5(self):
+        structure = h5py.File(self.filename,'r+')
+        j=0
+        for cv in list(structure.keys()):
+            curve = engine.dataset[j]
+            stored = structure[cv]
+            if curve._cp is not None:
+                if 'cp' in stored.keys():
+                    stored['cp'][0]=curve._cp[0]
+                    stored['cp'][1]=curve._cp[1]
+                else:
+                    stored['cp'] = list(curve._cp)
+            j+=1
+        structure.close()
 
     def loadExperiment(self,reload=False):
         if reload is False:
@@ -303,6 +314,7 @@ class NanoWindow(QtWidgets.QMainWindow):
                 for cv in structure['curves']:
                     engine.dataset.append(engine.curve(cv,len(engine.dataset)))
             elif '.hdf5' in filename:
+                self.ui.updateexperiment.setEnabled(True)
                 structure = h5py.File(filename,'r') 
                 for cv in list(structure.keys()):
                     engine.dataset.append(engine.curve(structure[cv],len(engine.dataset),True))
@@ -379,7 +391,8 @@ class NanoWindow(QtWidgets.QMainWindow):
 
     def calc_filters(self):
         for c in engine.dataset:
-            c.reset()            
+            #c.reset()            
+            # do we need to reset if the processing restarts ?
             for fil in self._filters_selected:
                 try:
                     c.setZF(fil.do(c._Z,c._F,curve=c))
