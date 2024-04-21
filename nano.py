@@ -21,7 +21,7 @@ else:
     import nanoindentation.nano_old_ui as view
 
 import nanoindentation.engine as engine
-import json
+import json, h5py
 import protocols.filters,protocols.cpoint,protocols.fmodels,protocols.emodels,protocols.exporters
 
 useGevent = False
@@ -289,7 +289,7 @@ class NanoWindow(QtWidgets.QMainWindow):
 
     def loadExperiment(self,reload=False):
         if reload is False:
-            fOpener = QtWidgets.QFileDialog.getOpenFileName(self,"Open Experiment File",self.workingpath,"JSON curve files (*.json)")
+            fOpener = QtWidgets.QFileDialog.getOpenFileName(self,"Open Experiment File",self.workingpath,"Softmec files (*.json *.hdf5)")
             if fOpener[0]=='' or fOpener[0] is None:
                 return
             self.redraw = False
@@ -298,9 +298,14 @@ class NanoWindow(QtWidgets.QMainWindow):
             self.filename = filename       
             self.workingpath = os.path.dirname(filename)
             self.reset()
-            structure = json.load(open(filename))
-            for cv in structure['curves']:
-                engine.dataset.append(engine.curve(cv,len(engine.dataset)))
+            if '.json' in filename:
+                structure = json.load(open(filename))
+                for cv in structure['curves']:
+                    engine.dataset.append(engine.curve(cv,len(engine.dataset)))
+            elif '.hdf5' in filename:
+                structure = h5py.File(filename,'r') 
+                for cv in list(structure.keys()):
+                    engine.dataset.append(engine.curve(structure[cv],len(engine.dataset),True))
         else:
             store = engine.dataset.copy()
             self.reset()

@@ -4,6 +4,16 @@ from scipy.signal import savgol_filter
 
 dataset = []
 
+def interpret(value):
+    try:
+        value = int(value)
+    except ValueError:
+        try:
+            value=float(value)
+        except ValueError:
+            pass
+    return value
+
 def dataformat(box,n):
     indicators=[]
     for i in range(n):
@@ -35,7 +45,7 @@ def reorganise(stack,n):
     return box
 
 class curve(object):
-    def __init__(self,structure=None,index=None):
+    def __init__(self,structure=None,index=None,h5=False):
         self.data = {'F': None,'Z':None}
         self.index = index
         self.spring_constant = 1.0
@@ -44,7 +54,27 @@ class curve(object):
         self._cp=[]
         self.reset()
         if structure is not None:
-            self.load(structure)
+            if h5 is True:
+                self.load5(structure)
+            else:
+                self.load(structure)
+
+    def load5(self,structure):
+        for name in structure.attrs:
+            value = interpret(structure.attrs[name])
+            setattr(self,name,value)
+        for name in structure['tip'].attrs:
+            value = interpret(structure['tip'].attrs[name])
+            self.tip[name]=value         
+        #backwards compatibility, to be eliminated in future releases
+        self.tip['radius']=self.tip['value']
+        self.tip['angle']=self.tip['value']
+        
+        F = np.array(structure[f'segment{self.selectedSegment}']['Force'])
+        Z = np.array(structure[f'segment{self.selectedSegment}']['Z'])
+        self.data = {'F': F,'Z':Z}
+        
+        self.reset()
 
     def load(self,structure):
         for k,v in structure.items():
