@@ -31,7 +31,7 @@ class EModel(fitPanel):
     def calculate(self, x,y):
         # This function gets the current x and y and returns the parameters.
         try:
-            popt, pcov = curve_fit(self.theory, x, y, p0=[1000,900,100], maxfev=10000)
+            popt, pcov = curve_fit(self.theory, x, y, p0=[100000,1000,1000], maxfev=10000)
         except RuntimeError:
             return False
         return popt
