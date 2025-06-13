@@ -6,7 +6,7 @@ useQtmodern = False
 try:
     import qtmodern.styles
     import qtmodern.windows
-    useQtmodern = True
+    useQtmodern = False
 except ModuleNotFoundError:
     print('Module qtmodern not found. Please evaluate installing it for a nicer UI')
 
@@ -14,7 +14,6 @@ except ModuleNotFoundError:
 #useQtmodern = False
 
 import nanoindentation.nano_new_ui as view
-
 import nanoindentation.engine as engine
 import json, h5py
 import protocols.filters,protocols.cpoint,protocols.fmodels,protocols.emodels,protocols.exporters
@@ -391,7 +390,7 @@ class NanoWindow(QtWidgets.QMainWindow):
 
     def calc_filters(self):
         for c in engine.dataset:
-            #c.reset()            
+            c.reset()            
             # do we need to reset if the processing restarts ?
             for fil in self._filters_selected:
                 try:

@@ -9,9 +9,9 @@ from scipy.signal import savgol_filter
 
 # Set here the details of the procedure
 # Name, please keep it short as it will appear in the combo box of the user interface
-NAME = 'Linear Detrend'
+NAME = 'Offset removal'
 # Free text
-DESCRIPTION = 'Removes linear trend obtained from baseline of F-z curves. Baseline is identified through thresholding (Threshold method of contact point). Ideal for data whose baseline trend hinders correct calculation of the contact point'
+DESCRIPTION = 'Removes offset obtained from baseline of F-z curves. Baseline is identified through thresholding (Threshold method of contact point). Ideal for data whose baseline trend hinders correct calculation of the contact point'
 DOI = ''  # set a DOI of a publication you want/suggest to be cited, empty if no reference
 
 # Create your filter class by extending the main one
@@ -24,8 +24,7 @@ class Filter(boxPanel):
 
     def calculate(self, x,y):
         x_base, y_base = self.get_baseline(x,y)
-        m,q = np.polyfit(x_base,y_base,1)
-        return x, y-m*x-q
+        return x, y-np.average(y_base)
 
     def get_baseline(self, x,y):
         perc = self.getValue('percentile')
