@@ -1,4 +1,4 @@
-from PyQt5 import QtGui, QtWidgets, QtCore
+from PySide6 import QtGui, QtWidgets, QtCore
 from importlib import import_module
 from magicgui.widgets import Label
             
@@ -43,7 +43,7 @@ class boxPanel:  # Contact point class
         while(layout.rowCount()>0):
             layout.removeRow(0)
         for widget in self._parameters.values():
-            layout.addRow(widget.label, widget.native)
+            layout.addRow(str(widget.label), widget.native)
 
 class fitPanel(boxPanel):
     def __init__(self):
