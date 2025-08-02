@@ -11,11 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>SoftMech2021</string>
+   <string>SoftMech2025</string>
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../../.designer/backup/ico.svg</normaloff>../../.designer/backup/ico.svg</iconset>
+    <normaloff>ico.svg</normaloff>ico.svg</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_10">

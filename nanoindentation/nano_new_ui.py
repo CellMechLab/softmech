@@ -29,7 +29,7 @@ class Ui_MainWindow(object):
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.resize(1680, 917)
         icon = QIcon()
-        icon.addFile(u"../ico.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        icon.addFile(u"ico.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         MainWindow.setWindowIcon(icon)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
@@ -536,7 +536,7 @@ class Ui_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"SoftMech2021", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"SoftMech2025", None))
         self.b_load.setText(QCoreApplication.translate("MainWindow", u"Load experiment", None))
         self.updateexperiment.setText(QCoreApplication.translate("MainWindow", u"Update HDF5", None))
         self.consolle.setText(QCoreApplication.translate("MainWindow", u"Consolle", None))
