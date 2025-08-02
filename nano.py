@@ -1,14 +1,14 @@
 import sys,os
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PySide6 import QtCore, QtGui, QtWidgets
 import pyqtgraph as pg
 import traceback
 useQtmodern = False
-try:
-    import qtmodern.styles
-    import qtmodern.windows
-    useQtmodern = False
-except ModuleNotFoundError:
-    print('Module qtmodern not found. Please evaluate installing it for a nicer UI')
+#try:
+#    import qtmodern.styles
+#    import qtmodern.windows
+#    useQtmodern = False
+#except ModuleNotFoundError:
+#    print('Module qtmodern not found. Please evaluate installing it for a nicer UI')
 
 #Set qtmoder manually to false if standard UI is preferred
 #useQtmodern = False
@@ -20,13 +20,13 @@ import protocols.filters,protocols.cpoint,protocols.fmodels,protocols.emodels,pr
 #joseph 
 
 useGevent = False
-try:
-    from gevent import monkey; monkey.patch_all()   # noqa
-    import gevent
-    from pyqtconsole.console import PythonConsole
-    useGevent = True
-except ModuleNotFoundError:
-    print('Module gevent and/or pyqtconsole not found. Please evaluate installing it if you want to have access to the integrated shell')
+#try:
+#    from gevent import monkey; monkey.patch_all()   # noqa
+#    import gevent
+#    #from pyqtconsole.console import PythonConsole
+#    useGevent = True
+#except ModuleNotFoundError:
+#    print('Module gevent and/or pyqtconsole not found. Please evaluate installing it if you want to have access to the integrated shell')
 
 try:
     from magicgui.widgets import FloatSlider   # noqa
@@ -76,8 +76,9 @@ class GEventProcessing:
         self._timer.stop()
 
     def process_events(self):
+        pass
         # Cooperative yield, allow gevent to monitor file handles via libevent
-        gevent.sleep(self._idle_period)
+        #gevent.sleep(self._idle_period)
 
 class NanoWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
@@ -752,12 +753,12 @@ class NanoWindow(QtWidgets.QMainWindow):
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     app.setApplicationName('SoftMech2023')
-    if useQtmodern is True:
-        qtmodern.styles.dark(app)
-        chiaro = NanoWindow()
-        mw = qtmodern.windows.ModernWindow(chiaro)
-    else:
-        mw = NanoWindow()
+#    if useQtmodern is True:
+#        qtmodern.styles.dark(app)
+#        chiaro = NanoWindow()
+#        mw = qtmodern.windows.ModernWindow(chiaro)
+#    else:
+    mw = NanoWindow()
     mw.show()
 
     #app.setQuitOnLastWindowClosed(True)
@@ -765,8 +766,8 @@ if __name__ == "__main__":
 
     #chiaro.ipkernel.start()
     #sys.exit(app.exec_())
-    if useGevent is True:
-        with GEventProcessing():
-            sys.exit(app.exec_())
-    else:
-        sys.exit(app.exec_())
+#    if useGevent is True:
+#        with GEventProcessing():
+#            sys.exit(app.exec_())
+#    else:
+    sys.exit(app.exec())

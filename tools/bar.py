@@ -1,7 +1,7 @@
 import sys,os
 import pandas as pd
 import matplotlib.pyplot as plt
-from PyQt5.QtWidgets import QApplication, QFileDialog
+from PySide6.QtWidgets import QApplication, QFileDialog
 
 def select_csv_file():
     app = QApplication(sys.argv)
