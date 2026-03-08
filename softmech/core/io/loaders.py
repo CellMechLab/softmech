@@ -116,12 +116,22 @@ def load_hdf5(filename: str) -> Dict[str, Any]:
             # Read attributes
             attrs = dict(curve_group.attrs)
 
-            # Find first segment with data
+            # Find segment to use - respect selectedSegment attribute if present
             segment_name = None
-            for key in curve_group.keys():
-                if key.startswith("segment"):
-                    segment_name = key
-                    break
+            if "selectedSegment" in attrs:
+                # Use the selected segment
+                selected_idx = int(attrs["selectedSegment"])
+                segment_name = f"segment{selected_idx}"
+                if segment_name not in curve_group:
+                    logger.warning(f"Selected segment {segment_name} not found in {curve_name}, falling back to first segment")
+                    segment_name = None
+            
+            # If no selectedSegment or it wasn't found, use first available
+            if segment_name is None:
+                for key in curve_group.keys():
+                    if key.startswith("segment"):
+                        segment_name = key
+                        break
 
             if segment_name is None:
                 logger.warning(f"No segment found in {curve_name}")
@@ -138,13 +148,34 @@ def load_hdf5(filename: str) -> Dict[str, Any]:
             z = np.array(segment["Z"])
 
             # Build curve dict
-            # Handle tip radius/angle with None-safety
-            tip_radius = attrs.get("tip_radius", 1e-6)
-            tip_angle = attrs.get("tip_angle", 45.0)
+            # Handle tip geometry - check for tip subgroup first (legacy format)
+            tip_radius = None
+            tip_angle = None
+            tip_geometry = "sphere"
+            
+            if "tip" in curve_group and hasattr(curve_group["tip"], "attrs"):
+                # Legacy format: tip is a subgroup with attributes
+                tip_attrs = dict(curve_group["tip"].attrs)
+                tip_geometry = str(tip_attrs.get("geometry", "sphere"))
+                if "value" in tip_attrs:
+                    tip_radius = float(tip_attrs["value"])
+                if "angle" in tip_attrs:
+                    tip_angle = float(tip_attrs["angle"])
+            else:
+                # New format: tip info in curve attributes
+                tip_geometry = str(attrs.get("tip_geometry", "sphere"))
+                tip_radius = attrs.get("tip_radius", None)
+                tip_angle = attrs.get("tip_angle", None)
+            
+            # Apply defaults and type conversion
+            if tip_radius is None:
+                tip_radius = 1e-6
             try:
                 tip_radius = float(tip_radius) if tip_radius is not None else None
             except (ValueError, TypeError):
                 tip_radius = 1e-6
+            if tip_angle is None:
+                tip_angle = 45.0
             try:
                 tip_angle = float(tip_angle) if tip_angle is not None else None
             except (ValueError, TypeError):
@@ -155,7 +186,7 @@ def load_hdf5(filename: str) -> Dict[str, Any]:
                 "F": force.tolist(),
                 "spring_constant": float(attrs.get("spring_constant", 1.0)) if attrs.get("spring_constant") is not None else 1.0,
                 "tip": {
-                    "geometry": str(attrs.get("tip_geometry", "sphere")),
+                    "geometry": tip_geometry,
                     "radius": tip_radius,
                     "angle": tip_angle,
                 },
