@@ -134,6 +134,11 @@ class PipelineExecutor:
         """
         logger.info(f"Executing step: {step.type} / {step.plugin_id}")
 
+        # Skip "none" placeholder steps
+        if step.plugin_id == "none":
+            logger.info(f"Skipping step {step.type} with plugin_id='none'")
+            return
+
         # Special handling for certain step types
         if step.type in ("indentation", "elasticity_spectra"):
             self._execute_spectral_step(step, context, progress_callback)
@@ -159,9 +164,31 @@ class PipelineExecutor:
         for curve_idx, curve in enumerate(context.dataset):
             context.current_curve_index = curve_idx
 
+            # Skip outliers only for elasticity-related downstream analysis.
+            # Keep indentation + force_model for outliers so fitted parameters
+            # remain available for diagnostic plotting (red dots).
+            if step.type in ("elasticity_spectra", "elastic_model") and curve.is_outlier:
+                logger.info(f"Skipping outlier curve {curve_idx} for {step.type} step")
+                continue
+
             try:
-                # Get current data
-                x, y = curve.get_current_data()
+                # Select input data based on step type
+                if step.type == "force_model":
+                    x, y = curve.get_indentation_data()
+                    if x is None or y is None or len(x) == 0:
+                        logger.warning(
+                            f"No indentation data for force model on curve {curve_idx}; skipping"
+                        )
+                        continue
+                elif step.type == "elastic_model":
+                    x, y = curve.get_elasticity_spectra()
+                    if x is None or y is None or len(x) == 0:
+                        logger.warning(
+                            f"No elasticity spectra data for elastic model on curve {curve_idx}; skipping"
+                        )
+                        continue
+                else:
+                    x, y = curve.get_current_data()
 
                 # Run plugin
                 result = plugin.calculate(x, y, curve=curve)
@@ -178,6 +205,13 @@ class PipelineExecutor:
                 elif step.type == "contact_point":
                     z_cp, f_cp = result
                     curve.set_contact_point(z_cp, f_cp)
+                    
+                    # Auto-calculate indentation after CP
+                    from softmech.core.algorithms import spectral
+                    try:
+                        spectral.calculate_indentation(curve, zero_force=True)
+                    except Exception as e:
+                        logger.warning(f"Auto-calculation after CP failed for curve {curve_idx}: {e}")
 
                 elif step.type == "force_model":
                     curve.set_force_model_params(result)
@@ -199,8 +233,11 @@ class PipelineExecutor:
                 msg = f"Error processing curve {curve_idx} with {step.plugin_id}: {e}"
                 context.add_error(msg)
                 logger.error(msg)
-                if logger.isEnabledFor(logging.DEBUG):
-                    logger.debug(traceback.format_exc())
+                logger.debug(traceback.format_exc())
+                # For filters, log the actual data issue
+                if step.type == "filter":
+                    logger.error(f"Filter {step.plugin_id} failed - input: Z({len(x)} pts), F({len(y)} pts)")
+                    logger.error(f"Step parameters: {step.parameters}")
 
             if progress_callback and len(context.dataset) > 0:
                 step_progress = (context.current_step_index + 1) / context.total_steps
@@ -237,6 +274,15 @@ class PipelineExecutor:
 
         for curve_idx, curve in enumerate(context.dataset):
             context.current_curve_index = curve_idx
+
+            # Skip outliers only for elasticity_spectra; keep indentation for
+            # outliers so force-model fitting can still run for diagnostics.
+            if curve.is_outlier and step.type == "elasticity_spectra":
+                logger.info(f"Skipping outlier curve {curve_idx} for {step.type} step")
+                if progress_callback and len(context.dataset) > 0:
+                    curve_progress = (curve_idx + 1) / len(context.dataset)
+                    progress_callback(f"{step.type}: curve {curve_idx + 1} (skipped - outlier)", curve_progress)
+                continue
 
             try:
                 if step.type == "indentation":

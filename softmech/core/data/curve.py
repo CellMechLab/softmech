@@ -115,6 +115,9 @@ class Curve:
         self.index = index
         self.metadata = metadata or {}
 
+        # Outlier flag
+        self.is_outlier = False
+
         # Processing history (list of ProcessingResult objects)
         self.processing_history: List[ProcessingResult] = []
 
@@ -257,6 +260,29 @@ class Curve:
         """Get fitted elastic model parameters."""
         return self._elastic_model_params
 
+    def toggle_outlier(self) -> bool:
+        """
+        Toggle outlier status.
+
+        Returns
+        -------
+        bool
+            New outlier status
+        """
+        self.is_outlier = not self.is_outlier
+        return self.is_outlier
+
+    def set_outlier(self, is_outlier: bool) -> None:
+        """
+        Set outlier status.
+
+        Parameters
+        ----------
+        is_outlier : bool
+            Whether this curve is an outlier
+        """
+        self.is_outlier = is_outlier
+
     def record_processing_step(self, result: ProcessingResult) -> None:
         """
         Record a processing step in the history.
@@ -292,6 +318,7 @@ class Curve:
             },
             "index": self.index,
             "metadata": self.metadata,
+            "is_outlier": self.is_outlier,
         }
 
 

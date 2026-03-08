@@ -130,7 +130,13 @@ class PluginBase(ABC):
             {parameter_name: current_value}
         """
         hints = get_type_hints(self.__class__)
-        return {name: getattr(self, name) for name in hints if not name.startswith("_")}
+        return {
+            name: getattr(self, name)
+            for name in hints
+            if not name.startswith("_")
+            and not name.endswith("_min")
+            and not name.endswith("_max")
+        }
 
     def set_parameters_dict(self, params: Dict[str, Any]) -> None:
         """
@@ -243,10 +249,65 @@ class ForceModel(PluginBase):
     Force models (e.g., Hertz) fit the F(δ) curve to extract mechanical
     properties like Young's modulus.
 
+    Parameters
+    ----------
+    min_indentation_depth : float
+        Minimum indentation depth (δ) for fitting region in nanometers (nm).
+        Range: 0-10000 nm (0-10 μm). If 0, uses minimum available data.
+    max_indentation_depth : float
+        Maximum indentation depth (δ) for fitting region in nanometers (nm).
+        Range: 0-10000 nm (0-10 μm). If 0, uses maximum available data.
+
     Subclasses must implement:
     - calculate(): Fit model to data, return parameters
     - theory(): Generate theoretical curve for given parameters
     """
+
+    # Fitting region parameters (in nanometers, 0-10000 nm typical range)
+    min_indentation_depth: float = 0.0  # 0 means use minimum available
+    max_indentation_depth: float = 0.0  # 0 means use maximum available
+
+    def _get_fitting_region(self, x: np.ndarray, y: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+        """
+        Extract the fitting region from indentation data based on region parameters.
+
+        Parameters are in nanometers. Input x data is assumed to be in meters (SI units)
+        and is converted for comparison.
+
+        Parameters
+        ----------
+        x : np.ndarray
+            Indentation depth values (meters)
+        y : np.ndarray
+            Force values
+
+        Returns
+        -------
+        tuple
+            (x_region, y_region) - Data within the specified fitting region
+        """
+        x = np.asarray(x)
+        y = np.asarray(y)
+
+        # Get region bounds in nanometers
+        x_min_nm = self.get_parameter("min_indentation_depth")
+        x_max_nm = self.get_parameter("max_indentation_depth")
+
+        # Convert indentation data to nanometers for comparison
+        x_nm = x * 1e9  # Convert meters to nanometers
+
+        # If min is 0 or not set, use data minimum
+        if x_min_nm <= 0:
+            x_min_nm = np.nanmin(x_nm) if np.all(np.isfinite(x_nm)) else 0.0
+
+        # If max is 0 or not set, use data maximum
+        if x_max_nm <= 0:
+            x_max_nm = np.nanmax(x_nm) if np.all(np.isfinite(x_nm)) else np.inf
+
+        # Create boolean mask for fitting region
+        mask = (x_nm >= x_min_nm) & (x_nm <= x_max_nm)
+
+        return x[mask], y[mask]
 
     def calculate(self, x: np.ndarray, y: np.ndarray, curve=None) -> Any:
         """

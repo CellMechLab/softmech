@@ -1,0 +1,1 @@
+"""SoftMech Command-Line Interface."""

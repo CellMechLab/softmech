@@ -1,0 +1,55 @@
+{
+  "version": "2.0",
+  "metadata": {
+    "name": "Default Pipeline",
+    "description": "Default pipeline with none placeholders",
+    "version": "1.0",
+    "author": "",
+    "created": "2026-03-07T18:21:46.096214",
+    "modified": "2026-03-07T18:21:46.096214",
+    "tags": [],
+    "notes": ""
+  },
+  "stages": [
+    {
+      "name": "preprocessing",
+      "description": "Filtering and contact point",
+      "steps": [
+        {
+          "type": "filter",
+          "plugin_id": "savgol",
+          "parameters": {
+            "window_size": 125.0,
+            "polyorder": 3
+          },
+          "plugin_version": "1.0.0"
+        },
+        {
+          "type": "contact_point",
+          "plugin_id": "nanite_fit_line_polynomial",
+          "parameters": {
+            "METHOD": "fit_line_polynomial",
+            "METHOD_NAME": "Piecewise fit with line and polynomial"
+          },
+          "plugin_version": "1.0.0"
+        }
+      ]
+    },
+    {
+      "name": "analysis",
+      "description": "Model fitting",
+      "steps": [
+        {
+          "type": "force_model",
+          "plugin_id": "hertz",
+          "parameters": {
+            "min_indentation_depth": 0.0,
+            "max_indentation_depth": 600.0,
+            "poisson": 0.5
+          },
+          "plugin_version": "1.0.0"
+        }
+      ]
+    }
+  ]
+}

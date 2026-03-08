@@ -17,6 +17,7 @@ NAME = "Hertz"
 DESCRIPTION = "Hertz contact mechanics model for AFM indentation fitting"
 VERSION = "1.1.0"
 DOI = ""
+EQUATION = r"F(\delta)=\frac{4}{3}\frac{E}{1-\nu^2}\sqrt{R\,\delta^3}"
 
 
 class ForceModel(ForceModel):
@@ -94,14 +95,14 @@ class ForceModel(ForceModel):
         else:
             raise ValueError(f"Unsupported tip geometry: {geom.geometry_type}")
 
-    def calculate(self, x: np.ndarray, y: np.ndarray, curve=None) -> Any:
+    def calculate(self, x: np.ndarray, y: np.ndarray, curve=None) -> any:
         """
         Fit Hertz model to indentation data.
 
         Parameters
         ----------
         x : np.ndarray
-            Indentation depth δ (m)
+            Indentation depth δ (meters)
         y : np.ndarray
             Force F (N)
         curve : optional
@@ -111,21 +112,41 @@ class ForceModel(ForceModel):
         -------
         list
             [elastic_modulus] or False if fitting fails
+
+        Notes
+        -----
+        Fitting region is selected using min_indentation_depth and max_indentation_depth
+        parameters (in nanometers). Set both to 0 to use full available range.
         """
         if curve is None:
             logger.error("Curve object required for Hertz fitting")
             return False
 
-        if len(x) < 5:
-            logger.warning("Insufficient data points for fitting")
-            return False
-
         try:
+            x = np.asarray(x)
+            y = np.asarray(y)
+
+            # Apply fitting region selection (min/max in nm, x in meters)
+            x_fit, y_fit = self._get_fitting_region(x, y)
+
+            if len(x_fit) < 5:
+                logger.warning("Insufficient data points in fitting region for Hertz fitting")
+                return False
+
+            # Hertz fitting is defined for non-negative indentation only
+            valid = np.isfinite(x_fit) & np.isfinite(y_fit) & (x_fit >= 0)
+            x_fit = x_fit[valid]
+            y_fit = y_fit[valid]
+
+            if len(x_fit) < 5:
+                logger.warning("Insufficient valid non-negative indentation points for Hertz fitting")
+                return False
+
             # Fit with initial guess
             def theory_wrapper(x_fit, E):
                 return self.theory(x_fit, E, curve=curve)
 
-            popt, _ = curve_fit(theory_wrapper, x, y, p0=[1e3], maxfev=1000)
+            popt, _ = curve_fit(theory_wrapper, x_fit, y_fit, p0=[1e3], maxfev=1000)
             return list(popt)
 
         except RuntimeError as e:

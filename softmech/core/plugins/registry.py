@@ -102,6 +102,7 @@ class PluginRegistry:
                     "name": module.NAME,
                     "description": getattr(module, "DESCRIPTION", ""),
                     "doi": getattr(module, "DOI", ""),
+                    "equation": getattr(module, "EQUATION", ""),
                     "version": getattr(module, "VERSION", "1.0.0"),
                     "category": category,
                     "module": module,
