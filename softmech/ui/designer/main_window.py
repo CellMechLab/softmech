@@ -274,13 +274,23 @@ class DesignerMainWindow(QMainWindow):
                             Z = np.array(curve_dict.get("Z", []))
                             F = np.array(curve_dict.get("F", []))
                         
-                        k = float(curve_dict.get("spring_constant", 0.032))
+                        k = float(curve_dict.get("spring_constant", 0.032)) if curve_dict.get("spring_constant") is not None else 0.032
                         
                         from softmech.core.data import TipGeometry
                         tip_dict = curve_dict.get("tip", {})
+                        # Handle None values for tip geometry
+                        radius = tip_dict.get("radius", 1e-6)
+                        if radius is not None:
+                            try:
+                                radius = float(radius)
+                            except (ValueError, TypeError):
+                                radius = 1e-6
+                        else:
+                            radius = 1e-6
+                        
                         tip_geom = TipGeometry(
                             geometry_type=tip_dict.get("geometry", "sphere"),
-                            radius=float(tip_dict.get("radius", 1e-6))
+                            radius=radius
                         )
                         
                         curve = Curve(Z, F, spring_constant=k, tip_geometry=tip_geom, index=i)

@@ -138,14 +138,26 @@ def load_hdf5(filename: str) -> Dict[str, Any]:
             z = np.array(segment["Z"])
 
             # Build curve dict
+            # Handle tip radius/angle with None-safety
+            tip_radius = attrs.get("tip_radius", 1e-6)
+            tip_angle = attrs.get("tip_angle", 45.0)
+            try:
+                tip_radius = float(tip_radius) if tip_radius is not None else None
+            except (ValueError, TypeError):
+                tip_radius = 1e-6
+            try:
+                tip_angle = float(tip_angle) if tip_angle is not None else None
+            except (ValueError, TypeError):
+                tip_angle = 45.0
+
             curve_dict = {
                 "Z": z.tolist(),
                 "F": force.tolist(),
-                "spring_constant": float(attrs.get("spring_constant", 1.0)),
+                "spring_constant": float(attrs.get("spring_constant", 1.0)) if attrs.get("spring_constant") is not None else 1.0,
                 "tip": {
                     "geometry": str(attrs.get("tip_geometry", "sphere")),
-                    "radius": float(attrs.get("tip_radius", 1e-6)) if "tip_radius" in attrs else None,
-                    "angle": float(attrs.get("tip_angle", 45.0)) if "tip_angle" in attrs else None,
+                    "radius": tip_radius,
+                    "angle": tip_angle,
                 },
                 "metadata": {k: v for k, v in attrs.items() if not k.startswith("tip_")},
                 "is_outlier": bool(attrs.get("is_outlier", False)),  # Backwards compatible default
@@ -159,8 +171,14 @@ def load_hdf5(filename: str) -> Dict[str, Any]:
 
             # Optional: read contact point if available
             if "cp" in curve_group:
-                cp_data = curve_group["cp"][()]
-                curve_dict["contact_point"] = [float(cp_data[0]), float(cp_data[1])]
+                try:
+                    cp_data = curve_group["cp"][()]
+                    if cp_data is not None and len(cp_data) >= 2:
+                        cp0 = float(cp_data[0]) if cp_data[0] is not None else 0.0
+                        cp1 = float(cp_data[1]) if cp_data[1] is not None else 0.0
+                        curve_dict["contact_point"] = [cp0, cp1]
+                except (ValueError, TypeError, IndexError):
+                    logger.warning(f"Could not read contact point from {curve_name}")
 
             data["curves"].append(curve_dict)
 
