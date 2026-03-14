@@ -2,6 +2,9 @@
 
 ## Quick Start
 
+> ⚠️ Experimental: The command-line interface is still evolving in the alpha series.
+> Command names, options, and pipeline behavior may change between releases.
+
 ### Launching the UI (Default)
 
 The easiest way to get started is to use one of the launcher scripts or run the script directly:

@@ -86,6 +86,9 @@ See [DESIGNER_QUICK_START.md](DESIGNER_QUICK_START.md) and [CLI_QUICKSTART.md](C
 
 ## Batch Processing via CLI
 
+> ⚠️ Experimental: The CLI is still evolving and may change between alpha releases.
+> For production or stable workflows, prefer the Designer UI.
+
 Process multiple datasets with a saved pipeline:
 
 ```bash

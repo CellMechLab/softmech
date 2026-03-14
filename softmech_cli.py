@@ -38,6 +38,8 @@ logger = logging.getLogger(__name__)
 @click.pass_context
 def cli(ctx: click.Context, verbose: bool) -> None:
     """SoftMech AFM Analysis Pipeline Tool
+
+    Experimental: CLI commands and options may change during alpha releases.
     
     Use 'softmech_cli ui' to launch the interactive UI
     Use 'softmech_cli batch' for command-line batch processing
