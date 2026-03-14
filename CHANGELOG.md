@@ -5,6 +5,28 @@ All notable changes to the SoftMech project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+- **Documentation Consistency**
+  - CLI and quickstart examples now consistently reference `.pipe` pipeline files.
+  - Clarified that `.pipe` files use JSON content internally.
+- **Parameter Editing UX**
+  - Parameter widgets now respect plugin type hints and numeric bounds.
+  - Internal metadata flags (for example odd-value constraints) are hidden from editable parameter lists.
+- **Savitzky-Golay Plugin**
+  - `window_size` is now treated as an odd integer parameter in the UI.
+  - Added backward compatibility for legacy `window_size` values stored in nanometers.
+- **Force Model Fitting Region**
+  - `max_indentation_depth` now defaults to `+inf` semantics (full available upper bound).
+  - Single-curve indentation fit overlay is now clipped to the configured fitting region.
+- **Visualization Behavior**
+  - Average mode now keeps low-alpha background curves for context.
+  - Autoscaling now occurs only once after data redraw/recalculation, preserving user zoom/pan when switching views.
+- **Plugin About/Metadata Display**
+  - DOI links are shown only in the About popup, not inline in filter/step cards.
+  - Equation labels use a readable Unicode-rendered form for common LaTeX-like symbols.
+
 ## [2.0.0-alpha] - 2026-03-08
 
 ### Major Changes

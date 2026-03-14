@@ -91,7 +91,7 @@ def _launch_designer_ui() -> None:
     '--pipeline',
     type=click.Path(exists=True),
     required=True,
-    help='Path to pipeline descriptor JSON file'
+    help='Path to pipeline descriptor .pipe file (JSON content)'
 )
 @click.option(
     '--input',
@@ -139,13 +139,13 @@ def batch(
     
     Example:
         softmech_cli batch \\
-            --pipeline my_pipeline.json \\
+            --pipeline my_pipeline.pipe \
             --input ./data \\
             --output ./results.json
     
     Or with HDF5 output:
         softmech_cli batch \\
-            --pipeline my_pipeline.json \\
+            --pipeline my_pipeline.pipe \
             --input ./data \\
             --output ./results.h5 \\
             --format hdf5

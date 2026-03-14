@@ -250,7 +250,7 @@ Automate pipeline execution for integration with other tools, batch jobs, cloud 
 
 ```bash
 # Basic usage
-softmech-cli run pipeline.json curves/ --output results.csv
+softmech-cli run pipeline.pipe curves/ --output results.csv
 
 # Options
 --pipeline FILE          Path to pipeline descriptor JSON
@@ -270,7 +270,7 @@ softmech/cli/
 ├── commands/
 │   ├── __init__.py
 │   ├── run.py             # softmech-cli run
-│   ├── validate.py        # softmech-cli validate <pipeline.json>
+│   ├── validate.py        # softmech-cli validate <pipeline.pipe>
 │   └── list_plugins.py    # softmech-cli list plugins
 └── formatters/
     ├── __init__.py
@@ -342,7 +342,7 @@ softmech/cli/
 - [ ] Error handling and logging
 
 **Definition of Done:**
-- `softmech-cli run pipeline.json curves/ --output results.csv` works
+- `softmech-cli run pipeline.pipe curves/ --output results.csv` works
 - Produces same results as GUI batch analyzer
 
 ---

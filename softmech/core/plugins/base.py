@@ -116,6 +116,17 @@ class PluginBase(ABC):
         """
         if not hasattr(self, name):
             raise KeyError(f"Unknown parameter: {name}")
+
+        # Cast values based on annotations so UI/frontends remain type-consistent.
+        hints = get_type_hints(self.__class__)
+        expected_type = hints.get(name)
+        if expected_type is bool:
+            value = bool(value)
+        elif expected_type is int and not isinstance(value, bool):
+            value = int(value)
+        elif expected_type is float and not isinstance(value, bool):
+            value = float(value)
+
         setattr(self, name, value)
 
     def get_parameters_dict(self) -> Dict[str, Any]:
@@ -136,6 +147,7 @@ class PluginBase(ABC):
             if not name.startswith("_")
             and not name.endswith("_min")
             and not name.endswith("_max")
+            and not name.endswith("_odd")
         }
 
     def set_parameters_dict(self, params: Dict[str, Any]) -> None:
@@ -256,7 +268,8 @@ class ForceModel(PluginBase):
         Range: 0-10000 nm (0-10 μm). If 0, uses minimum available data.
     max_indentation_depth : float
         Maximum indentation depth (δ) for fitting region in nanometers (nm).
-        Range: 0-10000 nm (0-10 μm). If 0, uses maximum available data.
+        Range: 0-10000 nm (0-10 μm) for explicit bounds. If +inf, uses
+        maximum available data.
 
     Subclasses must implement:
     - calculate(): Fit model to data, return parameters
@@ -264,8 +277,8 @@ class ForceModel(PluginBase):
     """
 
     # Fitting region parameters (in nanometers, 0-10000 nm typical range)
-    min_indentation_depth: float = 0.0  # 0 means use minimum available
-    max_indentation_depth: float = 0.0  # 0 means use maximum available
+    min_indentation_depth: float = 0.0
+    max_indentation_depth: float = float("inf")
 
     def _get_fitting_region(self, x: np.ndarray, y: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
         """
@@ -300,8 +313,8 @@ class ForceModel(PluginBase):
         if x_min_nm <= 0:
             x_min_nm = np.nanmin(x_nm) if np.all(np.isfinite(x_nm)) else 0.0
 
-        # If max is 0 or not set, use data maximum
-        if x_max_nm <= 0:
+        # If max is non-finite or not positive, use data maximum
+        if not np.isfinite(x_max_nm) or x_max_nm <= 0:
             x_max_nm = np.nanmax(x_nm) if np.all(np.isfinite(x_nm)) else np.inf
 
         # Create boolean mask for fitting region

@@ -23,19 +23,20 @@ class Filter(Filter):
 
     Parameters
     ----------
-    window_size : float
-        Window size in nanometers (will be converted to odd number of points)
+    window_size : int
+        Window size in points (must be an odd integer)
     polyorder : int
         Order of polynomial (must be < window_size in points)
     """
 
     # Parameters as type-annotated class variables
-    window_size: float = 25.0  # nanometers
+    window_size: int = 25
     polyorder: int = 3
 
     # Constraint hints (optional, used by UI)
-    window_size_min: float = 1.0
-    window_size_max: float = 500.0
+    window_size_min: int = 3
+    window_size_max: int = 501
+    _window_size_odd: bool = True
     polyorder_min: int = 1
     polyorder_max: int = 7
 
@@ -58,13 +59,15 @@ class Filter(Filter):
             (x_filtered, y_filtered)
         """
         # Get current parameters
-        window_nm = self.get_parameter("window_size")
-        polyorder = self.get_parameter("polyorder")
+        window_param = float(self.get_parameter("window_size"))
+        window_points = int(window_param)
+        polyorder = int(self.get_parameter("polyorder"))
 
-        # Convert window size from nm to points
-        x_window_m = window_nm * 1e-9
-        x_step = np.mean(np.diff(x))
-        window_points = int(np.round(x_window_m / x_step))
+        # Backward compatibility: legacy pipelines stored window_size in nanometers.
+        if window_points > len(y):
+            x_step = float(np.mean(np.diff(x))) if len(x) > 1 else 0.0
+            if x_step > 0:
+                window_points = int(round((window_param * 1e-9) / x_step))
 
         # Ensure window is odd
         if window_points % 2 == 0:
@@ -73,6 +76,11 @@ class Filter(Filter):
         # Validate parameters
         if window_points < 3:
             window_points = 3
+        max_window = len(y) if len(y) % 2 == 1 else len(y) - 1
+        if max_window < 3:
+            return False
+        if window_points > max_window:
+            window_points = max_window
         if polyorder >= window_points:
             polyorder = window_points - 1
 

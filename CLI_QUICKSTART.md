@@ -63,14 +63,14 @@ Process multiple AFM curves through a pipeline and save fit parameters:
 
 ```bash
 python softmech_cli.py batch \
-    --pipeline <pipeline.json> \
+  --pipeline <pipeline.pipe> \
     --input <input_directory> \
     --output <output_file> \
     [options]
 ```
 
 **Required Options:**
-- `--pipeline PATH`: Path to pipeline descriptor JSON file
+- `--pipeline PATH`: Path to pipeline descriptor `.pipe` file (JSON content)
 - `--input PATH`: Directory containing input files
 - `--output PATH`: Output file for results
 
@@ -84,13 +84,13 @@ python softmech_cli.py batch \
 ```bash
 # Basic batch processing with JSON output
 python softmech_cli.py batch \
-    --pipeline my_pipeline.json \
+  --pipeline my_pipeline.pipe \
     --input ./data \
     --output ./results.json
 
 # Process with HDF5 output and progress bar
 python softmech_cli.py batch \
-    --pipeline pipelines/standard.json \
+  --pipeline pipelines/standard.pipe \
     --input ./experimental_data \
     --output ./results.h5 \
     --format hdf5 \
@@ -98,7 +98,7 @@ python softmech_cli.py batch \
 
 # Process only CSV files with custom pattern
 python softmech_cli.py batch \
-    --pipeline my_pipeline.json \
+  --pipeline my_pipeline.pipe \
     --input ./data \
     --output ./results.json \
     --pattern "*.csv"
@@ -106,7 +106,7 @@ python softmech_cli.py batch \
 
 ## Pipeline Descriptor Format
 
-Create a `pipeline.json` file to define your analysis pipeline. Example:
+Create a `pipeline.pipe` file to define your analysis pipeline (JSON syntax). Example:
 
 ```json
 {
@@ -243,9 +243,9 @@ python softmech_cli.py [command]
 
 ### Pipeline Not Loading
 
-Verify your pipeline descriptor JSON:
+Verify your pipeline descriptor:
 ```bash
-python softmech_cli.py --verbose batch --pipeline my_pipeline.json ...
+python softmech_cli.py --verbose batch --pipeline my_pipeline.pipe ...
 ```
 
 The verbose flag will show detailed error messages during pipeline loading.
@@ -262,7 +262,7 @@ from softmech.core.io import loaders
 import json
 
 # Load pipeline
-with open('my_pipeline.json') as f:
+with open('my_pipeline.pipe') as f:
     pipeline_data = json.load(f)
 pipeline = PipelineDescriptor.from_dict(pipeline_data)
 

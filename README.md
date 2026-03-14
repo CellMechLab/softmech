@@ -74,9 +74,9 @@ python softmech_cli.py ui
 ```
 
 ### Basic Workflow
-1. **File → Open Curve** - Load AFM force curve dataset (HDF5 or JSON)
+1. **File → Open Experiment** - Load AFM force curve dataset (HDF5 or JSON)
 2. **Edit Pipeline** - Add/remove filters using the left panel flowchart editor
-3. **Run Pipeline** - Click "Run Pipeline" to process all curves
+3. **Run Pipeline** - Click "Run Pipeline" to process all curves (by default, it runs automatically after every change)
 4. **Analyze Results** - Browse curves, view indentation/elasticity, check parameter distributions
 5. **Export** - File → Export Results to save CSV files with analysis data
 

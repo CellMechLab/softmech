@@ -1,6 +1,7 @@
 """Block-based pipeline editor with vertical list of colored step blocks."""
 
-from typing import Optional, Dict, List, Any
+import math
+from typing import Optional, Dict, List, Any, get_type_hints
 import logging
 
 from PySide6.QtWidgets import (
@@ -31,10 +32,18 @@ STEP_TYPE_COLORS = {
 class ParametersDialog(QDialog):
     """Dialog for editing step parameters."""
 
-    def __init__(self, step: PipelineStep, plugin_display_name: Optional[str] = None, parent: Optional[QWidget] = None):
+    def __init__(
+        self,
+        step: PipelineStep,
+        plugin: Optional[Any] = None,
+        plugin_display_name: Optional[str] = None,
+        parent: Optional[QWidget] = None,
+    ):
         super().__init__(parent)
         self.step = step
         self.param_inputs: Dict[str, QWidget] = {}
+        self._plugin_class = plugin.__class__ if plugin is not None else None
+        self._param_hints: Dict[str, Any] = get_type_hints(self._plugin_class) if self._plugin_class else {}
         display_name = plugin_display_name or step.plugin_id
 
         self.setWindowTitle(f"Edit Parameters: {display_name}")
@@ -97,20 +106,19 @@ class ParametersDialog(QDialog):
                     param_row.addWidget(QLabel(f"{param_display_name}:"))
                     
                     # Create appropriate input widget (values in nanometers, 0-10000 nm typical)
-                    if isinstance(param_value, float):
-                        input_widget = QDoubleSpinBox()
-                        input_widget.setRange(0, 10000)
-                        input_widget.setDecimals(1)
-                        input_widget.setValue(param_value)
-                        input_widget.setSuffix(" nm")
-                        input_widget.setToolTip("Indentation depth in nanometers (0-10000 nm = 0-10 μm). Leave 0 to use full available range.")
+                    input_widget = QDoubleSpinBox()
+                    # Keep a large finite upper bound in the UI; treat that sentinel as +inf for max depth.
+                    input_widget.setRange(0, 1e9)
+                    input_widget.setDecimals(1)
+                    input_widget.setSuffix(" nm")
+
+                    numeric_value = float(param_value)
+                    if param_name == "max_indentation_depth" and not math.isfinite(numeric_value):
+                        input_widget.setValue(input_widget.maximum())
+                        input_widget.setToolTip("Maximum indentation depth in nanometers. Set to the top value to use full available range (infinity).")
                     else:
-                        input_widget = QDoubleSpinBox()
-                        input_widget.setRange(0, 10000)
-                        input_widget.setDecimals(1)
-                        input_widget.setValue(float(param_value))
-                        input_widget.setSuffix(" nm")
-                        input_widget.setToolTip("Indentation depth in nanometers (0-10000 nm = 0-10 μm). Leave 0 to use full available range.")
+                        input_widget.setValue(numeric_value)
+                        input_widget.setToolTip("Indentation depth in nanometers. Use 0 for minimum auto-bound; use the top value for full upper range.")
                     
                     self.param_inputs[param_name] = input_widget
                     param_row.addWidget(input_widget)
@@ -133,20 +141,40 @@ class ParametersDialog(QDialog):
         param_layout = QHBoxLayout()
         param_layout.addWidget(QLabel(f"{param_name}:"))
 
+        hinted_type = self._param_hints.get(param_name)
+        if hinted_type is None:
+            hinted_type = bool if isinstance(param_value, bool) else int if isinstance(param_value, int) else float if isinstance(param_value, float) else str
+
+        min_value = getattr(self._plugin_class, f"{param_name}_min", None) if self._plugin_class else None
+        max_value = getattr(self._plugin_class, f"{param_name}_max", None) if self._plugin_class else None
+        odd_only = False
+        if self._plugin_class:
+            odd_only = bool(
+                getattr(self._plugin_class, f"_{param_name}_odd", getattr(self._plugin_class, f"{param_name}_odd", False))
+            )
+
         # Create appropriate input widget based on type
-        if isinstance(param_value, bool):
+        if hinted_type is bool:
             input_widget = QComboBox()
             input_widget.addItems(["False", "True"])
-            input_widget.setCurrentText(str(param_value))
-        elif isinstance(param_value, int):
+            input_widget.setCurrentText("True" if bool(param_value) else "False")
+        elif hinted_type is int:
             input_widget = QSpinBox()
-            input_widget.setRange(-1000000, 1000000)
-            input_widget.setValue(param_value)
-        elif isinstance(param_value, float):
+            spin_min = int(min_value) if isinstance(min_value, (int, float)) else -1000000
+            spin_max = int(max_value) if isinstance(max_value, (int, float)) else 1000000
+            input_widget.setRange(spin_min, spin_max)
+            input_widget.setValue(int(param_value))
+            if odd_only:
+                input_widget.valueChanged.connect(lambda value, w=input_widget: self._enforce_odd_spinbox(w, value))
+                self._enforce_odd_spinbox(input_widget, input_widget.value())
+                input_widget.setToolTip("This parameter must be an odd integer.")
+        elif hinted_type is float:
             input_widget = QDoubleSpinBox()
-            input_widget.setRange(-1e9, 1e9)
+            float_min = float(min_value) if isinstance(min_value, (int, float)) else -1e9
+            float_max = float(max_value) if isinstance(max_value, (int, float)) and math.isfinite(float(max_value)) else 1e9
+            input_widget.setRange(float_min, float_max)
             input_widget.setDecimals(6)
-            input_widget.setValue(param_value)
+            input_widget.setValue(float(param_value))
         else:
             # Default to label for display
             input_widget = QLabel(str(param_value))
@@ -162,7 +190,11 @@ class ParametersDialog(QDialog):
             if isinstance(widget, QSpinBox):
                 params[param_name] = widget.value()
             elif isinstance(widget, QDoubleSpinBox):
-                params[param_name] = widget.value()
+                value = widget.value()
+                if param_name == "max_indentation_depth" and value >= widget.maximum():
+                    params[param_name] = float("inf")
+                else:
+                    params[param_name] = value
             elif isinstance(widget, QComboBox):
                 params[param_name] = widget.currentText() == "True"
             elif isinstance(widget, QLabel):
@@ -170,6 +202,15 @@ class ParametersDialog(QDialog):
             else:
                 params[param_name] = self.step.parameters[param_name]
         return params
+
+    @staticmethod
+    def _enforce_odd_spinbox(spinbox: QSpinBox, value: int) -> None:
+        """Force odd integer values for parameters that require odd-only input."""
+        if value % 2 == 0:
+            corrected = value + 1 if value < spinbox.maximum() else value - 1
+            spinbox.blockSignals(True)
+            spinbox.setValue(corrected)
+            spinbox.blockSignals(False)
 
 
 class StepBlockWidget(QFrame):
@@ -263,15 +304,6 @@ class StepBlockWidget(QFrame):
                 param_label.setWordWrap(True)
                 content_layout.addWidget(param_label)
 
-            doi_link = self._build_doi_link_html()
-            if doi_link:
-                doi_label = QLabel(doi_link)
-                doi_label.setFont(QFont("Arial", 8))
-                doi_label.setOpenExternalLinks(True)
-                doi_label.setTextFormat(Qt.TextFormat.RichText)
-                doi_label.setTextInteractionFlags(Qt.TextInteractionFlag.TextBrowserInteraction)
-                doi_label.setStyleSheet("color: #666;")
-                content_layout.addWidget(doi_label)
         else:
             no_param_label = QLabel("No parameters")
             no_param_label.setFont(QFont("Arial", 8))
@@ -329,13 +361,6 @@ class StepBlockWidget(QFrame):
 
         return tooltip
 
-    def _build_doi_link_html(self) -> str:
-        doi_value = self.plugin_info.get("doi", "")
-        doi_url = self._doi_to_url(doi_value)
-        if not doi_url:
-            return ""
-        return f'<a href="{doi_url}">DOI</a>'
-
     @staticmethod
     def _doi_to_url(doi_value: str) -> str:
         doi_text = (doi_value or "").strip()
@@ -347,6 +372,31 @@ class StepBlockWidget(QFrame):
 
         doi_text = doi_text.replace("https://doi.org/", "").replace("http://doi.org/", "")
         return f"http://doi.org/{doi_text}"
+
+    @staticmethod
+    def _format_equation_text(equation: str) -> str:
+        """Render a readable Unicode equation from common LaTeX-style tokens."""
+        text = (equation or "").strip()
+        if not text:
+            return ""
+
+        replacements = {
+            "\\delta": "δ",
+            "\\nu": "ν",
+            "\\sqrt": "√",
+            "\\frac": "",
+            "\\left": "",
+            "\\right": "",
+            "\\,": " ",
+            "^2": "²",
+            "^3": "³",
+        }
+        for source, target in replacements.items():
+            text = text.replace(source, target)
+
+        text = text.replace("{", "").replace("}", "")
+        text = text.replace("=", " = ")
+        return " ".join(text.split())
 
     def _get_step_display_name(self) -> str:
         """Return user-facing title for the step block."""
@@ -407,7 +457,8 @@ class StepBlockWidget(QFrame):
         # Equation
         equation = plugin_info.get("equation", "")
         if equation:
-            equation_label = QLabel(f"Equation: {equation}")
+            equation_text = self._format_equation_text(equation)
+            equation_label = QLabel(f"Equation: {equation_text}")
             equation_label.setFont(QFont("Arial", 8))
             equation_label.setWordWrap(True)
             layout.addWidget(equation_label)
@@ -670,7 +721,19 @@ class BlockBasedPipelineEditor(QWidget):
         step = block.step
         self._ensure_step_parameters(step)
 
-        dialog = ParametersDialog(step, plugin_display_name=block.plugin_info.get("name"), parent=self)
+        plugin_instance = None
+        if step.plugin_id != "none":
+            try:
+                plugin_instance = self.registry.get(step.plugin_id)
+            except Exception:
+                plugin_instance = None
+
+        dialog = ParametersDialog(
+            step,
+            plugin=plugin_instance,
+            plugin_display_name=block.plugin_info.get("name"),
+            parent=self,
+        )
         if dialog.exec_() == QDialog.DialogCode.Accepted:
             new_params = dialog.get_parameters()
             step.parameters = new_params

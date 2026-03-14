@@ -54,6 +54,7 @@ class CurveViewerWidget(QWidget):
         self._cp_calculated = False
         self._log_y = log_y
         self._clickable_series: list[tuple[int, np.ndarray, np.ndarray]] = []
+        self._autoscale_pending = True
 
         # Initialize outlier button controls
         self._sync_outlier_controls()
@@ -61,6 +62,8 @@ class CurveViewerWidget(QWidget):
     def set_dataset(self, dataset: Optional[Dataset]) -> None:
         """Set the dataset and update controls."""
         self._dataset = dataset
+        # Re-arm autoscale only when data is reloaded/recomputed.
+        self._autoscale_pending = True
         if dataset and len(dataset) > 0:
             self.curve_selector.set_num_curves(len(dataset))
             # Check if any curve has CP calculated
@@ -128,6 +131,9 @@ class CurveViewerWidget(QWidget):
 
     def _apply_range_from_non_outliers(self, series: list[tuple[np.ndarray, np.ndarray]]) -> None:
         """Autoscale plot based only on non-outlier series to avoid skew."""
+        if not self._autoscale_pending:
+            return
+
         if not series:
             return
 
@@ -158,6 +164,8 @@ class CurveViewerWidget(QWidget):
 
         self.plot.setXRange(x_min - x_pad, x_max + x_pad, padding=0)
         self.plot.setYRange(y_min - y_pad, y_max + y_pad, padding=0)
+        self.plot.enableAutoRange(x=False, y=False)
+        self._autoscale_pending = False
 
     def _register_clickable_curve(self, curve_idx: int, x: np.ndarray, y: np.ndarray) -> None:
         """Register a plotted curve for click-based selection."""
@@ -330,6 +338,23 @@ class ForceDisplacementViewer(CurveViewerWidget):
 
         if not Z_all:
             return
+
+        # Keep context in average mode: render all curves faintly in the background.
+        for i, curve in enumerate(self._dataset):
+            Z_bg, F_bg = curve.get_current_data()
+            if align_cp:
+                cp_bg = curve.get_contact_point()
+                if cp_bg:
+                    z_cp_bg, f_cp_bg = cp_bg
+                    Z_bg = Z_bg - z_cp_bg
+                    F_bg = F_bg - f_cp_bg
+
+            bg_color = (200, 60, 60, 30) if curve.is_outlier else (120, 120, 120, 30)
+            self.plot.plot(
+                Z_bg * 1e6, F_bg * 1e9,
+                pen=pg.mkPen(bg_color, width=1),
+                name=None if i > 0 else "Background curves"
+            )
 
         # Find common range
         Z_min = max(z.min() for z in Z_all)
@@ -514,6 +539,19 @@ class IndentationViewer(CurveViewerWidget):
         if not indent_all:
             return
 
+        # Keep context in average mode: render all curves faintly in the background.
+        for i, curve in enumerate(self._dataset):
+            indent_bg, force_bg = curve.get_indentation_data()
+            if indent_bg is None or force_bg is None:
+                continue
+
+            bg_color = (200, 60, 60, 30) if curve.is_outlier else (120, 120, 120, 30)
+            self.plot.plot(
+                indent_bg * 1e6, force_bg * 1e9,
+                pen=pg.mkPen(bg_color, width=1),
+                name=None if i > 0 else "Background curves"
+            )
+
         # Common range
         indent_min = max(i.min() for i in indent_all)
         indent_max = min(i.max() for i in indent_all)
@@ -563,10 +601,11 @@ class IndentationViewer(CurveViewerWidget):
             self.plot.addItem(text)
             return
 
-        fit_y = self._compute_force_model_fit(curve, indent)
+        fit_result = self._compute_force_model_fit(curve, indent)
         equation = self._get_model_equation(curve)
 
-        if fit_y is not None:
+        if fit_result is not None:
+            fit_x, fit_y = fit_result
             self.fit_params_label.setText(self._format_fitted_parameters(curve))
             marker_color = (200, 60, 60, 150) if curve.is_outlier else (20, 130, 90, 150)
             fit_color = (200, 60, 60) if curve.is_outlier else (40, 40, 40)
@@ -580,7 +619,7 @@ class IndentationViewer(CurveViewerWidget):
                 name=f"Curve {idx} data"
             )
             self.plot.plot(
-                indent * 1e6, fit_y * 1e9,
+                fit_x * 1e6, fit_y * 1e9,
                 pen=pg.mkPen(fit_color, width=2),
                 name=f"Fit ({equation})" if equation else "Fit"
             )
@@ -609,7 +648,32 @@ class IndentationViewer(CurveViewerWidget):
 
         info = self.registry.get_info(plugin_id)
         equation = info.get("equation", "") if isinstance(info, dict) else ""
-        return equation or ""
+        return self._format_equation_for_display(equation)
+
+    @staticmethod
+    def _format_equation_for_display(equation: str) -> str:
+        """Convert common LaTeX-like tokens to readable Unicode for labels/legends."""
+        text = (equation or "").strip()
+        if not text:
+            return ""
+
+        replacements = {
+            "\\delta": "δ",
+            "\\nu": "ν",
+            "\\sqrt": "√",
+            "\\frac": "",
+            "\\left": "",
+            "\\right": "",
+            "\\,": " ",
+            "^2": "²",
+            "^3": "³",
+        }
+        for source, target in replacements.items():
+            text = text.replace(source, target)
+
+        text = text.replace("{", "").replace("}", "")
+        text = text.replace("=", " = ")
+        return " ".join(text.split())
 
     def _format_fitted_parameters(self, curve: Curve) -> str:
         """Return a formatted fitted-parameter string for selected curve."""
@@ -636,8 +700,8 @@ class IndentationViewer(CurveViewerWidget):
 
         return f"Fitted parameters: {fitted_params}"
 
-    def _compute_force_model_fit(self, curve: Curve, indent: np.ndarray) -> Optional[np.ndarray]:
-        """Compute fitted force curve from stored force-model results."""
+    def _compute_force_model_fit(self, curve: Curve, indent: np.ndarray) -> Optional[tuple[np.ndarray, np.ndarray]]:
+        """Compute fitted force curve from stored force-model results within fitting region."""
         if self.registry is None:
             return None
 
@@ -668,13 +732,28 @@ class IndentationViewer(CurveViewerWidget):
             else:
                 param_values = (fitted_params,)
 
-            fit_y = plugin.theory(indent, *param_values, curve=curve)
+            indent = np.asarray(indent)
+            min_nm = float(plugin.get_parameter("min_indentation_depth"))
+            max_nm = float(plugin.get_parameter("max_indentation_depth"))
+
+            indent_nm = indent * 1e9
+            if min_nm <= 0:
+                min_nm = float(np.nanmin(indent_nm)) if np.all(np.isfinite(indent_nm)) else 0.0
+            if not np.isfinite(max_nm) or max_nm <= 0:
+                max_nm = float(np.nanmax(indent_nm)) if np.all(np.isfinite(indent_nm)) else np.inf
+
+            mask = (indent_nm >= min_nm) & (indent_nm <= max_nm)
+            fit_x = indent[mask]
+            if fit_x.size == 0:
+                return None
+
+            fit_y = plugin.theory(fit_x, *param_values, curve=curve)
             if fit_y is None:
                 return None
             fit_y = np.asarray(fit_y)
-            if fit_y.shape != indent.shape:
+            if fit_y.shape != fit_x.shape:
                 return None
-            return fit_y
+            return fit_x, fit_y
         except Exception as exc:
             logger.debug(f"Could not compute model fit overlay for curve {curve.index}: {exc}")
             return None
