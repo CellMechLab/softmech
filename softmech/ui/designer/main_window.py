@@ -460,63 +460,45 @@ class DesignerMainWindow(QMainWindow):
     def _export_fitting_parameters(self, curves, filename: str) -> None:
         """Export fitting parameters from all curves."""
         import csv
-        
+
+        def _params_to_dict(params, prefix: str) -> dict:
+            """Convert any params type to a flat {column: value} dict."""
+            if params is None:
+                return {}
+            if isinstance(params, dict):
+                return {f"{prefix}_{k}": v for k, v in params.items()}
+            if hasattr(params, '__dict__'):
+                return {f"{prefix}_{k}": v for k, v in params.__dict__.items()}
+            if isinstance(params, (list, tuple)):
+                return {f"{prefix}_param_{i}": v for i, v in enumerate(params)}
+            return {}
+
         with open(filename, "w", newline='') as f:
             writer = csv.writer(f)
-            
-            # Collect all parameters
-            param_data = []
-            header = ["curve_index"]
-            
+
+            # First pass: collect all rows as dicts to discover all columns
+            rows_as_dicts = []
             for curve in curves:
-                row = [curve.index]
-                
-                # Force model parameters
-                force_params = curve.get_force_model_params()
-                if force_params is not None:
-                    if len(param_data) == 0:  # First curve with params - set headers
-                        if hasattr(force_params, '__dict__'):
-                            for key in force_params.__dict__.keys():
-                                header.append(f"force_{key}")
-                        elif isinstance(force_params, dict):
-                            for key in force_params.keys():
-                                header.append(f"force_{key}")
-                    
-                    # Add values
-                    if hasattr(force_params, '__dict__'):
-                        for val in force_params.__dict__.values():
-                            row.append(val)
-                    elif isinstance(force_params, dict):
-                        for val in force_params.values():
-                            row.append(val)
-                
-                # Elastic model parameters
-                elastic_params = curve.get_elastic_model_params()
-                if elastic_params is not None:
-                    if len(param_data) == 0:  # First curve - add to headers
-                        if hasattr(elastic_params, '__dict__'):
-                            for key in elastic_params.__dict__.keys():
-                                header.append(f"elastic_{key}")
-                        elif isinstance(elastic_params, dict):
-                            for key in elastic_params.keys():
-                                header.append(f"elastic_{key}")
-                    
-                    # Add values
-                    if hasattr(elastic_params, '__dict__'):
-                        for val in elastic_params.__dict__.values():
-                            row.append(val)
-                    elif isinstance(elastic_params, dict):
-                        for val in elastic_params.values():
-                            row.append(val)
-                
-                param_data.append(row)
-            
-            # Write header and data
-            if len(param_data) > 0:
-                writer.writerow(header)
-                writer.writerows(param_data)
+                row_dict = {"curve_index": curve.index}
+                row_dict.update(_params_to_dict(curve.get_force_model_params(), "force"))
+                row_dict.update(_params_to_dict(curve.get_elastic_model_params(), "elastic"))
+                rows_as_dicts.append(row_dict)
+
+            # Build ordered header: curve_index first, then all seen columns
+            all_keys = ["curve_index"]
+            seen = {"curve_index"}
+            for row_dict in rows_as_dicts:
+                for k in row_dict:
+                    if k not in seen:
+                        all_keys.append(k)
+                        seen.add(k)
+
+            if len(all_keys) > 1:
+                writer.writerow(all_keys)
+                for row_dict in rows_as_dicts:
+                    writer.writerow([row_dict.get(k, "") for k in all_keys])
             else:
-                # No fitting parameters found
+                # No fitting parameters found in any curve
                 writer.writerow(["curve_index", "note"])
                 writer.writerow(["-", "No fitting parameters found"])
 
